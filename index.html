@@ -1,0 +1,133 @@
+<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14100c"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><title>Drill Up</title>
+<style>
+:root{--bg:#14100c;--p:#221a13;--l:#3a2c20;--tx:#efe3d0;--mu:#a8957c;--ac:#f0a030;--bad:#e5533a;--ok:#7cc06a;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.4 Georgia,'Palatino Linotype',serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+#top{padding:8px 14px;background:var(--p);border-bottom:2px solid var(--l);display:flex;justify-content:space-between;gap:8px;font-size:13px}
+#v{flex:1;overflow-y:auto;padding:12px 14px 20px}
+nav{display:flex;background:var(--p);border-top:2px solid var(--l);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mu);padding:12px 2px;font:inherit;font-size:13px}nav button.on{color:var(--ac);box-shadow:inset 0 3px var(--ac)}
+button.b{background:var(--ac);color:#1b1208;border:0;border-radius:6px;padding:11px 14px;font:700 14px Georgia,serif;margin:3px 0}button.b:disabled{opacity:.4}button.g{background:var(--l);color:var(--tx)}
+.row{display:flex;gap:8px}.row>*{flex:1}.card{background:var(--p);border:1px solid var(--l);border-radius:8px;padding:10px 12px;margin:8px 0}
+.big{font-size:34px;font-weight:700;color:var(--ac);line-height:1.1}.mu{color:var(--mu);font-size:13px}.bad{color:var(--bad)}.ok{color:var(--ok)}
+.bar{height:10px;background:var(--l);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8a5a2a,#e5533a,#f0a030)}
+table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px solid var(--l);font-size:13px}td:last-child{text-align:right}
+#toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 48px);background:var(--ac);color:#1b1208;padding:10px;border-radius:6px;display:none;font-weight:700;z-index:9}
+h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
+</style></head><body>
+<div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
+<nav id="nv"></nav>
+<script>
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.0';
+const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
+const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
+const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
+const ft=x=>nf(x,0)+' Ft';
+// üzemanyag: e = fűtőérték MJ/kg, p = Ft/kg
+const F={coal:{n:'Szén',e:24,p:40},diesel:{n:'Gázolaj',e:43,p:450},uran:{n:'Dúsított urán',e:3.9e6,p:1.2e6}};
+// meghajtás: név, mechanikus teljesítmény MW, hatásfok, üzemanyag, tömeg t, ár
+const D=[['Gőzgép',.4,.1,'coal',25,0],['Nagy gőzgép',1.5,.15,'coal',35,8e5],['Dízel-hidraulika',6,.38,'diesel',60,1.2e7],['Gázturbina',25,.4,'diesel',120,1.5e8],['Nukleáris Mk1 (kompakt PWR)',150,.3,'uran',400,2e9],['Nukleáris Mk2 (gyorsneutronos)',1000,.35,'uran',900,5e10],['Nukleáris Mk3 (a fizika határán)',6000,.4,'uran',2000,5e11]];
+// páncél: név, hőtűrés °C, nyomástűrés GPa, tömeg t, ár
+const H=[['Acélpáncél',150,.05,5,0],['Titánötvözet',400,.4,10,6e5],['Volfrám-karbid kerámia',900,3,25,2e7],['Szintetikus gyémánt',2000,40,60,4e8],['Nanogyémánt kompozit',4000,150,120,8e9],['Hipotetikus szuperkeményanyag',6000,420,300,2e11]];
+const T=[['Acéltartály',800,0],['Nagy tartály',3000,8e4],['Tankkonténer',12000,1.5e6],['Ipari tartály',6e4,2e7],['Mélytartály',2.5e5,3e8],['Szuper tartály',1e6,6e9],['Maxi tartály',4e6,8e10]];
+const C=[['Vödrös kocsi',2000,0],['Bányakocsi',8000,3e5],['Vonatszerelvény',3e4,6e6],['Konténersor',1.2e5,9e7],['Ércszállító modul',5e5,1.5e9],['Mélységi vontató',2e6,3e10],['Mamut raktár',1e7,4e11]];
+const U={d:['Meghajtás',D,x=>`${x[1]} MW, hatásfok ${x[2]*100|0}%, ${F[x[3]].n}`],h:['Páncél',H,x=>`${x[1]} °C / ${x[2]} GPa`],t:['Üzemanyagtartály',T,x=>fk(x[1])],c:['Raktér',C,x=>fk(x[1])]};
+const PT=[[0,0],[35e3,1],[410e3,13.4],[660e3,23.8],[2890e3,135.8],[5150e3,328.9],[6371e3,364]];
+const TT=[[0,15],[35e3,900],[410e3,1500],[660e3,1700],[2890e3,3700],[5150e3,5000],[6371e3,5400]];
+const lerp=(t,d)=>{for(let i=1;i<t.length;i++)if(d<=t[i][0]){const a=t[i-1],b=t[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return t.at(-1)[1]};
+// réteg: név, tól m, ig m, keménység MJ/m³, szín, [ásvány, kg/m, Ft/kg]
+const LY=[['Talaj (humusz, kavics)',0,3,10,'#6b4a2a',[['Kavics',200,15],['Humusz',100,5]]],
+['Üledék (homok, agyag)',3,400,40,'#a88a55',[['Homok',500,8],['Agyag',300,20],['Kőszén',80,45],['Borostyán',.02,4e5]]],
+['Üledékes kőzet (mészkő, homokkő)',400,4e3,90,'#9a9a88',[['Mészkő',400,12],['Kősó',100,60],['Vasérc',60,55],['Rézérc',.8,3500]]],
+['Gránit és gneisz (felső kéreg)',4e3,2e4,150,'#b06a6a',[['Gránitzúzalék',300,25],['Ezüst',.03,3e5],['Arany',.002,3e7],['Ón',.5,9e3],['Wolfram',.1,2e4],['Uránérc',.05,14e3]]],
+['Bazalt és gabbró (alsó kéreg)',2e4,35e3,250,'#4a4f5a',[['Titánérc',5,3e3],['Nikkel',3,6e3],['Kobalt',1,18e3],['Platina',.003,28e6]]],
+['Felső köpeny (peridotit)',35e3,410e3,400,'#3f6f3a',[['Olivin (peridot)',100,500],['Krómit',10,2500],['Gyémánt',.003,4e7],['Platinacsoport-fémek',.01,3e7]]],
+['Átmeneti zóna (ringwoodit)',410e3,660e3,600,'#2f7a8a',[['Ringwoodit',200,1500],['Wadsleyit',150,1200],['Gránát',20,8e3]]],
+['Alsó köpeny (bridgmanit)',660e3,2700e3,800,'#a2502a',[['Bridgmanit',300,4e3],['Ferroperiklász',100,3e3],['Davemaoit',2,1.5e5]]],
+['D″ réteg (köpeny–mag határ)',2700e3,2890e3,900,'#b03a2a',[['Poszt-perovszkit',200,9e3],['Ősi bazaltmaradék',1,4e5]]],
+['Külső mag (folyékony vas-nikkel)',2890e3,5150e3,500,'#e08a20',[['Vas–nikkel ötvözet',800,2e3],['Kén',100,800],['Ozmium',.02,8e6]]],
+['Belső mag (szilárd vas-nikkel)',5150e3,6371e3,1500,'#ffd86a',[['Szilárd vas–nikkel',1500,3500],['Irídium',.3,1.2e6]]]];
+// leletek: név, tól m, ig m, esély/m, kg, érték Ft, leírás
+const FD=[['Antropocén jelzőréteg',0,1,.1,.2,3e3,'Plutónium-239 és mikroműanyag: az atomkísérletek (1945-től) nyoma.'],
+['Római ezüstdénár',0,3,.05,.01,8e3,'Kb. i. sz. 2. század.'],['Őskori cserépedény',1,3,.03,2,4.5e4,'Újkőkori település maradványa.'],
+['Mamutagyar',5,60,.004,40,2.5e6,'Pleisztocén, kb. 30 ezer éves.'],['Miocén kagylófosszília',40,300,.02,.5,9e3,'Egykori tengerfenék, ~15 millió éves.'],
+['K–Pg iridiumréteg',140,170,.06,.2,6e6,'66 millió éve: a Chicxulub-becsapódás és a dinoszauruszok vége.'],
+['Dinoszaurusz-csont',200,1500,.003,300,1.8e7,'Kréta kori ragadozó csontja.'],['Trilobita',1500,3000,.01,.3,4.5e5,'Kambrium, ~500 millió év.'],
+['Permi kihalási réteg',2500,3500,.01,1,2e6,'252 millió éve: minden élet 90%-a eltűnt.'],['Sztromatolit',6e3,12e3,.005,25,3e6,'3,4 milliárd éves élet nyoma.'],
+['Meteorit-vas',5e3,15e3,.003,80,5e6,'Földön kívüli vas-nikkel.'],['4,4 milliárd éves cirkon',15e3,3e4,.002,.001,2e8,'A Föld legősibb ismert anyaga.'],
+['Kimberlit-gyémánt',150e3,200e3,2e-4,.1,5e6,'Köpenyből felhozott gyémánt.'],['Vizes ringwoodit',410e3,660e3,2e-5,.5,5e7,'Óceánnyi vizet rejthet a köpeny.'],
+['Theia-maradvány',2700e3,2890e3,4e-5,50,9e8,'Az elmélet szerint a Holdat létrehozó ütközés bolygójának anyaga.'],['Ősi hélium-3 zseb',3e6,5e6,1e-5,.01,4e9,'Primordiális gáz a Föld születéséből.']];
+const init=()=>({cash:25e4,depth:0,st:'idle',fuel:300,hp:100,u:{d:0,h:0,t:0,c:0},cg:{},fin:{},disc:{},max:0,t:Date.now(),log:[],set:{vol:60,sc:60,auto:1},won:0});
+let tab=0,S;try{S=Object.assign(init(),JSON.parse(localStorage.getItem('drillup1')))}catch(e){S=init()}
+const layer=d=>LY.find(l=>d<l[2])||LY.at(-1);
+const cargoKg=()=>Object.values(S.cg).reduce((a,b)=>a+b,0)+Object.entries(S.fin).reduce((a,[n,c])=>a+c*FD.find(f=>f[0]==n)[4],0);
+const cap=()=>C[S.u.c][1],tank=()=>T[S.u.t][1],mass=()=>(D[S.u.d][4]+H[S.u.h][3])*1e3+cargoKg()+S.fuel;
+function calc(){const d=D[S.u.d],f=F[d[3]],L=layer(S.depth),P=lerp(PT,S.depth),Tm=lerp(TT,S.depth),m=mass();
+ const e=L[3]*(1+P/100),v=Math.min(3,d[1]/(e*A)),fr=d[1]/(d[2]*f.e),fm=m*G/(.5*d[2]*f.e*1e6),vu=Math.min(5,d[1]*1e6*.5/(m*G));
+ return{d,f,L,P,Tm,m,v,fr,fm,vu,need:S.depth*fm}}
+const base=()=>S.depth==0&&S.st=='idle';
+function msg(t,quiet){S.log.unshift(new Date().toLocaleTimeString('hu-HU')+' '+t);S.log.length=Math.min(S.log.length,30);if(!quiet)toast(t)}
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',3500)}
+function strand(why){msg('💀 '+why+' A gép elveszett a mélyben – rakomány és fejlesztések oda. Új gépet kell építened (pénzed megmaradt).');S.cg={};S.fin={};S.u={d:0,h:0,t:0,c:0};S.depth=0;S.fuel=0;S.hp=100;S.st='idle'}
+function step(dt){const c=calc(),h=H[S.u.h];
+ if(S.st=='down'){let t=dt;if(c.fr*t>S.fuel)t=S.fuel/c.fr;let dd=c.v*t;
+  const per=c.L[5].reduce((a,x)=>a+x[1],0),room=cap()-cargoKg();if(per*dd>room){dd=Math.max(0,room/per);S.st='idle';msg('📦 A raktér megtelt – menj fel eladni!')}
+  const used=dd/c.v;S.depth=Math.min(R,S.depth+dd);S.fuel-=c.fr*used;S.max=Math.max(S.max,S.depth);
+  c.L[5].forEach(x=>S.cg[x[0]]=(S.cg[x[0]]||0)+x[1]*dd);
+  FD.forEach(f=>{if(S.depth>=f[1]&&S.depth<=f[2]){let n=Math.floor(f[3]*dd+Math.random());if(n>0){S.fin[f[0]]=(S.fin[f[0]]||0)+n;if(!S.disc[f[0]]){S.disc[f[0]]=1;ding();msg('🔎 Lelet: '+f[0]+' – '+f[6])}}}});
+  const L2=layer(S.depth);if(L2!=c.L)msg('⬇ Réteg: '+L2[0],1);
+  if(S.depth>=R){S.st='idle';S.won=1;msg('🌍 ELÉRTED A FÖLD KÖZEPÉT!')}
+  else if(S.st=='down'){const need=S.depth*c.fm*1.05;if(S.fuel<=1e-6){strand('Elfogyott az üzemanyag.')}else if(S.set.auto&&S.fuel<=need+c.fr*60){S.st='up';msg('⚠ Tartalék-határ: automatikus visszaindulás.')}}}
+ else if(S.st=='up'){let dd=c.vu*dt;if(c.fm*dd>S.fuel)dd=S.fuel/c.fm;S.fuel-=c.fm*dd;S.depth-=dd;
+  if(S.depth<=0){S.depth=0;S.st='idle';msg('☀ Felértél a bázisra!')}else if(S.fuel<=1e-6)strand('Felfelé menet elfogyott az üzemanyag.')}
+ if(S.st!='idle'||S.depth>0){const r=Math.max(c.Tm/h[1],c.P/h[2])-1;if(r>0){S.hp-=(.02+r*.2)*dt;if(S.hp<=0)strand('A páncél összeroppant.')}}}
+function tick(){const now=Date.now();let real=Math.min((now-S.t)/1000,7*864e2);S.t=now;
+ if(S.st!='idle'){let tot=real*S.set.sc,ch=Math.max(20,tot/2e4);while(tot>0&&S.st!='idle'){const x=Math.min(ch,tot);step(x);tot-=x}}
+ snd();live()}
+// hang
+let AC,N,W,O,gO;
+function aInit(){if(AC)return;AC=new(window.AudioContext||webkitAudioContext)();const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;
+ const mk=(ty,f)=>{const s=AC.createBufferSource();s.buffer=b;s.loop=true;const fl=AC.createBiquadFilter();fl.type=ty;fl.frequency.value=f;const g=AC.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AC.destination);s.start();return{g,fl}};
+ N=mk('lowpass',300);W=mk('highpass',4000);O=AC.createOscillator();gO=AC.createGain();gO.gain.value=0;O.connect(gO);gO.connect(AC.destination);O.start()}
+function snd(){if(!AC)return;const on=S.st!='idle'&&S.set.vol>0,v=S.set.vol/100,t=AC.currentTime,k=S.u.d;
+ N.g.gain.setTargetAtTime(on?.5*v:0,t,.3);N.fl.frequency.setTargetAtTime(200+k*60+(S.st=='up'?150:0),t,.3);
+ W.g.gain.setTargetAtTime(on&&k<2?.1*v:0,t,.3);gO.gain.setTargetAtTime(on?.1*v:0,t,.3);
+ O.type=k>=4?'sine':'sawtooth';O.frequency.setTargetAtTime(k<2?28+k*10:k<4?45+k*8:60,t,.3)}
+function ding(){if(!AC||!S.set.vol)return;const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.frequency.value=880;g.gain.setValueAtTime(.3*S.set.vol/100,t);g.gain.exponentialRampToValueAtTime(.001,t+1.2);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+1.2)}
+// nézetek
+const price=(n,b)=>{let h=0;for(const ch of n)h+=ch.charCodeAt(0);return b*(.85+.3*(.5+.5*Math.sin(h+Math.floor(Date.now()/864e5))))};
+function live(){$('#hd').innerHTML=`${ft(S.cash)}`;const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
+ e.innerHTML=`<div class="big">${fd(S.depth)}</div><div class="mu">Rekord: ${fd(S.max)} · a mag: ${fd(R-S.depth)} mélyen</div><div class="bar" style="margin:8px 0"><i style="width:${Math.max(.5,pct)}%"></i></div>
+ <div class="card" style="border-left:6px solid ${c.L[4]}"><b>${c.L[0]}</b><br><span class="mu">${nf(c.Tm)} °C · ${nf(c.P,2)} GPa · páncél ${nf(S.hp,1)}% (${H[S.u.h][1]} °C / ${H[S.u.h][2]} GPa)</span>${Math.max(c.Tm/H[S.u.h][1],c.P/H[S.u.h][2])>1?'<br><b class="bad">⚠ A páncél túlterhelt!</b>':''}</div>
+ <div class="card">Állapot: <b>${{idle:'Áll',down:'Fúr lefelé',up:'Felfelé tart'}[S.st]}</b><br>Fúrási sebesség: ${nf(c.v*3600,1)} m/óra · felfelé: ${nf(c.vu*3600,0)} m/óra<br>Időgyorsítás: ×${S.set.sc}${c.v>0&&S.depth<R?`<br>Mag eléréséig (ilyen tempóval): ~${nf((R-S.depth)/c.v/86400/S.set.sc*(S.set.sc),1)} nap játékidő`:''}</div>
+ <div class="card ${low?'bad':''}">⛽ ${F[c.d[3]].n}: <b>${fk(S.fuel)}</b> / ${fk(tank())}<br>Fogyasztás fúrás közben: ${fk(c.fr*3600)}/óra<br>Visszaút a felszínre innen: <b>${fk(c.need)}</b>${low?'<br><b>Itt az idő felmenni!</b>':''}</div>
+ <div class="card">📦 Rakomány: ${fk(cargoKg())} / ${fk(cap())} · gép tömege: ${fk(c.m)}</div>`}
+const vDrill=()=>`<div id="live"></div><div class="row"><button class="b" onclick="go('down')">▼ Fúrás</button><button class="b g" onclick="go('idle')">■ Megáll</button><button class="b" onclick="go('up')">▲ Fel</button></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
+function go(s){const c=calc();if(s=='down'){if(S.depth>=R)return;if(S.fuel<=0)return toast('Nincs üzemanyag – tankolj a műhelyben!');if(cargoKg()>=cap())return toast('Tele a raktár!')}if(s=='up'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='up'&&S.fuel<=0)return toast('Nincs üzemanyag!');
+ aInit();if(AC.state=='suspended')AC.resume();S.st=s;S.t=Date.now();view()}
+function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
+ for(const k in U){const[n,a,f]=U[k],i=S.u[k],nx=a[i+1];h+=`<div class="card"><b>${n}</b>: ${a[i][0]}<br><span class="mu">${f(a[i])}</span>${nx?`<br>Következő: ${nx[0]} <span class="mu">(${f(nx)})</span><br><button class="b" ${b?'':'disabled'} onclick="buy('${k}')">Fejlesztés – ${ft(nx.at(-1))}</button>`:'<br><i>Maximális szint</i>'}</div>`}
+ const d=calc();h+=`<div class="card">⛽ Tankolás (${d.f.n}, ${ft(d.f.p)}/kg)<br>Tank: ${fk(S.fuel)} / ${fk(tank())}<div class="row"><button class="b g" ${b?'':'disabled'} onclick="fill(.25)">+25%</button><button class="b" ${b?'':'disabled'} onclick="fill(1)">Tele</button></div></div>
+ <div class="card">🔧 Páncél: ${nf(S.hp,1)}%<br><button class="b" ${b&&S.hp<100?'':'disabled'} onclick="repair()">Javítás – ${ft((100-S.hp)*2e3*Math.pow(8,S.u.h))}</button></div>`;return h}
+function buy(k){if(!base())return;const a=U[k][1],nx=a[S.u[k]+1],p=nx.at(-1);if(S.cash<p)return toast('Nincs elég pénzed.');S.cash-=p;const old=calc().d[3];S.u[k]++;if(k=='d'&&D[S.u.d][3]!=old){S.cash+=S.fuel*F[old].p*.8;S.fuel=0;msg('Új üzemanyag-típus: tankolj újra!')}if(k=='h')S.hp=100;if(S.fuel>tank())S.fuel=tank();view()}
+function fill(p){if(!base())return;const f=calc().f,add=Math.min(tank()-S.fuel,tank()*p),x=Math.min(add,S.cash/f.p);S.fuel+=x;S.cash-=x*f.p;view()}
+function repair(){const c=(100-S.hp)*2e3*Math.pow(8,S.u.h);if(S.cash<c)return toast('Nincs elég pénzed.');S.cash-=c;S.hp=100;view()}
+function vMarket(){if(!base())return'<div class="card bad">A piac csak a felszínen érhető el.</div>';let rows='',tot=0;
+ for(const n in S.cg){const kg=S.cg[n];if(kg<=0)continue;const b=LY.flatMap(l=>l[5]).find(x=>x[0]==n),p=price(n,b[2]);tot+=kg*p;rows+=`<tr><td>${n}</td><td>${fk(kg)}</td><td>${ft(p)}/kg</td><td>${ft(kg*p)}</td></tr>`}
+ for(const n in S.fin){const f=FD.find(x=>x[0]==n),c=S.fin[n];tot+=c*f[5];rows+=`<tr><td>${n} ×${c}</td><td>${fk(c*f[4])}</td><td>${ft(f[5])}/db</td><td>${ft(c*f[5])}</td></tr>`}
+ return`<h3>Piac</h3><div class="card">${rows?`<table>${rows}</table>`:'Üres a raktár. Fúrj ásványokat!'}</div><button class="b" ${rows?'':'disabled'} onclick="sell()">Mindent elad – ${ft(tot)}</button><div class="mu">Az árak naponta ±15%-ot ingadoznak. A leleteket múzeum veszi meg.</div>`}
+function sell(){let t=0;for(const n in S.cg){const b=LY.flatMap(l=>l[5]).find(x=>x[0]==n);t+=S.cg[n]*price(n,b[2])}for(const n in S.fin)t+=S.fin[n]*FD.find(x=>x[0]==n)[5];S.cash+=t;S.cg={};S.fin={};toast('Eladva: '+ft(t));view()}
+function vLog(){return`<h3>Rétegek</h3>${LY.map(l=>`<div class="card" style="border-left:6px solid ${l[4]};${S.max>=l[1]?'':'opacity:.4'}"><b>${S.max>=l[1]?l[0]:'???'}</b><br><span class="mu">${fd(l[1])} – ${fd(l[2])}${S.max>=l[1]?' · '+l[5].map(x=>x[0]).join(', '):''}</span></div>`).join('')}<h3>Leletek (${Object.keys(S.disc).length}/${FD.length})</h3>${FD.map(f=>S.disc[f[0]]?`<div class="card"><b>${f[0]}</b><br><span class="mu">${f[6]} (${fd(f[1])}–${fd(f[2])})</span></div>`:'').join('')||'<div class="mu">Még nem találtál semmit.</div>'}`}
+let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;view()});
+function vMenu(){return`<h3>Főmenü</h3><button class="b" style="width:100%" onclick="tab=0;view()">▶ Játék folytatása</button><button class="b g" style="width:100%" onclick="share()">📤 Megosztás</button>${ip?'<button class="b" style="width:100%" onclick="ip.prompt()">📲 Telepítés a telefonra</button>':'<div class="mu">iPhone: Safari → Megosztás → Főképernyőhöz adás. Androidon a böngésző menüjéből telepíthető.</div>'}<button class="b g" style="width:100%" onclick="upd()">🔄 Frissítés keresése (v${VER})</button>
+<h3>Beállítások</h3><div class="card">Hangerő: ${S.set.vol}%<input type="range" min="0" max="100" value="${S.set.vol}" oninput="S.set.vol=+this.value;this.previousSibling.textContent='Hangerő: '+this.value+'%';snd()">Időgyorsítás (valós idő = ×1)<select onchange="S.set.sc=+this.value;view()">${[1,10,60,600,3600].map(x=>`<option ${x==S.set.sc?'selected':''} value="${x}">×${x}</option>`).join('')}</select><br><br><label><input type="checkbox" ${S.set.auto?'checked':''} onchange="S.set.auto=this.checked?1:0"> Automatikus visszafordulás a tartalék-határnál</label></div>
+<button class="b g" style="width:100%" onclick="if(confirm('Biztosan törlöd a mentést?')){S=init();view()}">🗑 Új játék</button><div class="mu" style="margin-top:12px">A fúrás a lap bezárása után is „fut": megnyitáskor elszámoljuk (max. 7 nap). Ha félúton elfogy az üzemanyag, a gép elvész és újra kell kezdeni.</div>`}
+async function share(){const d={title:'Drill Up',text:`A Drill Up-ban ${fd(S.max)} mélyre jutottam!`,url:location.href};try{if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(d.text+' '+d.url);toast('Link a vágólapon')}}catch(e){}}
+async function upd(){const r=await navigator.serviceWorker?.getRegistration();if(!r)return toast('Offline mód nem elérhető.');toast('Keresés…');await r.update();if(r.waiting)r.waiting.postMessage('skip');setTimeout(()=>location.reload(),700)}
+const vs=[vDrill,vShop,vMarket,vLog,vMenu],names=['⛏ Fúrás','🏭 Műhely','💰 Piac','📖 Napló','☰ Menü'];
+function view(){$('#v').innerHTML=vs[tab]();$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on':''}" onclick="tab=${i};view()">${n}</button>`).join('');live()}
+const save=()=>localStorage.setItem('drillup1',JSON.stringify(S));
+setInterval(tick,250);setInterval(save,5e3);document.addEventListener('visibilitychange',()=>{save();if(!document.hidden)tick()});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+tick();view();
+</script></body></html>
