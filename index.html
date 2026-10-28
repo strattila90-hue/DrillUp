@@ -13,7 +13,7 @@ button.b{background:var(--ac);color:#1b1208;border:0;border-radius:6px;padding:1
 .bar{height:10px;background:var(--l);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8a5a2a,#e5533a,#f0a030)}
 table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px solid var(--l);font-size:13px}td:last-child{text-align:right}
 #toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 48px);background:var(--ac);color:#1b1208;padding:10px;border-radius:6px;display:none;font-weight:700;z-index:9}
-h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
+#cv{width:100%;height:300px;display:block;border-radius:8px;border:2px solid var(--l)}h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
 </style></head><body>
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
@@ -96,13 +96,13 @@ function snd(){if(!AC)return;const on=S.st!='idle'&&S.set.vol>0,v=S.set.vol/100,
 function ding(){if(!AC||!S.set.vol)return;const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.frequency.value=880;g.gain.setValueAtTime(.3*S.set.vol/100,t);g.gain.exponentialRampToValueAtTime(.001,t+1.2);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+1.2)}
 // nézetek
 const price=(n,b)=>{let h=0;for(const ch of n)h+=ch.charCodeAt(0);return b*(.85+.3*(.5+.5*Math.sin(h+Math.floor(Date.now()/864e5))))};
-function live(){$('#hd').innerHTML=`${ft(S.cash)}`;const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
+function live(){$('#hd').innerHTML=`${ft(S.cash)}`;const a=$('#bd');if(a){a.className='b'+(S.st=='down'?'':' g');$('#bu').className='b'+(S.st=='up'?'':' g')}const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
  e.innerHTML=`<div class="big">${fd(S.depth)}</div><div class="mu">Rekord: ${fd(S.max)} · a mag: ${fd(R-S.depth)} mélyen</div><div class="bar" style="margin:8px 0"><i style="width:${Math.max(.5,pct)}%"></i></div>
  <div class="card" style="border-left:6px solid ${c.L[4]}"><b>${c.L[0]}</b><br><span class="mu">${nf(c.Tm)} °C · ${nf(c.P,2)} GPa · páncél ${nf(S.hp,1)}% (${H[S.u.h][1]} °C / ${H[S.u.h][2]} GPa)</span>${Math.max(c.Tm/H[S.u.h][1],c.P/H[S.u.h][2])>1?'<br><b class="bad">⚠ A páncél túlterhelt!</b>':''}</div>
  <div class="card">Állapot: <b>${{idle:'Áll',down:'Fúr lefelé',up:'Felfelé tart'}[S.st]}</b><br>Fúrási sebesség: ${nf(c.v*3600,1)} m/óra · felfelé: ${nf(c.vu*3600,0)} m/óra<br>Időgyorsítás: ×${S.set.sc}${c.v>0&&S.depth<R?`<br>Mag eléréséig (ilyen tempóval): ~${nf((R-S.depth)/c.v/86400/S.set.sc*(S.set.sc),1)} nap játékidő`:''}</div>
  <div class="card ${low?'bad':''}">⛽ ${F[c.d[3]].n}: <b>${fk(S.fuel)}</b> / ${fk(tank())}<br>Fogyasztás fúrás közben: ${fk(c.fr*3600)}/óra<br>Visszaút a felszínre innen: <b>${fk(c.need)}</b>${low?'<br><b>Itt az idő felmenni!</b>':''}</div>
  <div class="card">📦 Rakomány: ${fk(cargoKg())} / ${fk(cap())} · gép tömege: ${fk(c.m)}</div>`}
-const vDrill=()=>`<div id="live"></div><div class="row"><button class="b" onclick="go('down')">▼ Fúrás</button><button class="b g" onclick="go('idle')">■ Megáll</button><button class="b" onclick="go('up')">▲ Fel</button></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
+const vDrill=()=>`<canvas id="cv"></canvas><div class="row" style="margin:8px 0"><button id="bd" class="b ${S.st=='down'?'':'g'}" style="font-size:20px;padding:16px" onclick="tg('down')">▼ Le</button><button id="bu" class="b ${S.st=='up'?'':'g'}" style="font-size:20px;padding:16px" onclick="tg('up')">▲ Fel</button></div><div id="live"></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
 function go(s){const c=calc();if(s=='down'){if(S.depth>=R)return;if(S.fuel<=0)return toast('Nincs üzemanyag – tankolj a műhelyben!');if(cargoKg()>=cap())return toast('Tele a raktár!')}if(s=='up'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='up'&&S.fuel<=0)return toast('Nincs üzemanyag!');
  aInit();if(AC.state=='suspended')AC.resume();S.st=s;S.t=Date.now();view()}
 function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
@@ -129,5 +129,47 @@ function view(){$('#v').innerHTML=vs[tab]();$('#nv').innerHTML=names.map((n,i)=>
 const save=()=>localStorage.setItem('drillup1',JSON.stringify(S));
 setInterval(tick,250);setInterval(save,5e3);document.addEventListener('visibilitychange',()=>{save();if(!document.hidden)tick()});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+// ---- animált jelenet ----
+const vy=d=>70*Math.log10(1+d);let ph=0,pt=0,pr=[];
+const tg=s=>go(S.st==s?'idle':s);
+function draw(ts){requestAnimationFrame(draw);const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=300;
+ if(cv.width!=Math.round(w*dp)){cv.width=Math.round(w*dp);cv.height=h*dp}
+ const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const dt=Math.min(.05,(ts-pt)/1e3||0);pt=ts;
+ const dn=S.st=='down',upw=S.st=='up',act=dn||upw,tier=S.u.d;ph+=dt*(dn?1:upw?-1:0);
+ const GY=120,cam=vy(S.depth),sy=Math.max(0,cam-110),mx=w/2,my=GY+Math.min(cam,110);
+ x.fillStyle='#000';x.fillRect(0,0,w,h);x.save();x.translate(0,-sy);
+ let g=x.createLinearGradient(0,GY-130,0,GY);g.addColorStop(0,'#2a5fa8');g.addColorStop(1,'#a9d4f0');x.fillStyle=g;x.fillRect(0,GY-130,w,130);
+ x.fillStyle='#ffe27a';x.beginPath();x.arc(w*.8,GY-85,16,0,7);x.fill();
+ x.fillStyle='#6d86a0';x.beginPath();x.moveTo(0,GY);[[.2,45],[.38,15],[.55,60],[.75,20],[1,40]].forEach(p=>x.lineTo(w*p[0],GY-p[1]));x.lineTo(w,GY);x.fill();
+ // rétegek
+ LY.forEach(l=>{const y0=GY+vy(l[1]),y1=GY+vy(l[2]);if(y1-sy<0||y0-sy>h)return;x.fillStyle=l[4];x.fillRect(0,y0,w,y1-y0);x.fillStyle='rgba(0,0,0,.35)';x.fillRect(0,y0,w,y1-y0);
+  x.save();x.beginPath();x.rect(0,y0,w,y1-y0);x.clip();const m=y1-y0;
+  for(let i=0;i<26;i++){const yy=y0+((((i*37.7+ph*30)%m)+m)%m),xx=(i*131)%w;x.fillStyle=i%2?'rgba(255,255,255,.14)':'rgba(0,0,0,.28)';x.fillRect(xx,yy,2+i%3*2,2+i%2*2)}x.restore()});
+ x.fillStyle='#5fa244';x.fillRect(0,GY-3,w,5);
+ // felszín: műhely, fák
+ const bx=w*.14;x.fillStyle='#7a5230';x.fillRect(bx-26,GY-34,52,34);x.fillStyle='#a33';x.beginPath();x.moveTo(bx-30,GY-34);x.lineTo(bx,GY-54);x.lineTo(bx+30,GY-34);x.fill();
+ x.fillStyle='#555';x.fillRect(bx+12,GY-60,7,18);x.fillStyle='#ffcf5a';x.fillRect(bx-18,GY-24,12,10);x.fillStyle='#3a2412';x.fillRect(bx+4,GY-22,12,22);x.fillStyle='#fff';x.font='9px Georgia';x.fillText('BÁZIS',bx-14,GY-58);
+ [w*.82,w*.93].forEach(tx=>{x.fillStyle='#5a3b1e';x.fillRect(tx-2,GY-18,4,18);x.fillStyle='#2f6b2a';x.beginPath();x.arc(tx,GY-24,11,0,7);x.fill()});
+ // mélységjelzők
+ x.font='10px Georgia';[10,100,1e3,1e4,1e5,1e6,5e6].forEach(d=>{const y=GY+vy(d);x.fillStyle='rgba(255,255,255,.75)';x.fillRect(0,y,12,1);x.fillText(d>=1e3?d/1e3+' km':d+' m',15,y+3)});
+ // alagút
+ if(S.depth>0){x.fillStyle='#120d09';x.fillRect(mx-18,GY,36,my-GY)}
+ // részecskék
+ if(Math.random()<dt*8)pr.push({x:bx+15,y:GY-62,vx:8,vy:-20,l:3,t:'s'});
+ if(act&&tier<4&&Math.random()<dt*14)pr.push({x:mx,y:my-84,vx:(Math.random()-.5)*14,vy:-35,l:2,t:'s'});
+ if(dn&&Math.random()<dt*50)pr.push({x:mx+(Math.random()-.5)*20,y:my,vx:(Math.random()-.5)*90,vy:-30-Math.random()*50,l:.7,t:'d'});
+ pr=pr.filter(p=>(p.l-=dt)>0).slice(-140);pr.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.t=='d'){p.vy+=160*dt;x.fillStyle='#caa26a';x.fillRect(p.x,p.y,2,2)}else{x.fillStyle=`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(p.x,p.y,3+(3-p.l)*2,0,7);x.fill()}});
+ // gép
+ const jx=dn?Math.sin(ts/25)*1.2:0,X=mx+jx;
+ x.fillStyle='#2b2b2b';[-18,10].forEach(o=>{x.fillRect(X+o,my-62,8,36);x.strokeStyle='#777';for(let yy=my-62+(((ph*30)%6)+6)%6;yy<my-26;yy+=6){x.beginPath();x.moveTo(X+o,yy);x.lineTo(X+o+8,yy);x.stroke()}});
+ x.fillStyle='#b5651d';x.fillRect(X-10,my-66,20,36);x.fillStyle='#8a4c12';x.fillRect(X-10,my-66,20,5);
+ x.fillStyle='#bfe3f5';x.beginPath();x.arc(X,my-50,7,0,7);x.fill();x.fillStyle='#f2c9a0';x.beginPath();x.arc(X-2.5,my-50,2.2,0,7);x.arc(X+2.5,my-50,2.2,0,7);x.fill();
+ x.fillStyle='#777';x.fillRect(X-4,my-80,8,14);x.fillStyle=tier>=4?'#4fd0ff':'#aaa';x.fillRect(X-5,my-82,10,3);
+ x.fillStyle='#8d949c';x.beginPath();x.moveTo(X-15,my-30);x.lineTo(X+15,my-30);x.lineTo(X,my);x.fill();
+ x.strokeStyle='#f0a030';x.lineWidth=2;for(let k=0;k<4;k++){const f=(((ph*3+k/4)%1)+1)%1,yy=my-30+f*30,hw=15*(1-f);x.beginPath();x.moveTo(X-hw,yy);x.lineTo(X+hw,yy);x.stroke()}x.lineWidth=1;
+ x.restore();
+ const T=lerp(TT,S.depth);if(S.depth>0){x.fillStyle=`rgba(255,70,0,${Math.min(.4,T/6000*.5)})`;x.fillRect(0,0,w,h)}
+ x.fillStyle='rgba(0,0,0,.55)';x.fillRect(w-196,6,190,22);x.fillStyle='#fff';x.font='bold 12px Georgia';x.textAlign='right';x.fillText(fd(S.depth),w-12,22);x.textAlign='left'}
+requestAnimationFrame(draw);
 tick();view();
 </script></body></html>
