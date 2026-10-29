@@ -206,12 +206,12 @@ function nav(){$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on'
 function view(){$('#v').className=tab==0?'dr':'';$('#v').innerHTML=vs[tab]();nav();live()}
 const save=()=>localStorage.setItem('drillup1',JSON.stringify(S));
 setInterval(tick,250);setInterval(save,5e3);document.addEventListener('visibilitychange',()=>{save();if(!document.hidden)tick()});
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 // ---- jelenet: 1 m = 10 px, a gép ~12 m hosszú (Ikarus-méret) ----
 const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*43758.5)%1+1)%1;
 const mix=(a,b,t)=>{const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=p(a),B=p(b);return'#'+A.map((v,i)=>('0'+Math.round(v+(B[i]-v)*t).toString(16)).slice(-2)).join('')};
 const HC=[['#9aa1aa','#5d636b'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
-let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0,exX=0,exY=0,dep=0,hs=0,lastDT=0,lastSnd=0,rx=0,ry=0,pSX=0,pSY=0,vsp=0;
+let rf=[],rfA=[0,0,0,0],frA=0,FV=null,ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0,exX=0,exY=0,dep=0,hs=0,lastDT=0,lastSnd=0,rx=0,ry=0,pSX=0,pSY=0,vsp=0;
 const DBG={fps:60,err:''};addEventListener('error',e=>{DBG.err=(e.message||'')+' '+((e.filename||'').split('/').pop())+':'+e.lineno});addEventListener('unhandledrejection',e=>{DBG.err=String(e.reason)});
 const tg=s=>{aInit();navigator.vibrate&&navigator.vibrate(S.st==s?[12,40,12]:18);clk(S.st==s?330:560);go(S.st==s?'idle':s)};
 let hold=null;
@@ -352,19 +352,57 @@ function drawF(ts){const mc=$('#mc');if(mc)icon(mc,ts);const cv=$('#cv');if(!cv)
  const sY=Math.sin(yaw),sc=Math.cos(yaw),fc=sc>=0?1:-1,fa=Math.abs(Math.sin(ang)),lift=ry<1?20*(1-fa):0,Ty=cy-lift,cA=Math.cos(ang),sA=Math.sin(ang),lw=(a,b)=>[cx+K*(sc*a*cA-b*sA),Ty+K*(sc*a*sA+b*cA)];
  if(ry<1&&day>.15){x.fillStyle=`rgba(0,0,0,${.3*day*(1-fa)})`;x.beginPath();x.ellipse(cx-60*sc,Ys,70+20*Math.abs(sY),5,0,0,7);x.fill()}
  if(act&&Math.random()<dt*(tier<2?14:tier<4?8:0)){const[a,b]=tier<2?lw(-11.15,-2.1-sk):lw(-10,-2.9);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*.8,vy:-2.2,l:2.2,t:tier<2?'s':'k'})}
- if(dr&&Math.random()<dt*50){const[a,b]=lw(.5,0);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*8,vy:-2-Math.random()*5,l:.8,t:'d'})}
- {let q=(dr&&hh>.3?dt*hh*hh*100:0)+(Date.now()-STALL<300?dt*300:0);while(q>0){if(Math.random()<Math.min(1,q)){const[a,b]=lw(.55,0),ag=Math.random()*6.283,sv=5+Math.random()*9;pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:Math.cos(ag)*sv,vy:Math.sin(ag)*sv,l:.35+Math.random()*.4,t:'sp'})}q--}}
- // a fúrófej előtti kőzet: zúzott, szabálytalan front, repedések, törmelék
- if(dr){const[nx,ny]=lw(.6,0),fx=fc*cA,fy=fc*sA,qx=-fy,qy=fx,sd=0,P=(u,v)=>[nx+fx*u+qx*v,ny+fy*u+qy*v];
-  x.fillStyle='rgba(10,6,4,.92)';x.beginPath();for(let k=0;k<=18;k++){const a=(k/18-.5)*Math.PI,r=1+.35*(rg(k,5)-.5),p=P(Math.cos(a)*14*r,Math.sin(a)*24*r);k?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])}x.closePath();x.fill();
-  for(let i=0;i<10;i++){const a=(rg(i,1)-.5)*2.6,len=14+rg(i,9)*26;let u=6,v=Math.sin(a)*16,p=P(u,v);x.beginPath();x.moveTo(p[0],p[1]);for(let j=1;j<=3;j++){u+=Math.cos(a)*len/3+(rg(i*5+j,2)-.5)*5;v+=Math.sin(a)*len/3+(rg(i*5+j,3)-.5)*5;p=P(u,v);x.lineTo(p[0],p[1])}x.strokeStyle=hh>.5?`rgba(255,${120+hh*60|0},40,${.35*hh})`:'rgba(0,0,0,.6)';x.lineWidth=1.2;x.stroke()}
-  for(let i=0;i<22;i++){const u=3+rg(i,11)*34,v=(rg(i,12)-.5)*50,p=P(u,v);chunk(x,p[0],p[1],2+rg(i,13)*rg(i,15)*5.5,i*13+5,rg(i,14)>.5?lcc:mix(layer(ry)[4],'#000000',.45))}}
+  {let q=(dr&&hh>.3?dt*hh*hh*100:0)+(Date.now()-STALL<300?dt*300:0);while(q>0){if(Math.random()<Math.min(1,q)){const[a,b]=lw(.55,0),ag=Math.random()*6.283,sv=5+Math.random()*9;pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:Math.cos(ag)*sv,vy:Math.sin(ag)*sv,l:.35+Math.random()*.4,t:'sp'})}q--}}
+ // a fúrófej előtti kőzet: ÉLŐ rendszer – a törmelék, a repedések és a por a világhoz kötött, valós fizikával mozog
+ {const I=dr?clamp(rate/14,0,1):0;frA+=((dr?1:0)-frA)*Math.min(1,dt*(dr?6:3));
+  const[nx,ny]=lw(.6,0),fx=fc*cA,fy=fc*sA,qx=-fy,qy=fx,nwx=rx+(nx-cx)/K,nwy=ry+(ny-cy)/K,rk=layer(ry)[4],P=(u,v,X=nx,Y=ny)=>[X+fx*u+qx*v,Y+fy*u+qy*v];
+  FV={nx,ny,fx,fy,qx,qy,I};
+  // --- keletkezés (ütemezett, a pörgéssel arányos; a sorok korlátozottak, így nem torlódik fel) ---
+  const C={ch:0,du:0,cr:0,pu:0};for(const p of rf)C[p.t]++;
+  const mk=p=>{p.ox=nwx;p.oy=nwy;p.fx=fx;p.fy=fy;p.age=0;rf.push(p)},w2=(u,v)=>[nwx+u*fx-v*fy,nwy+u*fy+v*fx],sg=()=>Math.random()<.5?-1:1,H1=clamp(hh,0,1.2);
+  if(I>.02&&dt>0){
+   rfA[0]+=dt*(34+H1*36)*I;while(rfA[0]>=1){rfA[0]--;if(C.ch>=110)continue;C.ch++;const sd=Math.random(),sp0=2+Math.random()*7*(.5+I*.5),side=sg(),bk=.4+Math.random()*4.5,v0=(Math.random()-.5)*3.2,[X0,Y0]=w2(Math.random()*.2,v0);
+    mk({t:'ch',x:X0,y:Y0,vx:-fx*bk+qx*side*sp0,vy:-fy*bk+qy*side*sp0-Math.random()*2,rot:Math.random()*6.283,vr:(Math.random()-.5)*16,z:1.4+Math.random()*Math.random()*4.2,sd:sd*997,life:.55+Math.random()*.8,gl:Math.random()<.18+H1*.4})}
+   rfA[1]+=dt*(20+H1*10)*I;while(rfA[1]>=1){rfA[1]--;if(C.du>=48)continue;C.du++;const[X0,Y0]=w2(Math.random()*.3,(Math.random()-.5)*3),bk=.7+Math.random()*1.9;
+    mk({t:'du',x:X0,y:Y0,vx:-fx*bk+qx*(Math.random()-.5)*1.4,vy:-fy*bk+qy*(Math.random()-.5)*1.4-.3,life:1+Math.random()*1.1,r0:4+Math.random()*3,r1:14+Math.random()*7,sd:Math.random()})}
+   rfA[2]+=dt*(4.5+H1*3)*I;while(rfA[2]>=1){rfA[2]--;if(C.cr>=26)continue;C.cr++;const n=4+(Math.random()*3|0),ag=(Math.random()-.5)*1.7,sl=.3+Math.random()*.45;let u=.35,v=(Math.random()-.5)*2.8;const pts=[w2(u,v)];
+    for(let j=0;j<n;j++){u+=Math.cos(ag)*sl+(Math.random()-.5)*.25;v+=Math.sin(ag)*sl+(Math.random()-.5)*.35;pts.push(w2(u,v))}
+    mk({t:'cr',pts,life:.75+Math.random()*.5,gt:.22+Math.random()*.1,sd:Math.random()});
+    if(Math.random()<.55){const k=2+(Math.random()*2|0),b0=pts[k],ag2=ag+sg()*(.6+Math.random()*.6),q=[b0];let bx=b0[0],by=b0[1];for(let j=0;j<3;j++){bx+=(Math.cos(ag2)*fx-Math.sin(ag2)*fy)*sl*.8;by+=(Math.cos(ag2)*fy+Math.sin(ag2)*fx)*sl*.8;q.push([bx+(Math.random()-.5)*.15,by+(Math.random()-.5)*.15])}mk({t:'cr',pts:q,life:.6,gt:.2,sd:Math.random()})}}
+   rfA[3]+=dt*2.4*I;while(rfA[3]>=1){rfA[3]--;if(C.pu<5)mk({t:'pu',x:nwx,y:nwy,life:.5})}}
+  // --- mozgás: a furat falán és a front előtt visszapattan (a törmelék nem lép ki az alagútból) ---
+  const bound=(p,e,m)=>{const a=p.x-p.ox,b=p.y-p.oy;let u=a*p.fx+b*p.fy,v=-a*p.fy+b*p.fx,vu=p.vx*p.fx+p.vy*p.fy,vv=-p.vx*p.fy+p.vy*p.fx;const lim=2.05-m;if(v>lim){v=lim;vv=-Math.abs(vv)*e}else if(v<-lim){v=-lim;vv=Math.abs(vv)*e}if(u>.3){u=.3;vu=-Math.abs(vu)*e}
+   p.x=p.ox+u*p.fx-v*p.fy;p.y=p.oy+u*p.fy+v*p.fx;p.vx=vu*p.fx-vv*p.fy;p.vy=vu*p.fy+vv*p.fx};
+  rf=rf.filter(p=>{p.age+=dt;if(p.age>=p.life||!(p.age==p.age))return false;
+   if(p.t=='ch'){p.vy+=15*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.vr*dt;bound(p,.45,p.z*.05);const f=Math.exp(-dt*.8);p.vx*=f;p.vy*=f}
+   else if(p.t=='du'){const f=Math.exp(-dt*1.7);p.vx*=f;p.vy=p.vy*f-.45*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;bound(p,.2,.9)}
+   return true});
+  // --- rajz (a gép MÖGÖTT): zúzott front, repedések, lökéshullám, kavargó törmelék ---
+  if(frA>.01){const jx=Math.sin(ts*.083)*.7*frA,jy=Math.cos(ts*.097)*.7*frA,X=nx+jx,Y=ny+jy,pp=(u,v)=>P(u,v,X,Y);x.save();x.globalAlpha=frA;
+   x.fillStyle='rgba(12,7,4,.8)';x.beginPath();for(let k=0;k<=20;k++){const a=(k/20-.5)*Math.PI,r=1+.16*Math.sin(ts*.011+k*1.9)+.1*Math.sin(ts*.023+k*3.1)+.06*Math.sin(ts*.047+k*5.3),q=pp(Math.cos(a)*10*r+2,Math.sin(a)*21*r);k?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1])}x.closePath();x.fill();
+   {const q=pp(7,0),g=x.createRadialGradient(q[0],q[1],1,q[0],q[1],24);g.addColorStop(0,`rgba(${mix(rk,'#ffe2b0',.35).match(/\w\w/g).map(h=>parseInt(h,16)).join(',')},${.3+.1*Math.sin(ts*.04)})`);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(q[0]-24,q[1]-24,48,48)}
+   for(let i=0;i<14;i++){const s=((ts/1000)*(.8+rg(i,3)*.9)+rg(i,4))%1,th=(rg(i,1)-.5)*2.7,d=3+s*24,q=pp(2+d*Math.cos(th)*.55,d*Math.sin(th)*.95);x.globalAlpha=frA*Math.sin(s*Math.PI);chunk(x,q[0],q[1],1.5+rg(i,2)*2.4*(1-.45*s),i*13+5,i%3?lcc:mix(rk,'#000000',.5))}
+   x.globalAlpha=frA;x.restore()}
+  const nlo=(wx,wy)=>((wx-nwx)*fx+(wy-nwy)*fy)>=-.2;
+  for(const p of rf){if(p.t=='cr'){const k=p.age/p.life,gr=clamp(p.age/p.gt,0,1),al=Math.pow(1-k,1.2),cnt=Math.max(1,Math.ceil((p.pts.length-1)*gr)),he=clamp(hh,0,1);
+    const path=()=>{x.beginPath();let on=false;for(let i=0;i<=cnt;i++){let[wx,wy]=p.pts[i];if(i==cnt&&i>0){const f=(p.pts.length-1)*gr-(cnt-1),a0=p.pts[i-1];wx=a0[0]+(wx-a0[0])*clamp(f,0,1);wy=a0[1]+(wy-a0[1])*clamp(f,0,1)}if(!nlo(wx,wy)){on=false;continue}const X=SX(wx),Y=SY(wy);on?x.lineTo(X,Y):x.moveTo(X,Y);on=true}};
+    path();x.strokeStyle=`rgba(0,0,0,${.8*al})`;x.lineWidth=1.9;x.lineJoin='round';x.stroke();path();x.strokeStyle=`rgba(255,236,200,${.28*al})`;x.lineWidth=.7;x.stroke();
+    if(he>.35){x.save();x.globalCompositeOperation='lighter';path();x.strokeStyle=`rgba(255,${110+he*50|0},30,${(he-.3)*.8*al})`;x.lineWidth=1.4;x.stroke();x.restore()}}
+   else if(p.t=='pu'){const k=p.age/p.life,X=SX(p.x),Y=SY(p.y),r=(1.4+k*3.2)*K;x.strokeStyle=`rgba(255,240,215,${.3*(1-k)*(1-k)})`;x.lineWidth=2.2*(1-k)+.6;x.beginPath();for(let j=0;j<=14;j++){const a=(j/14-.5)*2.2,q=[X+p.fx*Math.cos(a)*r*.7-p.fy*Math.sin(a)*r,Y+p.fy*Math.cos(a)*r*.7+p.fx*Math.sin(a)*r];j?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1])}x.stroke()}}
+  }
  pr=pr.filter(p=>(p.l-=dt)>0).slice(-150);pr.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;const X=SX(p.x),Y=SY(p.y);if(p.t=='d'){p.vy+=20*dt;x.fillStyle='#caa26a';x.fillRect(X,Y,2,2)}else if(p.t=='sp'){p.vy+=16*dt;x.strokeStyle=`rgba(255,${130+p.l*200|0},50,${Math.min(1,p.l*3)})`;x.lineWidth=1.6;x.beginPath();x.moveTo(X,Y);x.lineTo(X-p.vx*dt*K*2.5,Y-p.vy*dt*K*2.5);x.stroke()}else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
  const vb=clamp(rate/14,0,1)*.7,vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=Math.pow(clamp(Math.abs(sY)*1.5,0,1),1.3);
  x.save();x.globalAlpha=1-.6*fo;x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke});x.fillStyle=`rgba(0,0,0,${.28*Math.abs(sY)})`;x.fillRect(-12,-2.1,12.6,4.2);x.restore();
  if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K,K);front(x,sp,hl,dep,hh,S.u.f);x.restore();x.globalAlpha=1}
  x.restore();
+ // élő törmelék + por (a gép FÖLÖTT, még a fényhatás előtt, így a fej lámpája megvilágítja)
+ {const rk=layer(ry)[4],dust=mix(rk,'#d9cdb8',.4),dc=dust.match(/\w\w/g).map(h=>parseInt(h,16)).join(',');
+  for(const p of rf){if(p.t!='du')continue;const k=p.age/p.life,X=SX(p.x),Y=SY(p.y),r=p.r0+(p.r1-p.r0)*Math.sqrt(k),al=.42*Math.sin(Math.min(1,k*4)*Math.PI/2)*(1-k)*(1-k*.3);if(X<-30||X>w+30||Y<-30||Y>h+30)continue;
+   const g=x.createRadialGradient(X,Y,0,X,Y,r);g.addColorStop(0,`rgba(${dc},${al})`);g.addColorStop(1,`rgba(${dc},0)`);x.fillStyle=g;x.fillRect(X-r,Y-r,r*2,r*2)}
+  for(const p of rf){if(p.t!='ch')continue;const k=p.age/p.life,X=SX(p.x),Y=SY(p.y);if(X<-10||X>w+10||Y<-10||Y>h+10)continue;x.save();x.globalAlpha=Math.min(1,(1-k)*3.5);x.translate(X,Y);x.rotate(p.rot);
+   chunk(x,0,0,p.z*(1-.25*k),p.sd,p.gl?mix('#ff9a3a','#3a2a20',clamp(k*1.4,0,1)):(p.sd*7%1>.5?lcc:mix(rk,'#000000',.4)));x.restore()}
+  if(FV&&frA>.02&&hh>.05){const q=[FV.nx+FV.fx*1.5,FV.ny+FV.fy*1.5],f=clamp(hh,0,1.2)*frA*(.7+.3*Math.sin(ts*.07)+.15*Math.sin(ts*.19)),g=x.createRadialGradient(q[0],q[1],0,q[0],q[1],34);x.save();x.globalCompositeOperation='lighter';g.addColorStop(0,`rgba(255,170,70,${Math.min(.55,f*.5)})`);g.addColorStop(1,'rgba(255,90,20,0)');x.fillStyle=g;x.fillRect(q[0]-34,q[1]-34,68,68);x.restore()}}
  // fények
  {const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:dr?55:200,s:.5});lamp(nx,ny,dr?75:90,.9);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25})}
  if(dk&&dk.width!=cv.width)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=cv.width;dk.height=cv.height}
