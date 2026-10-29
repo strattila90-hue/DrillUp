@@ -27,6 +27,11 @@ table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px s
 #mm{position:fixed;inset:0;z-index:40;background:#0b0806;display:flex;flex-direction:column;justify-content:center;padding:24px;padding-top:calc(env(safe-area-inset-top) + 24px);overflow-y:auto}#mc{position:absolute;inset:0;width:100%;height:100%;opacity:.6}#mm .in{position:relative;z-index:1}
 .ttl{font:900 46px Georgia,serif;letter-spacing:3px;color:#f0a030;text-shadow:0 3px 0 #7a4a0a,0 0 24px #f0a03066;text-align:center}.sub{text-align:center;color:#d8c9b2;margin:4px 0 22px;text-shadow:0 1px 4px #000}
 .mb{display:block;width:100%;margin:9px 0;padding:15px;font:700 17px Georgia,serif;border:0;border-radius:10px;color:#efe3d0;background:linear-gradient(#5d5953,#35322e);box-shadow:0 5px 0 #14120f,0 8px 12px #0009,inset 0 1px 0 #948e82;transition:transform .12s,box-shadow .18s}.mb:active{transform:translateY(4px);box-shadow:0 1px 0 #14120f}.mb.pri{background:linear-gradient(#f7b84a,#d98a18);color:#1b1208;box-shadow:0 5px 0 #7a4a0a,0 8px 12px #0009,inset 0 1px 0 #ffe0a0}
+.pb,.mb{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.dp{grid-template-columns:repeat(3,62px);grid-auto-rows:62px}.pb{height:62px}.pb b{font-size:26px}.pb.tall{height:104px}.pb.tall b{font-size:30px}
+.pb::before{content:'';position:absolute;inset:8px 6px 6px;border-radius:7px;background:radial-gradient(ellipse at 50% 15%,rgba(255,255,255,.13),transparent 70%);pointer-events:none}
+.pb.stop.rnd{border-radius:50%;height:62px;background:radial-gradient(circle at 50% 30%,#c0392b,#5a1510) padding-box,repeating-linear-gradient(45deg,#f0b020 0 8px,#1a1a1a 8px 16px) border-box}.pb.stop.rnd::after{display:none}
+.pb.dn{transform:translateY(4px);box-shadow:0 1px 0 #14120f,inset 0 1px 0 #948e82}.hint{font-size:11px;color:#b8ab96;line-height:1.35}
 h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
 </style></head><body>
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
@@ -104,12 +109,12 @@ function step(dt){const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;
  if(m=='U'&&!back&&S.depth<=0){S.st='idle';return}
  S.mode=trav?'travel':'drill';let v,fpm;if(trav){v=vert?c.vu:c.vh;fpm=vert?(dd<0?c.fm:c.fm*.2):c.fh}else{v=c.v;fpm=c.fr/c.v}
  let dist=v*dt;if(back)dist=Math.min(dist,tp[1]);if(fpm*dist>S.fuel)dist=S.fuel/fpm;
- const per=c.L[5].reduce((a,x)=>a+x[1],0);
+ const bk=x=>x[2]<100?.05:1,per=c.L[5].reduce((a,x)=>a+x[1]*bk(x),0);
  if(!trav){const room=cap()-cargoKg();if(per*dist>room){dist=Math.max(0,room/per);S.st='idle';msg('📦 A raktér megtelt – indulj haza (🏠) eladni!')}if(dd>0&&S.depth+dist>R)dist=R-S.depth;if(dd<0&&dist>S.depth)dist=S.depth}
  const x0=S.x,d0=S.depth;S.fuel-=fpm*dist;S.x+=dx*dist;S.depth+=dd*dist;S.max=Math.max(S.max,S.depth);
  if(back){tp[1]-=dist;if(tp[1]<1e-6)S.tr.pop()}else if(dist>0){if(tp&&tp[0]==m)tp[1]+=dist;else S.tr.push([m,dist])}
  if(!trav&&dist>0){const g=S.tn.at(-1);if(g&&g[2]==x0&&g[3]==d0&&(dx?g[1]==g[3]:g[0]==g[2])){g[2]=S.x;g[3]=S.depth}else{S.tn.push([x0,d0,S.x,S.depth]);if(S.tn.length>400)S.tn.shift()}
-  c.L[5].forEach(x=>S.cg[x[0]]=(S.cg[x[0]]||0)+x[1]*dist);
+  c.L[5].forEach(x=>S.cg[x[0]]=(S.cg[x[0]]||0)+x[1]*bk(x)*dist);
   FD.forEach(f=>{if(S.depth>=f[1]&&S.depth<=f[2]){let n=Math.floor(f[3]*dist+Math.random());if(n>0){S.fin[f[0]]=(S.fin[f[0]]||0)+n;if(!S.disc[f[0]]){S.disc[f[0]]=1;ding();msg('🔎 Lelet: '+f[0]+' – '+f[6])}}}});
   const L2=layer(S.depth);if(L2!=c.L)msg('Réteg: '+L2[0],1)}
  if(S.depth>=R){S.st='idle';S.won=1;msg('🌍 ELÉRTED A FÖLD KÖZEPÉT!');return}
@@ -120,30 +125,38 @@ function tick(){const now=Date.now();let real=Math.min((now-S.t)/1000,7*864e2);S
  if(S.st!='idle'){let tot=real*S.set.sc,ch=Math.max(20,tot/2e4);while(tot>0&&S.st!='idle'){const x=Math.min(ch,tot);step(x);tot-=x}}
  if(S.st=='idle')S.mode='';const bb=base();if(bb!=wasB){wasB=bb;nav();if(bb&&cargoKg()>0)toast('🏠 A bázison vagy – a Piacon eladhatod a rakományt.')}snd();live()}
 // hang
-let AC,N,W,O,gO;
-function aInit(){if(AC)return;AC=new(window.AudioContext||webkitAudioContext)();const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;
- const mk=(ty,f)=>{const s=AC.createBufferSource();s.buffer=b;s.loop=true;const fl=AC.createBiquadFilter();fl.type=ty;fl.frequency.value=f;const g=AC.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AC.destination);s.start();return{g,fl}};
- N=mk('lowpass',300);W=mk('highpass',4000);O=AC.createOscillator();gO=AC.createGain();gO.gain.value=0;O.connect(gO);gO.connect(AC.destination);O.start()}
-function snd(){if(!AC)return;const on=S.st!='idle'&&S.set.vol>0,v=S.set.vol/100,t=AC.currentTime,k=S.u.d;
- N.g.gain.setTargetAtTime(on?.5*v:0,t,.3);N.fl.frequency.setTargetAtTime(200+k*60+(S.st=='up'?150:0),t,.3);
- W.g.gain.setTargetAtTime(on&&k<2?.1*v:0,t,.3);gO.gain.setTargetAtTime(on?.1*v:0,t,.3);
- O.type=k>=4?'sine':'sawtooth';O.frequency.setTargetAtTime(k<2?28+k*10:k<4?45+k*8:60,t,.3)}
+let AC,N,W,O,gO,NB,LF,LG,OF;
+function aInit(){if(AC)return;AC=new(window.AudioContext||webkitAudioContext)();const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),x=b.getChannelData(0);let l=0;for(let i=0;i<x.length;i++){l=l*.97+(Math.random()*2-1)*.3;x[i]=l*2}NB=b;
+ const mk=(ty,f,q)=>{const s=AC.createBufferSource();s.buffer=b;s.loop=true;const fl=AC.createBiquadFilter();fl.type=ty;fl.frequency.value=f;fl.Q.value=q;const g=AC.createGain();g.gain.value=0;s.connect(fl);fl.connect(g);g.connect(AC.destination);s.start();return{g,fl}};
+ N=mk('bandpass',220,1.4);W=mk('bandpass',1100,.8);
+ O=AC.createOscillator();OF=AC.createBiquadFilter();OF.type='lowpass';OF.frequency.value=110;gO=AC.createGain();gO.gain.value=0;O.connect(OF);OF.connect(gO);gO.connect(AC.destination);O.start();
+ LF=AC.createOscillator();LG=AC.createGain();LG.gain.value=0;LF.frequency.value=6;LF.connect(LG);LG.connect(N.g.gain);LF.start()}
+// tömb-súrlódás: barnás zaj + mély puffanás
+function scr(dur,f0,f1,g,thud){if(!AC||!S.set.vol||!NB)return;const t=AC.currentTime,v=S.set.vol/100,s=AC.createBufferSource();s.buffer=NB;s.loop=true;const bp=AC.createBiquadFilter();bp.type='bandpass';bp.Q.value=1.1;bp.frequency.setValueAtTime(f0,t);bp.frequency.exponentialRampToValueAtTime(f1,t+dur);
+ const gn=AC.createGain();gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(g*v,t+.02);gn.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(bp);bp.connect(gn);gn.connect(AC.destination);s.start(t,Math.random()*1.5);s.stop(t+dur+.03);
+ if(thud!==0){const o=AC.createOscillator(),g2=AC.createGain();o.frequency.setValueAtTime(95,t);o.frequency.exponentialRampToValueAtTime(38,t+.12);g2.gain.setValueAtTime(.4*v,t);g2.gain.exponentialRampToValueAtTime(.001,t+.14);o.connect(g2);g2.connect(AC.destination);o.start(t);o.stop(t+.15)}}
+function clk(f){const h=f<400;scr(h?.24:.15,h?320:520,h?80:180,h?.6:.45)}
+function snd(){if(!AC)return;const v=S.set.vol/100,t=AC.currentTime,k=S.u.d,dri=clamp(rate/14,0,1),trv=Math.abs(pv)*(S.mode=='travel'?1:0),on=S.set.vol>0&&(S.st!='idle'||rate>.3||Math.abs(pv)>.05),I=on?(dri>.05?.25+.75*dri:.1+.35*trv):0,jit=.65+.7*Math.random();
+ N.g.gain.setTargetAtTime(.55*I*v*jit,t,.06);N.fl.frequency.setTargetAtTime((140+k*35+dri*160)*(.8+.4*Math.random()),t,.05);
+ W.g.gain.setTargetAtTime(dri>.05?.24*dri*v*(Math.random()<.5?1.5:.4):on&&k<2?.04*v:0,t,.04);W.fl.frequency.setTargetAtTime(700+Math.random()*900,t,.05);
+ LG.gain.setTargetAtTime(.25*I*v,t,.1);LF.frequency.setTargetAtTime(2+dri*7+trv*3,t,.2);
+ gO.gain.setTargetAtTime(on?(.12+.12*I)*v:0,t,.3);O.type=k>=4?'sine':'sawtooth';O.frequency.setTargetAtTime(k<2?26+k*8+dri*8:k<4?42+dri*10:58,t,.3)}
 function ding(){if(!AC||!S.set.vol)return;const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.frequency.value=880;g.gain.setValueAtTime(.3*S.set.vol/100,t);g.gain.exponentialRampToValueAtTime(.001,t+1.2);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+1.2)}
 // nézetek
 const price=(n,b)=>{let h=0;for(const ch of n)h+=ch.charCodeAt(0);return b*(.85+.3*(.5+.5*Math.sin(h+Math.floor(Date.now()/864e5))))};
 function live(){$('#hd').innerHTML=`${ft(S.cash)}`;for(const k of'UDLRH'){const a=$('#b'+k);if(a)a.classList.toggle('on',S.st==k)}
- const lc=$('#lcd');if(lc){const cc=calc(),t0=S.tr.at(-1),hz=S.st=='L'||S.st=='R'||(S.st=='H'&&t0&&'LR'.includes(t0[0]));lc.textContent=({idle:'■ KÉSZENLÉT',U:'▲ FELFELÉ',D:'▼ LEFELÉ',L:'◀ BALRA',R:'JOBBRA ▶',H:'⌂ HAZAFELÉ'})[S.st]+(base()?' [BÁZIS]':'')+'  '+nf((S.mode=='drill'?cc.v:S.mode=='travel'?(hz?cc.vh:cc.vu):0)*3600,1)+' m/h';$('#vf').innerHTML=lad(S.fuel/tank(),0);$('#vc').innerHTML=lad(cargoKg()/cap(),1)}const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
+ const lc=$('#lcd');if(lc){const cc=calc(),t0=S.tr.at(-1),hz=S.st=='L'||S.st=='R'||(S.st=='H'&&t0&&'LR'.includes(t0[0]));lc.textContent=(hold&&hold.mom?'✋ ':'')+({idle:'■ KÉSZENLÉT',U:'▲ FELFELÉ',D:'▼ LEFELÉ',L:'◀ BALRA',R:'JOBBRA ▶',H:'⌂ HAZAFELÉ'})[S.st]+(base()?' [BÁZIS]':'')+'  '+nf((S.mode=='drill'?cc.v:S.mode=='travel'?(hz?cc.vh:cc.vu):0)*3600,1)+' m/h';$('#vf').innerHTML=lad(S.fuel/tank(),0);$('#vc').innerHTML=lad(cargoKg()/cap(),1)}const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
  e.innerHTML=`<div class="big">${fd(S.depth)}</div><div class="mu">Vízszintes: ${nf(S.x,1)} m · Rekord: ${fd(S.max)} · a mag: ${fd(R-S.depth)} mélyen</div><div class="bar" style="margin:8px 0"><i style="width:${Math.max(.5,pct)}%"></i></div>
  <div class="card" style="border-left:6px solid ${c.L[4]}"><b>${c.L[0]}</b><br><span class="mu">${nf(c.Tm)} °C · ${nf(c.P,2)} GPa · páncél ${nf(S.hp,1)}% (${H[S.u.h][1]} °C / ${H[S.u.h][2]} GPa)</span>${Math.max(c.Tm/H[S.u.h][1],c.P/H[S.u.h][2])>1?'<br><b class="bad">⚠ A páncél túlterhelt!</b>':''}</div>
  <div class="card">Állapot: <b>${{idle:'Áll',U:'Felfelé',D:'Lefelé',L:'Balra',R:'Jobbra',H:'Hazafelé'}[S.st]+(S.mode=='drill'?' – fúrás':S.mode=='travel'?' – haladás a kész alagútban':'')}</b><br>Fúrási sebesség: ${nf(c.v*3600,1)} m/óra · felfelé: ${nf(c.vu*3600,0)} m/óra<br>Időgyorsítás: ×${S.set.sc}${c.v>0&&S.depth<R?`<br>Mag eléréséig (ilyen tempóval): ~${nf((R-S.depth)/c.v/86400/S.set.sc*(S.set.sc),1)} nap játékidő`:''}</div>
  <div class="card ${low?'bad':''}">⛽ ${F[c.d[3]].n}: <b>${fk(S.fuel)}</b> / ${fk(tank())}<br>Fogyasztás fúrás közben: ${fk(c.fr*3600)}/óra<br>Visszaút a felszínre innen: <b>${fk(c.need)}</b>${low?'<br><b>Itt az idő felmenni!</b>':''}</div>
  <div class="card">📦 Rakomány: ${fk(cargoKg())} / ${fk(cap())} · gép tömege: ${fk(c.m)}</div>`}
-const vDrill=()=>`<canvas id="cv"></canvas><div class="con"><span class="sc" style="left:5px;top:5px"></span><span class="sc" style="right:5px;top:5px"></span><span class="sc" style="left:5px;bottom:5px"></span><span class="sc" style="right:5px;bottom:5px"></span>
-<div class="cp"><div class="dp"><i></i>${pb('U','▲','Fel','#4fd0ff')}<i></i>${pb('L','◀','Bal','#7cff6a')}${pb('D','▼','Le','#ff9a1a')}${pb('R','▶','Jobb','#7cff6a')}</div>
-<div class="rt">${pb('H','⌂','Haza','#5aa0ff','wide')}<button class="pb stop" style="--lc:#ff3b2f" onclick="stp()"><b>■</b><small>Megáll</small></button></div></div>
+const vDrill=()=>`<canvas id="cv"></canvas><div class="con" oncontextmenu="return false"><span class="sc" style="left:5px;top:5px"></span><span class="sc" style="right:5px;top:5px"></span><span class="sc" style="left:5px;bottom:5px"></span><span class="sc" style="right:5px;bottom:5px"></span>
+<div class="cp"><div class="dp"><i></i>${pb('U','▲','Fel','#4fd0ff')}<i></i>${pb('L','◀','Bal','#7cff6a')}<button class="pb stop rnd" style="--lc:#ff3b2f" onpointerdown="event.preventDefault();stp()"><b>■</b></button>${pb('R','▶','Jobb','#7cff6a')}<i></i>${pb('D','▼','Le','#ff9a1a')}<i></i></div>
+<div class="rt">${pb('H','⌂','Haza','#5aa0ff','tall')}<div class="hint">☝ <b>Tartsd nyomva</b>: amíg nyomod, megy.<br><b>Koppints</b>: automata menet, újra koppintva megáll.</div></div></div>
 <div class="lcd" id="lcd">■ KÉSZENLÉT</div><div class="vus"><div><small>⛽ ÜZEMANYAG</small><div class="lad" id="vf"></div></div><div><small>📦 RAKTÉR</small><div class="lad" id="vc"></div></div></div></div><div id="live"></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
 function go(s){if(s!='idle'){if(S.fuel<=0)return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.')}
- aInit();if(AC.state=='suspended')AC.resume();S.st=s;S.t=Date.now();view()}
+ aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);S.st=s;S.t=Date.now();if(tab==0)live();else view()}
 function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
  for(const k in U){const[n,a,f]=U[k],i=S.u[k],nx=a[i+1];h+=`<div class="card"><b>${n}</b>: ${a[i][0]}<br><span class="mu">${f(a[i])}</span>${nx?`<br>Következő: ${nx[0]} <span class="mu">(${f(nx)})</span><br><button class="b" ${b?'':'disabled'} onclick="buy('${k}')">Fejlesztés – ${ft(nx.at(-1))}</button>`:'<br><i>Maximális szint</i>'}</div>`}
  const d=calc();h+=`<div class="card">⛽ Tankolás (${d.f.n}, ${ft(d.f.p)}/kg)<br>Tank: ${fk(S.fuel)} / ${fk(tank())}<div class="row"><button class="b g" ${b?'':'disabled'} onclick="fill(.25)">+25%</button><button class="b" ${b?'':'disabled'} onclick="fill(1)">Tele</button></div></div>
@@ -186,10 +199,14 @@ const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*4
 const mix=(a,b,t)=>{const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=p(a),B=p(b);return'#'+A.map((v,i)=>('0'+Math.round(v+(B[i]-v)*t).toString(16)).slice(-2)).join('')};
 const HC=[['#9aa1aa','#5d636b'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
 let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0;
-function clk(f){if(!AC||!S.set.vol)return;const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type='square';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f/2,t+.06);g.gain.setValueAtTime(.1*S.set.vol/100,t);g.gain.exponentialRampToValueAtTime(.001,t+.08);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+.09)}
 const tg=s=>{aInit();navigator.vibrate&&navigator.vibrate(S.st==s?[12,40,12]:18);clk(S.st==s?330:560);go(S.st==s?'idle':s)};
+let hold=null;
+function pd(k,e){e.preventDefault();if(hold)return;aInit();if(AC&&AC.state=='suspended')AC.resume();const was=S.st;clk(was==k?300:520);navigator.vibrate&&navigator.vibrate(14);
+ if(was!=k)go(k);hold={k,was,mom:false,tm:setTimeout(()=>{if(hold&&hold.k==k&&was!=k&&S.st==k){hold.mom=true;navigator.vibrate&&navigator.vibrate([8,18,8])}},220)};const el=$('#b'+k);el&&el.classList.add('dn')}
+function pu(){if(!hold)return;const h=hold;hold=null;clearTimeout(h.tm);const el=$('#b'+h.k);el&&el.classList.remove('dn');if(h.mom){if(S.st==h.k)go('idle')}else if(h.was==h.k)go('idle')}
+document.addEventListener('pointerup',pu);document.addEventListener('pointercancel',pu);
 function stp(){aInit();navigator.vibrate&&navigator.vibrate([20,30,20]);clk(260);go('idle')}
-const pb=(k,s,n,c,cl='')=>`<button id="b${k}" class="pb ${cl}${S.st==k?' on':''}" style="--lc:${c}" onclick="tg('${k}')"><b>${s}</b><small>${n}</small></button>`;
+const pb=(k,s,n,c,cl='')=>`<button id="b${k}" class="pb ${cl}${S.st==k?' on':''}" style="--lc:${c}" onpointerdown="pd('${k}',event)"><b>${s}</b><small>${n}</small></button>`;
 const lad=(f,m)=>{let o='';const on=Math.round(clamp(f,0,1)*12);for(let i=0;i<12;i++){const c=m?(i<7?'#59d65a':i<10?'#f0b020':'#ff3b2f'):(f<.25?'#ff3b2f':f<.5?'#f0b020':'#59d65a');o+=i<on?`<i style="background:${c};box-shadow:0 0 6px ${c}"></i>`:'<i></i>'}return o};
 function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp}=o,tier=S.u.d,hl=S.u.h;
 const[c1,c2]=HC[hl],rr=(a,b,c,d,r)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,r);else x.rect(a,b,c,d)},ex=.15+(dr?.12*Math.sin(ts/300):0);
