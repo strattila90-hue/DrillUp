@@ -7,13 +7,24 @@ body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 #v{flex:1;overflow-y:auto;padding:12px 14px 20px}
 nav{display:flex;background:var(--p);border-top:2px solid var(--l);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:0;color:var(--mu);padding:12px 0;font:inherit;font-size:11px}nav button.on{color:var(--ac);box-shadow:inset 0 3px var(--ac)}
-button.b{background:var(--ac);color:#1b1208;border:0;border-radius:6px;padding:11px 14px;font:700 14px Georgia,serif;margin:3px 0}button.b:disabled{opacity:.4}button.g{background:var(--l);color:var(--tx)}
+button.b{background:linear-gradient(#f7b84a,#d98a18);color:#1b1208;border:0;border-radius:8px;padding:11px 14px;font:700 14px Georgia,serif;margin:3px 0;box-shadow:0 3px 0 #7a4a0a,0 5px 8px #0008,inset 0 1px 0 #ffe0a0}button.b:active{transform:translateY(2px);box-shadow:0 1px 0 #7a4a0a}button.b:disabled{opacity:.4}button.g{background:var(--l);color:var(--tx)}
 .row{display:flex;gap:8px}.row>*{flex:1}.card{background:var(--p);border:1px solid var(--l);border-radius:8px;padding:10px 12px;margin:8px 0}
 .big{font-size:34px;font-weight:700;color:var(--ac);line-height:1.1}.mu{color:var(--mu);font-size:13px}.bad{color:var(--bad)}.ok{color:var(--ok)}
 .bar{height:10px;background:var(--l);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8a5a2a,#e5533a,#f0a030)}
 table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px solid var(--l);font-size:13px}td:last-child{text-align:right}
 #toast{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 48px);background:var(--ac);color:#1b1208;padding:10px;border-radius:6px;display:none;font-weight:700;z-index:9}
-#cv{width:100%;height:320px;display:block;border-radius:8px;border:2px solid var(--l)}h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
+#cv{width:100%;height:320px;display:block;border-radius:8px;border:2px solid var(--l)}.con{position:relative;margin:8px 0;padding:14px 12px 12px;border-radius:14px;border:2px solid #0d0c0a;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 2px,transparent 2px 4px),linear-gradient(#45433f,#262522);box-shadow:inset 0 2px 0 #6a665e,0 6px 14px #000}
+.sc{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#bbb,#444);box-shadow:inset 0 0 0 1px #111}
+.cp{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}.dp{display:grid;grid-template-columns:repeat(3,58px);gap:6px}.rt{display:flex;flex-direction:column;gap:10px}
+.pb{--lc:#fff;position:relative;height:58px;border:0;border-radius:10px;color:#efe3d0;font:inherit;background:linear-gradient(#5d5953,#35322e);box-shadow:0 5px 0 #14120f,0 8px 10px #0009,inset 0 1px 0 #948e82;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:6px;transition:transform .05s,box-shadow .05s;-webkit-tap-highlight-color:transparent}
+.pb b{font-size:20px;line-height:1}.pb small{font-size:10px;color:#b8ab96}
+.pb::after{content:'';position:absolute;top:5px;left:50%;width:24px;height:4px;margin-left:-12px;border-radius:2px;background:#171310}
+.pb:active{transform:translateY(4px);box-shadow:0 1px 0 #14120f,inset 0 1px 0 #948e82}
+.pb.on{background:linear-gradient(#4a3a24,#2a2014);box-shadow:0 5px 0 #14120f,0 0 14px var(--lc),inset 0 0 12px var(--lc)}.pb.on::after{background:var(--lc);box-shadow:0 0 8px var(--lc),0 0 16px var(--lc)}
+.pb.wide{height:52px}.pb.stop{height:52px;border:3px solid transparent;background:linear-gradient(#7a2a24,#4a1612) padding-box,repeating-linear-gradient(45deg,#f0b020 0 8px,#1a1a1a 8px 16px) border-box}
+.lcd{margin:12px 0 8px;padding:6px 10px;border-radius:6px;background:#0a160a;color:#6dff6d;font:700 14px 'Courier New',monospace;text-shadow:0 0 6px #3f3;box-shadow:inset 0 2px 6px #000,0 1px 0 #6a665e}
+.vus{display:grid;grid-template-columns:1fr 1fr;gap:12px}.vus small{font-size:10px;color:#b8ab96}.lad{display:flex;gap:2px;margin-top:3px}.lad i{flex:1;height:11px;border-radius:2px;background:#171715;box-shadow:inset 0 1px 2px #000}
+h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
 </style></head><body>
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
@@ -117,13 +128,17 @@ function snd(){if(!AC)return;const on=S.st!='idle'&&S.set.vol>0,v=S.set.vol/100,
 function ding(){if(!AC||!S.set.vol)return;const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.frequency.value=880;g.gain.setValueAtTime(.3*S.set.vol/100,t);g.gain.exponentialRampToValueAtTime(.001,t+1.2);o.connect(g);g.connect(AC.destination);o.start();o.stop(t+1.2)}
 // nézetek
 const price=(n,b)=>{let h=0;for(const ch of n)h+=ch.charCodeAt(0);return b*(.85+.3*(.5+.5*Math.sin(h+Math.floor(Date.now()/864e5))))};
-function live(){$('#hd').innerHTML=`${ft(S.cash)}`;for(const k of'UDLRH'){const a=$('#b'+k);if(a)a.className='b'+(S.st==k?'':' g')}const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
+function live(){$('#hd').innerHTML=`${ft(S.cash)}`;for(const k of'UDLRH'){const a=$('#b'+k);if(a)a.classList.toggle('on',S.st==k)}
+ const lc=$('#lcd');if(lc){const cc=calc(),t0=S.tr.at(-1),hz=S.st=='L'||S.st=='R'||(S.st=='H'&&t0&&'LR'.includes(t0[0]));lc.textContent=({idle:'■ KÉSZENLÉT',U:'▲ FELFELÉ',D:'▼ LEFELÉ',L:'◀ BALRA',R:'JOBBRA ▶',H:'⌂ HAZAFELÉ'})[S.st]+'  '+nf((S.mode=='drill'?cc.v:S.mode=='travel'?(hz?cc.vh:cc.vu):0)*3600,1)+' m/h';$('#vf').innerHTML=lad(S.fuel/tank(),0);$('#vc').innerHTML=lad(cargoKg()/cap(),1)}const e=$('#live');if(!e)return;const c=calc(),pct=S.depth/R*100,low=S.st!='idle'&&S.fuel<c.need*1.15;
  e.innerHTML=`<div class="big">${fd(S.depth)}</div><div class="mu">Vízszintes: ${nf(S.x,1)} m · Rekord: ${fd(S.max)} · a mag: ${fd(R-S.depth)} mélyen</div><div class="bar" style="margin:8px 0"><i style="width:${Math.max(.5,pct)}%"></i></div>
  <div class="card" style="border-left:6px solid ${c.L[4]}"><b>${c.L[0]}</b><br><span class="mu">${nf(c.Tm)} °C · ${nf(c.P,2)} GPa · páncél ${nf(S.hp,1)}% (${H[S.u.h][1]} °C / ${H[S.u.h][2]} GPa)</span>${Math.max(c.Tm/H[S.u.h][1],c.P/H[S.u.h][2])>1?'<br><b class="bad">⚠ A páncél túlterhelt!</b>':''}</div>
  <div class="card">Állapot: <b>${{idle:'Áll',U:'Felfelé',D:'Lefelé',L:'Balra',R:'Jobbra',H:'Hazafelé'}[S.st]+(S.mode=='drill'?' – fúrás':S.mode=='travel'?' – haladás a kész alagútban':'')}</b><br>Fúrási sebesség: ${nf(c.v*3600,1)} m/óra · felfelé: ${nf(c.vu*3600,0)} m/óra<br>Időgyorsítás: ×${S.set.sc}${c.v>0&&S.depth<R?`<br>Mag eléréséig (ilyen tempóval): ~${nf((R-S.depth)/c.v/86400/S.set.sc*(S.set.sc),1)} nap játékidő`:''}</div>
  <div class="card ${low?'bad':''}">⛽ ${F[c.d[3]].n}: <b>${fk(S.fuel)}</b> / ${fk(tank())}<br>Fogyasztás fúrás közben: ${fk(c.fr*3600)}/óra<br>Visszaút a felszínre innen: <b>${fk(c.need)}</b>${low?'<br><b>Itt az idő felmenni!</b>':''}</div>
  <div class="card">📦 Rakomány: ${fk(cargoKg())} / ${fk(cap())} · gép tömege: ${fk(c.m)}</div>`}
-const vDrill=()=>`<canvas id="cv"></canvas><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0">${[['H','🏠 Haza'],['U','▲ Fel'],['I','■ Megáll'],['L','◀ Bal'],['D','▼ Le'],['R','Jobb ▶']].map(([k,n])=>k=='I'?`<button class="b g" onclick="go('idle')">${n}</button>`:`<button id="b${k}" class="b ${S.st==k?'':'g'}" style="font-size:16px;padding:14px 4px" onclick="tg('${k}')">${n}</button>`).join('')}</div><div id="live"></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
+const vDrill=()=>`<canvas id="cv"></canvas><div class="con"><span class="sc" style="left:5px;top:5px"></span><span class="sc" style="right:5px;top:5px"></span><span class="sc" style="left:5px;bottom:5px"></span><span class="sc" style="right:5px;bottom:5px"></span>
+<div class="cp"><div class="dp"><i></i>${pb('U','▲','Fel','#4fd0ff')}<i></i>${pb('L','◀','Bal','#7cff6a')}${pb('D','▼','Le','#ff9a1a')}${pb('R','▶','Jobb','#7cff6a')}</div>
+<div class="rt">${pb('H','⌂','Haza','#5aa0ff','wide')}<button class="pb stop" style="--lc:#ff3b2f" onclick="navigator.vibrate&&navigator.vibrate(30);go('idle')"><b>■</b><small>Megáll</small></button></div></div>
+<div class="lcd" id="lcd">■ KÉSZENLÉT</div><div class="vus"><div><small>⛽ ÜZEMANYAG</small><div class="lad" id="vf"></div></div><div><small>📦 RAKTÉR</small><div class="lad" id="vc"></div></div></div></div><div id="live"></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
 function go(s){if(s!='idle'){if(S.fuel<=0)return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.')}
  aInit();if(AC.state=='suspended')AC.resume();S.st=s;S.t=Date.now();view()}
 function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
@@ -161,7 +176,9 @@ const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*4
 const mix=(a,b,t)=>{const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=p(a),B=p(b);return'#'+A.map((v,i)=>('0'+Math.round(v+(B[i]-v)*t).toString(16)).slice(-2)).join('')};
 const HC=[['#9aa1aa','#5d636b'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
 let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2;
-const tg=s=>go(S.st==s?'idle':s);
+const tg=s=>{navigator.vibrate&&navigator.vibrate(15);go(S.st==s?'idle':s)};
+const pb=(k,s,n,c,cl='')=>`<button id="b${k}" class="pb ${cl}${S.st==k?' on':''}" style="--lc:${c}" onclick="tg('${k}')"><b>${s}</b><small>${n}</small></button>`;
+const lad=(f,m)=>{let o='';const on=Math.round(clamp(f,0,1)*12);for(let i=0;i<12;i++){const c=m?(i<7?'#59d65a':i<10?'#f0b020':'#ff3b2f'):(f<.25?'#ff3b2f':f<.5?'#f0b020':'#59d65a');o+=i<on?`<i style="background:${c};box-shadow:0 0 6px ${c}"></i>`:'<i></i>'}return o};
 function draw(ts){requestAnimationFrame(draw);const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=320;
  if(cv.width!=Math.round(w*dp)){cv.width=Math.round(w*dp);cv.height=h*dp;dk=null}
  const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const dt=Math.min(.05,(ts-pt)/1e3||0);pt=ts;
