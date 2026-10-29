@@ -37,7 +37,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.1';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.2';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -99,11 +99,11 @@ const cap=()=>C[S.u.c][1],tank=()=>T[S.u.t][1],mass=()=>(D[S.u.d][4]+H[S.u.h][3]
 function calc(){const d=D[S.u.d],f=F[d[3]],L=layer(S.depth),P=lerp(PT,S.depth),Tm=lerp(TT,S.depth),m=mass();
  const e=L[3]*(1+P/100),v=Math.min(3,d[1]/(e*A)),fr=d[1]/(d[2]*f.e),fm=m*G/(.5*d[2]*f.e*1e6),vu=Math.min(5,d[1]*1e6*.5/(m*G));
  const fh=fm*.1,vh=Math.min(5,d[1]*1e6*.5/(m*G*.1));return{d,f,L,P,Tm,m,v,fr,fm,vu,fh,vh,need:S.tr.reduce((a,t)=>a+t[1]*(t[0]=='D'?fm:t[0]=='U'?fm*.2:fh),0)}}
-let wasB=false;const base=()=>S.depth<2&&S.x>-70&&S.x<50;
+let wasB=false,tl=0,ldt=0,acc=0;const base=()=>S.depth<2&&S.x>-70&&S.x<50;
 function msg(t,quiet){S.log.unshift(new Date().toLocaleTimeString('hu-HU')+' '+t);S.log.length=Math.min(S.log.length,30);if(!quiet)toast(t)}
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',3500)}
 function strand(why){msg('💀 '+why+' A gép elveszett a mélyben – rakomány és fejlesztések oda. Új gépet kell építened (pénzed megmaradt).');S.cg={};S.fin={};S.u={d:0,h:0,t:0,c:0};S.depth=0;S.x=0;S.tr=[];S.tn=[];S.fuel=0;S.hp=100;S.st='idle'}
-function step(dt){const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;
+function step(dt){const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;if(tl&&Date.now()-ldt<300){S.mode='';return}
  const tp=S.tr.at(-1);if(m=='H'){if(!tp){S.st='idle';S.mode='';msg('☀ Hazaértél a bázisra!');return}m=OP[tp[0]]}
  const[dx,dd]=DV[m],vert=dd!=0,back=tp&&tp[0]==OP[m],trav=back||(S.depth==0&&!vert);
  if(m=='U'&&!back&&S.depth<=0){S.st='idle';return}
@@ -121,9 +121,10 @@ function step(dt){const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;
  if(S.fuel<=1e-6){if(S.depth>0)strand('Elfogyott az üzemanyag.');else{S.st='idle';msg('Elfogyott az üzemanyag a felszínen.')}return}
  if(!trav&&S.st!='idle'&&S.st!='H'&&S.set.auto&&S.fuel<=calc().need*1.05+c.fr*60){S.st='H';msg('⚠ Tartalék-határ: automatikus visszaindulás.')}
  if(S.depth>0){const r=Math.max(c.Tm/h[1],c.P/h[2])-1;if(r>0){S.hp-=(.02+r*.2)*dt;if(S.hp<=0)strand('A páncél összeroppant.')}}}
-function tick(){const now=Date.now();let real=Math.min((now-S.t)/1000,7*864e2);S.t=now;
- if(S.st!='idle'){let tot=real*S.set.sc,ch=Math.max(20,tot/2e4);while(tot>0&&S.st!='idle'){const x=Math.min(ch,tot);step(x);tot-=x}}
- if(S.st=='idle')S.mode='';const bb=base();if(bb!=wasB){wasB=bb;nav();if(bb&&cargoKg()>0)toast('🏠 A bázison vagy – a Piacon eladhatod a rakományt.')}snd();live()}
+function sim(){const now=Date.now();let real=Math.min((now-S.t)/1000,7*864e2);S.t=now;let rem=real,n=0;
+ while(rem>1e-6&&S.st!='idle'&&n++<30000){const sc=S.mode=='travel'?Math.min(S.set.sc,3):S.set.sc,gd=Math.min(rem*sc,Math.max(20,real*sc/2e4));if(tl&&Date.now()-ldt<300)acc=0;else acc=Math.min(1,acc+gd/sc*1.1);step(gd*Math.max(.03,acc));rem-=gd/sc}
+ if(S.st=='idle'){S.mode='';acc=0}}
+function tick(){sim();const bb=base();if(bb!=wasB){wasB=bb;nav();if(bb&&cargoKg()>0)toast('🏠 A bázison vagy – a Piacon eladhatod a rakományt.')}snd();live()}
 // hang
 let AC,N,W,O,gO,NB,LF,LG,OF;
 function aInit(){if(AC)return;AC=new(window.AudioContext||webkitAudioContext)();const b=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),x=b.getChannelData(0);let l=0;for(let i=0;i<x.length;i++){l=l*.97+(Math.random()*2-1)*.3;x[i]=l*2}NB=b;
@@ -156,7 +157,7 @@ const vDrill=()=>`<canvas id="cv"></canvas><div class="con" oncontextmenu="retur
 <div class="rt">${pb('H','⌂','Haza','#5aa0ff','tall')}<div class="hint">☝ <b>Tartsd nyomva</b>: amíg nyomod, megy.<br><b>Koppints</b>: automata menet, újra koppintva megáll.</div></div></div>
 <div class="lcd" id="lcd">■ KÉSZENLÉT</div><div class="vus"><div><small>⛽ ÜZEMANYAG</small><div class="lad" id="vf"></div></div><div><small>📦 RAKTÉR</small><div class="lad" id="vc"></div></div></div></div><div id="live"></div><h3>Napló</h3><div class="mu">${S.log.slice(0,8).join('<br>')||'Még nincs esemény.'}</div>`;
 function go(s){if(s!='idle'){if(S.fuel<=0)return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.')}
- aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);S.st=s;S.t=Date.now();if(tab==0)live();else view()}
+ aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);S.st=s;acc=0;S.t=Date.now();if(tab==0)live();else view()}
 function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
  for(const k in U){const[n,a,f]=U[k],i=S.u[k],nx=a[i+1];h+=`<div class="card"><b>${n}</b>: ${a[i][0]}<br><span class="mu">${f(a[i])}</span>${nx?`<br>Következő: ${nx[0]} <span class="mu">(${f(nx)})</span><br><button class="b" ${b?'':'disabled'} onclick="buy('${k}')">Fejlesztés – ${ft(nx.at(-1))}</button>`:'<br><i>Maximális szint</i>'}</div>`}
  const d=calc();h+=`<div class="card">⛽ Tankolás (${d.f.n}, ${ft(d.f.p)}/kg)<br>Tank: ${fk(S.fuel)} / ${fk(tank())}<div class="row"><button class="b g" ${b?'':'disabled'} onclick="fill(.25)">+25%</button><button class="b" ${b?'':'disabled'} onclick="fill(1)">Tele</button></div></div>
@@ -183,7 +184,7 @@ function vMenu(){return`<h3>Főmenü</h3><button class="b" style="width:100%" on
 async function share(){const d={title:'Drill Up',text:`A Drill Up-ban ${fd(S.max)} mélyre jutottam!`,url:location.href};try{if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(d.text+' '+d.url);toast('Link a vágólapon')}}catch(e){}}
 async function upd(){const r=await navigator.serviceWorker?.getRegistration();if(!r)return toast('Offline mód nem elérhető.');toast('Keresés…');await r.update();if(r.waiting)r.waiting.postMessage('skip');setTimeout(()=>location.reload(),700)}
 
-const setHTML=()=>`<div class="ttl" style="font-size:30px">Beállítások</div><div class="card" style="margin-top:20px;background:#221a13ee">Hangerő: <span id="vl">${S.set.vol}%</span><input type="range" min="0" max="100" value="${S.set.vol}" oninput="S.set.vol=+this.value;$('#vl').textContent=this.value+'%';snd()"><br><br>Időgyorsítás (valós idő = ×1)<select onchange="S.set.sc=+this.value">${[1,10,60,600,3600].map(x=>`<option ${x==S.set.sc?'selected':''} value="${x}">×${x}</option>`).join('')}</select><br><br><label><input type="checkbox" ${S.set.auto?'checked':''} onchange="S.set.auto=this.checked?1:0"> Automatikus visszafordulás a tartaléknál</label></div><button class="mb pri" onclick="showMM()">◀ Vissza</button>`;
+const setHTML=()=>`<div class="ttl" style="font-size:30px">Beállítások</div><div class="card" style="margin-top:20px;background:#221a13ee">Hangerő: <span id="vl">${S.set.vol}%</span><input type="range" min="0" max="100" value="${S.set.vol}" oninput="S.set.vol=+this.value;$('#vl').textContent=this.value+'%';snd()"><br><br>Időgyorsítás (valós idő = ×1)<select onchange="S.set.sc=+this.value">${[1,10,60,600,3600].map(x=>`<option ${x==S.set.sc?'selected':''} value="${x}">×${x}</option>`).join('')}</select><br><br><label><input type="checkbox" ${S.set.auto?'checked':''} onchange="S.set.auto=this.checked?1:0"> Automatikus visszafordulás a tartaléknál</label><br><br><label><input type="checkbox" ${S.set.dbg?'checked':''} onchange="S.set.dbg=this.checked?1:0"> 🐞 Hibakereső mód (FPS, adatok)</label></div><button class="mb pri" onclick="showMM()">◀ Vissza</button>`;
 function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id='mm';document.body.appendChild(m)}const has=S.max>0||S.cash!=25e4;
  m.innerHTML='<canvas id="mc"></canvas><div class="in">'+(sub=='set'?setHTML():`<div class="ttl">DRILL UP</div><div class="sub">${D[S.u.d][0]} · ${H[S.u.h][0]}<br>Rekord: ${fd(S.max)} · ${ft(S.cash)}</div>
 <button class="mb pri" onclick="hideMM()">▶ ${has?'Folytatás':'Játék indítása'}</button><button class="mb" onclick="showMM('set')">⚙ Beállítások</button><button class="mb" onclick="upd()">🔄 Frissítés keresése (v${VER})</button><button class="mb" onclick="share()">📤 Megosztás</button>${ip?'<button class="mb" onclick="ip.prompt()">📲 Telepítés a telefonra</button>':''}<button class="mb" onclick="if(confirm('Biztosan törlöd a mentést?')){S=init();hideMM();view()}">🗑 Új játék</button><div class="mu" style="text-align:center">iPhone: Safari → Megosztás → Főképernyőhöz adás</div>`)+'</div>'}
@@ -198,7 +199,8 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*43758.5)%1+1)%1;
 const mix=(a,b,t)=>{const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=p(a),B=p(b);return'#'+A.map((v,i)=>('0'+Math.round(v+(B[i]-v)*t).toString(16)).slice(-2)).join('')};
 const HC=[['#9aa1aa','#5d636b'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
-let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0;
+let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0,exX=0,exY=0,rx=0,ry=0,pSX=0,pSY=0,vsp=0;
+const DBG={fps:60,err:''};addEventListener('error',e=>{DBG.err=(e.message||'')+' '+((e.filename||'').split('/').pop())+':'+e.lineno});addEventListener('unhandledrejection',e=>{DBG.err=String(e.reason)});
 const tg=s=>{aInit();navigator.vibrate&&navigator.vibrate(S.st==s?[12,40,12]:18);clk(S.st==s?330:560);go(S.st==s?'idle':s)};
 let hold=null;
 function pd(k,e){e.preventDefault();if(hold)return;aInit();if(AC&&AC.state=='suspended')AC.resume();const was=S.st;clk(was==k?300:520);navigator.vibrate&&navigator.vibrate(14);
@@ -229,7 +231,7 @@ const[c1,c2]=HC[hl],rr=(a,b,c,d,r)=>{x.beginPath();if(x.roundRect)x.roundRect(a,
  else{g=x.createLinearGradient(0,-2.2,0,-.9);g.addColorStop(0,'#f2f4f6');g.addColorStop(1,'#8f959c');x.fillStyle=g;rr(-11.9,-2.2,2.7,1.3,.65);x.fill();if(tier>4){x.strokeStyle=tier==6?'#c9a2ff':'#6fc1ff';x.lineWidth=.1;[-11.3,-10.5,-9.7].forEach(px=>{x.beginPath();x.ellipse(px,-1.55,.12,.62,0,0,7);x.stroke()})}
   x.fillStyle='#f5c518';x.beginPath();x.arc(-10.55,-1.55,.34,0,7);x.fill();x.fillStyle='#111';for(let k=0;k<3;k++){x.beginPath();x.moveTo(-10.55,-1.55);x.arc(-10.55,-1.55,.3,-.5+k*2.09,.5+k*2.09);x.fill()}
   const[a,b]=lw(-10.55,-1.55);GL.push({x:a,y:b,r:70,c:'90,200,255',i:.3+.15*Math.sin(ts/400)});lamp(a,b,55,.5)}
- x.fillStyle='#1c1d20';rr(-10.8,1.15,9,.85,.42);x.fill();x.strokeStyle='#55585e';x.lineWidth=.07;for(let i=0;i<16;i++){const lx=-10.8+(((i*.56+ph*4)%9)+9)%9;x.beginPath();x.moveTo(lx,1.18);x.lineTo(lx,1.97);x.stroke()}
+ x.fillStyle='#1c1d20';rr(-10.8,1.15,9,.85,.42);x.fill();x.strokeStyle='#55585e';x.lineWidth=.07;for(let i=0;i<16;i++){const lx=-10.8+(((i*.56-ph*4)%9)+9)%9;x.beginPath();x.moveTo(lx,1.18);x.lineTo(lx,1.97);x.stroke()}
  for(let i=0;i<6;i++){const wx2=-10.2+i*1.5;x.fillStyle='#70747b';x.beginPath();x.arc(wx2,1.58,.3,0,7);x.fill();x.strokeStyle='#222';x.lineWidth=.06;x.beginPath();x.moveTo(wx2,1.58);x.lineTo(wx2+.26*Math.cos(ph*4+i),1.58+.26*Math.sin(ph*4+i));x.stroke()}
  x.fillStyle=act&&Math.sin(ts/120)>0?'#ff9a1a':'#6a3b0c';x.beginPath();x.arc(-6.8,-1.55,.22,0,7);x.fill();
  [-1.5,1.0].forEach(py=>{x.fillStyle='#222';x.fillRect(-2.3,py,.7,.5);x.fillStyle='#fff7c0';x.beginPath();x.arc(-1.9,py+.25,.17,0,7);x.fill()});
@@ -250,12 +252,14 @@ function front(x,sp,hl){const[c1,c2]=HC[hl];x.fillStyle='#1d1e21';x.beginPath();
 function icon(c,ts){const dp=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;if(c.width!=Math.round(w*dp)||c.height!=Math.round(h*dp)){c.width=Math.round(w*dp);c.height=Math.round(h*dp)}
  const x=c.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const g=x.createRadialGradient(w/2,h*.4,10,w/2,h*.4,h*.8);g.addColorStop(0,'#3a2a1a');g.addColorStop(1,'#0b0806');x.fillStyle=g;x.fillRect(0,0,w,h);
  const k=w*.9/12.8;x.save();x.translate(w/2+6*k,h*.4);x.rotate(-.2);x.scale(k,k);mach(x,{ts,ph:ts/500,sp:ts/90,sk:3.2,dr:true,act:true,lit2:true,lw:()=>[0,0],GL:[],lamp:()=>{}});x.restore()}
-function draw(ts){requestAnimationFrame(draw);const mc=$('#mc');if(mc)icon(mc,ts);const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=320;
+function drawF(ts){const mc=$('#mc');if(mc)icon(mc,ts);const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=320;
  if(cv.width!=Math.round(w*dp)){cv.width=Math.round(w*dp);cv.height=h*dp;dk=null}
  const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const dt=Math.min(.05,(ts-pt)/1e3||0);pt=ts;
+ if(Math.abs(S.x-rx)>60||Math.abs(S.depth-ry)>60){rx=S.x;ry=S.depth;pSX=S.x;pSY=S.depth}else{const a=1-Math.exp(-dt*18);rx+=(S.x-rx)*a;ry+=(S.depth-ry)*a}
+ const ux=dt>0?(S.x-pSX)/dt:0,uy=dt>0?(S.depth-pSY)/dt:0;pSX=S.x;pSY=S.depth;vsp+=(Math.hypot(ux,uy)*K-vsp)*Math.min(1,dt*6);if(dt>0)DBG.fps+=(1/dt-DBG.fps)*.05;
  const tp=S.tr.at(-1),dir=S.st=='H'&&tp?OP[tp[0]]:S.st,dr=S.mode=='drill',act=S.st!='idle',tier=S.u.d,hl=S.u.h;
- pv+=((act?(dir=='D'||dir=='R'?1:-1):0)-pv)*Math.min(1,dt*4);ph+=dt*pv;rate+=((dr?14:act?2:0)-rate)*Math.min(1,dt*2.5);sp+=dt*rate;sk+=((S.depth>2?.6:3.2)-sk)*Math.min(1,dt*2);
- const cy=170,cx=w/2,Ys=cy-S.depth*K,SX=m=>(m-S.x)*K+cx,SY=m=>cy+(m-S.depth)*K;
+ const mov=act&&S.mode!='',dv=DV[dir]||[0,0];pv+=((mov?1:0)-pv)*Math.min(1,dt*4);ph+=dt*pv;rate+=((dr?14:act?2:0)-rate)*Math.min(1,dt*2.5);sp+=dt*rate;if(dr){const add=Math.max(0,24*clamp(rate/14,0,1)-vsp)*dt;exX+=dv[0]*add;exY+=dv[1]*add}sk+=((ry>2?.6:3.2)-sk)*Math.min(1,dt*2);
+ const cy=170,cx=w/2,Ys=cy-ry*K,SX=m=>(m-rx)*K+cx,SY=m=>cy+(m-ry)*K;
  const now=new Date(),hr=now.getHours()+now.getMinutes()/60,el=Math.sin((hr-6)/12*Math.PI),day=clamp(el*3+.35,0,1),LT=[],CN=[],GL=[];
  const lamp=(px,py,r,i)=>{if(px>-r&&px<w+r&&py>-r&&py<h+r)LT.push({x:px,y:py,r,i})};
  x.fillStyle='#000';x.fillRect(0,0,w,h);
@@ -264,10 +268,10 @@ function draw(ts){requestAnimationFrame(draw);const mc=$('#mc');if(mc)icon(mc,ts
   const u=(hr-6)/12,um=((hr+6)%24)/12;
   if(u>=0&&u<=1){x.fillStyle='#fff4b8';x.beginPath();x.arc(w*(.1+.8*u),Ys-20-Math.sin(u*Math.PI)*150,17,0,7);x.fill()}
   if(um>=0&&um<=1){x.fillStyle='#e8ecf5';x.beginPath();x.arc(w*(.1+.8*um),Ys-20-Math.sin(um*Math.PI)*150,11,0,7);x.fill()}
-  x.fillStyle=`rgba(255,255,255,${.12+.4*day})`;for(let i=0;i<4;i++){const q=(((i*170-S.x*K*.1)%(w+200))+w+200)%(w+200)-100;x.beginPath();x.ellipse(q,Ys-110-i*22,46,12,0,0,7);x.ellipse(q+25,Ys-118-i*22,28,10,0,0,7);x.fill()}
-  for(const[f,c0,c1,hh]of[[.25,'#0c1630','#5b7794',70],[.5,'#0f2418','#4d7a48',38]]){x.fillStyle=mix(c0,c1,day);x.beginPath();x.moveTo(0,Ys);for(let px=0;px<=w+20;px+=20)x.lineTo(px,Ys-14-hh*(.5+.3*Math.sin((px+S.x*K*f)*.012)+.2*Math.sin((px+S.x*K*f)*.031)));x.lineTo(w,Ys);x.fill()}}
+  x.fillStyle=`rgba(255,255,255,${.12+.4*day})`;for(let i=0;i<4;i++){const q=(((i*170-rx*K*.1)%(w+200))+w+200)%(w+200)-100;x.beginPath();x.ellipse(q,Ys-110-i*22,46,12,0,0,7);x.ellipse(q+25,Ys-118-i*22,28,10,0,0,7);x.fill()}
+  for(const[f,c0,c1,hh]of[[.25,'#0c1630','#5b7794',70],[.5,'#0f2418','#4d7a48',38]]){x.fillStyle=mix(c0,c1,day);x.beginPath();x.moveTo(0,Ys);for(let px=0;px<=w+20;px+=20)x.lineTo(px,Ys-14-hh*(.5+.3*Math.sin((px+rx*K*f)*.012)+.2*Math.sin((px+rx*K*f)*.031)));x.lineTo(w,Ys);x.fill()}}
  LY.forEach((l,li)=>{const y0=SY(l[1]),y1=SY(l[2]),top=Math.max(0,Ys);if(y1<=top||y0>=h)return;const a=clamp(y0,top,h),b=clamp(y1,top,h+5);x.fillStyle=l[4];x.fillRect(0,a,w,b-a);
-  x.save();x.beginPath();x.rect(0,a,w,b-a);x.clip();const wx=S.x*K,wy=S.depth*K-ph*30,i0=Math.floor((wx-cx)/80),j0=Math.floor((wy-cy)/80);
+  x.save();x.beginPath();x.rect(0,a,w,b-a);x.clip();const wx=rx*K+exX,wy=ry*K+exY,i0=Math.floor((wx-cx)/80),j0=Math.floor((wy-cy)/80);
   for(let i=i0;i<=i0+w/80+1;i++)for(let j=j0;j<=j0+h/80+1;j++)for(let n=0;n<7;n++){const s=i*31+j*17+n*7+li*101,X=i*80-wx+cx+rnd(s)*80,Y=j*80-wy+cy+rnd(s+1)*80,z=2+rnd(s+2)*5;x.fillStyle=n%2?'rgba(255,255,255,.13)':'rgba(0,0,0,.28)';if(li>=9&&n%3==0)x.fillStyle='rgba(255,210,90,.25)';if(li<3){x.beginPath();x.ellipse(X,Y,z,z*.6,0,0,7);x.fill()}else x.fillRect(X,Y,z*1.6,z*.5)}
   x.restore()});
  if(Ys<h+6){x.fillStyle=mix('#1a3a1a','#4f9a3c',day);x.fillRect(0,Ys-3,w,5)}
@@ -275,11 +279,11 @@ function draw(ts){requestAnimationFrame(draw);const mc=$('#mc');if(mc)icon(mc,ts
  x.save();x.beginPath();x.rect(0,Math.max(0,Ys),w,h);x.clip();
  S.tn.forEach(t=>{const X1=SX(t[0]),Y1=SY(t[1]),X2=SX(t[2]),Y2=SY(t[3]);
   if(t[1]==t[3]){const a=clamp(Math.min(X1,X2),-60,w+60),b=clamp(Math.max(X1,X2),-60,w+60);if(b<=a||Y1<-30||Y1>h+30)return;x.fillStyle='#0e0a07';x.fillRect(a,Y1-22,b-a,44);x.fillStyle='#4a3d33';x.fillRect(a,Y1-22,b-a,2);x.fillRect(a,Y1+20,b-a,2);x.fillStyle='rgba(255,255,255,.06)';
-   for(let g=Math.ceil((S.x+(a-cx)/K)/1.5)*1.5;SX(g)<b;g+=1.5)x.fillRect(SX(g),Y1-22,1,44);
-   for(let g=Math.ceil((S.x+(a-cx)/K)/8)*8;SX(g)<b;g+=8){const lx=SX(g);x.fillStyle='#ffe9a0';x.fillRect(lx-3,Y1-20,6,4);lamp(lx,Y1-14,62,.8)}}
+   for(let g=Math.ceil((rx+(a-cx)/K)/1.5)*1.5;SX(g)<b;g+=1.5)x.fillRect(SX(g),Y1-22,1,44);
+   for(let g=Math.ceil((rx+(a-cx)/K)/8)*8;SX(g)<b;g+=8){const lx=SX(g);x.fillStyle='#ffe9a0';x.fillRect(lx-3,Y1-20,6,4);lamp(lx,Y1-14,62,.8)}}
   else{const a=clamp(Math.min(Y1,Y2),-60,h+60),b=clamp(Math.max(Y1,Y2),-60,h+60);if(b<=a||X1<-30||X1>w+30)return;x.fillStyle='#0e0a07';x.fillRect(X1-22,a,44,b-a);x.fillStyle='#4a3d33';x.fillRect(X1-22,a,2,b-a);x.fillRect(X1+20,a,2,b-a);x.fillStyle='rgba(255,255,255,.06)';
-   for(let g=Math.ceil((S.depth+(a-cy)/K)/1.5)*1.5;SY(g)<b;g+=1.5)x.fillRect(X1-22,SY(g),44,1);
-   for(let g=Math.ceil((S.depth+(a-cy)/K)/8)*8;SY(g)<b;g+=8){const ly=SY(g);x.fillStyle='#ffe9a0';x.fillRect(X1+16,ly-3,4,6);lamp(X1+12,ly,62,.8)}}});
+   for(let g=Math.ceil((ry+(a-cy)/K)/1.5)*1.5;SY(g)<b;g+=1.5)x.fillRect(X1-22,SY(g),44,1);
+   for(let g=Math.ceil((ry+(a-cy)/K)/8)*8;SY(g)<b;g+=8){const ly=SY(g);x.fillStyle='#ffe9a0';x.fillRect(X1+16,ly-3,4,6);lamp(X1+12,ly,62,.8)}}});
  x.restore();
  // felszín: műhely (22×9 m), tartály, lámpaoszlop, ember (1,8 m), fák
  if(Ys>-170&&Ys<h+170){const Y0=Ys,lit=day<.55,x0=SX(-46);
@@ -292,19 +296,19 @@ function draw(ts){requestAnimationFrame(draw);const mc=$('#mc');if(mc)icon(mc,ts
   const tx=SX(-21);x.fillStyle='#8c9aa5';x.fillRect(tx,Y0-32,56,26);x.beginPath();x.ellipse(tx,Y0-19,5,13,0,0,7);x.ellipse(tx+56,Y0-19,5,13,0,0,7);x.fill();x.fillStyle='#444';x.fillRect(tx+8,Y0-6,4,6);x.fillRect(tx+44,Y0-6,4,6);x.fillStyle='#fff';x.font='7px Georgia';x.fillText('ÜZEMANYAG',tx+7,Y0-17);
   const lp=SX(-13);x.fillStyle='#333';x.fillRect(lp-1.5,Y0-75,3,75);x.fillRect(lp-1.5,Y0-76,16,3);x.fillStyle=lit?'#fff3b0':'#888';x.fillRect(lp+9,Y0-73,9,4);if(lit){lamp(lp+13,Y0-70,170,.95);GL.push({x:lp+13,y:Y0-70,r:120,c:'255,220,140',i:.3})}
   const hm=SX(-24.2);x.fillStyle='#2b3a5c';x.fillRect(hm-3,Y0-9,2.5,9);x.fillRect(hm+.5,Y0-9,2.5,9);x.fillStyle='#e8742a';x.fillRect(hm-4,Y0-15,8,7);x.fillStyle='#f0c8a0';x.beginPath();x.arc(hm,Y0-18,3.2,0,7);x.fill();x.fillStyle='#f0b020';x.fillRect(hm-3.5,Y0-21.5,7,2);
-  for(let k=Math.floor((S.x-w/K)/11)-1;k<=(S.x+w/K)/11+1;k++){const m=k*11+rnd(k)*6;if(m>-54&&m<-10)continue;const tx2=SX(m),hh=60+rnd(k+5)*60;x.fillStyle=mix('#12100a','#5a3b1e',day);x.fillRect(tx2-4,Y0-hh*.5,8,hh*.5);x.fillStyle=mix('#0a1a0c','#2f6b2a',day);x.beginPath();x.arc(tx2,Y0-hh*.62,hh*.32,0,7);x.arc(tx2-hh*.16,Y0-hh*.48,hh*.24,0,7);x.arc(tx2+hh*.16,Y0-hh*.48,hh*.24,0,7);x.fill()}}
+  for(let k=Math.floor((rx-w/K)/11)-1;k<=(rx+w/K)/11+1;k++){const m=k*11+rnd(k)*6;if(m>-54&&m<-10)continue;const tx2=SX(m),hh=60+rnd(k+5)*60;x.fillStyle=mix('#12100a','#5a3b1e',day);x.fillRect(tx2-4,Y0-hh*.5,8,hh*.5);x.fillStyle=mix('#0a1a0c','#2f6b2a',day);x.beginPath();x.arc(tx2,Y0-hh*.62,hh*.32,0,7);x.arc(tx2-hh*.16,Y0-hh*.48,hh*.24,0,7);x.arc(tx2+hh*.16,Y0-hh*.48,hh*.24,0,7);x.fill()}}
  if(Math.random()<dt*7)pr.push({x:-44.5,y:-12.5,vx:.7,vy:-1.2,l:3.5,t:'s'});
  // gép: tájolás (3D fordulás: yaw = jobb↔bal, fel↔le)
  const ld=dir!='idle'?(lastD=dir):lastD;if(ld=='L'||ld=='R')hf=ld=='L'?-1:1;
- let angT=ld=='U'||ld=='D'?Math.PI/2:0,faceT=ld=='D'?1:ld=='U'?-1:hf;if(S.depth<1&&dir!='D'){angT=0;faceT=hf}
- const yawT=faceT>0?0:Math.PI,mvv=(a,b)=>{const d=b-a;return a+Math.sign(d)*Math.min(Math.abs(d),dt*(1.2+3.2*Math.abs(d)))};ang=mvv(ang,angT);yaw=mvv(yaw,yawT);
- const sY=Math.sin(yaw),sc=Math.cos(yaw),fc=sc>=0?1:-1,fa=Math.abs(Math.sin(ang)),lift=S.depth<1?20*(1-fa):0,Ty=cy-lift,cA=Math.cos(ang),sA=Math.sin(ang),lw=(a,b)=>[cx+K*(sc*a*cA-b*sA),Ty+K*(sc*a*sA+b*cA)];
- if(S.depth<1&&day>.15){x.fillStyle=`rgba(0,0,0,${.3*day*(1-fa)})`;x.beginPath();x.ellipse(cx-60*sc,Ys,70+20*Math.abs(sY),5,0,0,7);x.fill()}
- if(act&&Math.random()<dt*(tier<2?14:tier<4?8:0)){const[a,b]=tier<2?lw(-11.15,-2.1-sk):lw(-10,-2.9);pr.push({x:S.x+(a-cx)/K,y:S.depth+(b-cy)/K,vx:(Math.random()-.5)*.8,vy:-2.2,l:2.2,t:tier<2?'s':'k'})}
- if(dr&&Math.random()<dt*50){const[a,b]=lw(.5,0);pr.push({x:S.x+(a-cx)/K,y:S.depth+(b-cy)/K,vx:(Math.random()-.5)*8,vy:-2-Math.random()*5,l:.8,t:'d'})}
+ let angT=ld=='U'||ld=='D'?Math.PI/2:0,faceT=ld=='D'?1:ld=='U'?-1:hf;if(ry<1&&dir!='D'){angT=0;faceT=hf}
+ const yawT=faceT>0?0:Math.PI,mvv=(a,b)=>{const d=b-a;return a+Math.sign(d)*Math.min(Math.abs(d),dt*(1.2+3.2*Math.abs(d)))};ang=mvv(ang,angT);yaw=mvv(yaw,yawT);tl=Math.abs(yaw-yawT)>.22||Math.abs(ang-angT)>.22;ldt=Date.now();
+ const sY=Math.sin(yaw),sc=Math.cos(yaw),fc=sc>=0?1:-1,fa=Math.abs(Math.sin(ang)),lift=ry<1?20*(1-fa):0,Ty=cy-lift,cA=Math.cos(ang),sA=Math.sin(ang),lw=(a,b)=>[cx+K*(sc*a*cA-b*sA),Ty+K*(sc*a*sA+b*cA)];
+ if(ry<1&&day>.15){x.fillStyle=`rgba(0,0,0,${.3*day*(1-fa)})`;x.beginPath();x.ellipse(cx-60*sc,Ys,70+20*Math.abs(sY),5,0,0,7);x.fill()}
+ if(act&&Math.random()<dt*(tier<2?14:tier<4?8:0)){const[a,b]=tier<2?lw(-11.15,-2.1-sk):lw(-10,-2.9);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*.8,vy:-2.2,l:2.2,t:tier<2?'s':'k'})}
+ if(dr&&Math.random()<dt*50){const[a,b]=lw(.5,0);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*8,vy:-2-Math.random()*5,l:.8,t:'d'})}
  pr=pr.filter(p=>(p.l-=dt)>0).slice(-150);pr.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;const X=SX(p.x),Y=SY(p.y);if(p.t=='d'){p.vy+=20*dt;x.fillStyle='#caa26a';x.fillRect(X,Y,2,2)}else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
- x.save();x.translate(cx,Ty);x.rotate(ang);const lit2=S.depth>2||day<.55,fo=Math.pow(clamp(Math.abs(sY)*1.5,0,1),1.3);
+ const vb=clamp(rate/14,0,1)*.7,vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=Math.pow(clamp(Math.abs(sY)*1.5,0,1),1.3);
  x.save();x.globalAlpha=1-.6*fo;x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp});x.fillStyle=`rgba(0,0,0,${.28*Math.abs(sY)})`;x.fillRect(-12,-2.1,12.6,4.2);x.restore();
  if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K,K);front(x,sp,hl);x.restore();x.globalAlpha=1}
  x.restore();
@@ -312,18 +316,25 @@ function draw(ts){requestAnimationFrame(draw);const mc=$('#mc');if(mc)icon(mc,ts
  {const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:dr?55:200,s:.5});lamp(nx,ny,dr?75:90,.9);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25})}
  if(dk&&dk.width!=cv.width)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=cv.width;dk.height=cv.height}
  const d2=dk.getContext('2d');d2.setTransform(dp,0,0,dp,0,0);d2.globalCompositeOperation='source-over';d2.clearRect(0,0,w,h);const ys=clamp(Ys,0,h);
- d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.5+.35*Math.min(1,S.depth/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
+ d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.5+.35*Math.min(1,ry/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
  LT.forEach(l=>{const q=d2.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(0,0,0,${l.i})`);q.addColorStop(1,'rgba(0,0,0,0)');d2.fillStyle=q;d2.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});
  const cone=(c,ctx,fill)=>{const e1=[c.dx*Math.cos(c.s)-c.dy*Math.sin(c.s),c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],e2=[c.dx*Math.cos(c.s)+c.dy*Math.sin(c.s),-c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],q=ctx.createLinearGradient(c.x,c.y,c.x+c.dx*c.len,c.y+c.dy*c.len);q.addColorStop(0,fill);q.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=q;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x+e1[0]*c.len,c.y+e1[1]*c.len);ctx.lineTo(c.x+e2[0]*c.len,c.y+e2[1]*c.len);ctx.fill()};
  CN.forEach(c=>cone(c,d2,'rgba(0,0,0,.95)'));x.drawImage(dk,0,0,w,h);
  x.globalCompositeOperation='lighter';LT.forEach(l=>{const q=x.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(255,190,100,${l.i*.2})`);q.addColorStop(1,'rgba(255,190,100,0)');x.fillStyle=q;x.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});
  GL.forEach(l=>{const q=x.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(${l.c},${l.i})`);q.addColorStop(1,`rgba(${l.c},0)`);x.fillStyle=q;x.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});CN.forEach(c=>cone(c,x,'rgba(255,230,160,.22)'));x.globalCompositeOperation='source-over';
- const T=lerp(TT,S.depth);if(S.depth>0){x.fillStyle=`rgba(255,70,0,${Math.min(.35,T/6000*.45)})`;x.fillRect(0,0,w,h)}
+ const T=lerp(TT,ry);if(ry>0){x.fillStyle=`rgba(255,70,0,${Math.min(.35,T/6000*.45)})`;x.fillRect(0,0,w,h)}
+ // irányjelzők
+ if(act&&dir in DV){const col={U:'#4fd0ff',D:'#ff9a1a',L:'#7cff6a',R:'#7cff6a'}[dir],q=(ts/600)%1,ax=dv[0],ay=dv[1];x.save();x.strokeStyle=col;x.lineWidth=3;x.lineCap='round';x.lineJoin='round';
+  for(let i=0;i<3;i++){const t=(q+i/3)%1,d=75+t*55,px=cx+ax*d,py=cy+ay*d;x.globalAlpha=Math.sin(t*Math.PI)*(mov?.85:.35);x.beginPath();x.moveTo(px-ax*9-ay*12,py-ay*9+ax*12);x.lineTo(px+ax*3,py+ay*3);x.lineTo(px-ax*9+ay*12,py-ay*9-ax*12);x.stroke()}
+  x.restore();const nm={R:'▶ JOBBRA',L:'◀ BALRA',U:'▲ FEL',D:'▼ LE'}[dir]+(S.st=='H'?' · HAZA':'')+(tl?' · fordul…':S.mode=='drill'?' · fúrás':S.mode=='travel'?' · haladás':'');x.font='bold 12px Georgia';const tw=x.measureText(nm).width+20;x.fillStyle='rgba(0,0,0,.6)';x.fillRect(w/2-tw/2,h-34,tw,22);x.fillStyle=col;x.textAlign='center';x.fillText(nm,w/2,h-18);x.textAlign='left'}
  // kijelzők
- x.fillStyle='rgba(0,0,0,.55)';x.fillRect(w-236,6,230,22);x.fillStyle='#fff';x.font='bold 12px Georgia';x.textAlign='right';x.fillText(`↕ ${fd(S.depth)} · ↔ ${nf(S.x,0)} m`,w-12,22);x.textAlign='left';
+ x.fillStyle='rgba(0,0,0,.55)';x.fillRect(w-236,6,230,22);x.fillStyle='#fff';x.font='bold 12px Georgia';x.textAlign='right';x.fillText(`↕ ${fd(ry)} · ↔ ${nf(rx,0)} m`,w-12,22);x.textAlign='left';
  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(6,6,74,22);x.fillStyle='#fff';x.font='12px Georgia';x.fillText((day>.5?'☀ ':'🌙 ')+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),12,22);
  x.fillStyle='#fff';x.fillRect(10,h-14,100,2);x.fillRect(10,h-18,2,10);x.fillRect(108,h-18,2,10);x.font='10px Georgia';x.fillText('10 m',44,h-20);
- {const mx=w-20,my0=40,mh=230;LY.forEach(l=>{const a=Math.sqrt(l[1]/R)*mh,b=Math.sqrt(l[2]/R)*mh;x.fillStyle=l[4];x.fillRect(mx,my0+a,12,b-a+.5)});const q=my0+Math.sqrt(S.depth/R)*mh;x.fillStyle='#fff';x.beginPath();x.moveTo(mx-2,q);x.lineTo(mx-9,q-5);x.lineTo(mx-9,q+5);x.fill();x.font='9px Georgia';x.textAlign='right';x.fillText('0',mx-3,my0+8);x.fillText('6371 km',mx+12,my0+mh+11);x.textAlign='left'}}
+ {const mx=w-20,my0=40,mh=230;LY.forEach(l=>{const a=Math.sqrt(l[1]/R)*mh,b=Math.sqrt(l[2]/R)*mh;x.fillStyle=l[4];x.fillRect(mx,my0+a,12,b-a+.5)});const q=my0+Math.sqrt(ry/R)*mh;x.fillStyle='#fff';x.beginPath();x.moveTo(mx-2,q);x.lineTo(mx-9,q-5);x.lineTo(mx-9,q+5);x.fill();x.font='9px Georgia';x.textAlign='right';x.fillText('0',mx-3,my0+8);x.fillText('6371 km',mx+12,my0+mh+11);x.textAlign='left'}
+ if(S.set.dbg){x.font='10px monospace';x.fillStyle='rgba(0,0,0,.65)';x.fillRect(4,34,236,96);x.fillStyle='#7cff6a';const L=[`FPS ${DBG.fps|0}  dt ${(dt*1e3)|0} ms`,`st ${S.st} mode ${S.mode||'-'} turn ${tl|0}`,`x ${S.x.toFixed(2)}  d ${S.depth.toFixed(2)}`,`lag ${(rx-S.x).toFixed(2)}/${(ry-S.depth).toFixed(2)} m  v ${vsp|0} px/s`,`spin ${rate.toFixed(1)} pv ${pv.toFixed(2)} ang ${ang.toFixed(2)} yaw ${yaw.toFixed(2)}`,`part ${pr.length} lights ${LT.length} fuel ${S.fuel.toFixed(1)}`];L.forEach((t,i)=>x.fillText(t,8,46+i*13));if(DBG.err){x.fillStyle='#ff6a5a';x.fillText(DBG.err.slice(0,42),8,46+L.length*13)}}
+}
+function draw(ts){requestAnimationFrame(draw);try{sim();drawF(ts)}catch(e){DBG.err=(e.message||e)+' '+((e.stack||'').split('\n')[1]||'').trim().slice(-30)}}
 requestAnimationFrame(draw);
 tick();view();showMM();
 </script></body></html>
