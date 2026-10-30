@@ -38,12 +38,18 @@ table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px s
 .tb{background:linear-gradient(#4a4741,#2d2b27);color:#efe3d0;border:0;border-radius:8px;padding:8px 2px;font:700 12px Georgia,serif;box-shadow:0 3px 0 #14120f,inset 0 1px 0 #7a756b}.tb:active{transform:translateY(2px)}.tb.on{background:linear-gradient(#f7b84a,#d98a18);color:#1b1208}
 .pr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.pb.sm{height:50px;padding-top:4px}.pb.sm small{display:none}.pb.sm b{font-size:21px}.pb.sm::after{top:4px;width:16px;margin-left:-8px}.pb.stop.sm{border-width:2px;border-radius:10px;background:linear-gradient(#7a2a24,#4a1612) padding-box,repeating-linear-gradient(45deg,#f0b020 0 8px,#1a1a1a 8px 16px) border-box}
 html,body{overscroll-behavior:none}.pb,.dock,.tb{touch-action:none}#stage{overflow:hidden}.dock{position:relative;z-index:5}.pb.sm{height:54px}
+#mm{justify-content:flex-start;padding:calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 14px);overflow:hidden}#mc{opacity:1}#mm .in{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
+.top{text-align:center}.ttl{font:900 clamp(40px,13vw,58px) Georgia,serif;letter-spacing:4px;animation:glow 3.2s ease-in-out infinite}.tag{color:#d8c9b2;font-size:13px;letter-spacing:1px;text-shadow:0 1px 4px #000}.sp{flex:1}
+@keyframes glow{0%,100%{text-shadow:0 3px 0 #7a4a0a,0 0 18px #f0a03055}50%{text-shadow:0 3px 0 #7a4a0a,0 0 34px #f0a030aa}}@keyframes pl{0%,100%{box-shadow:0 5px 0 #7a4a0a,0 8px 12px #0009,0 0 0 #f0a03000,inset 0 1px 0 #ffe0a0}50%{box-shadow:0 5px 0 #7a4a0a,0 8px 12px #0009,0 0 22px #f0a030aa,inset 0 1px 0 #ffe0a0}}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.stat{background:rgba(18,14,10,.82);border:1px solid #3a2c20;border-radius:10px;padding:7px 10px}.stat.wide{grid-column:1/-1}.stat small{display:block;font-size:9px;letter-spacing:1.5px;color:#a8957c}.stat b{font-size:14px;color:#f0d9b0}
+.mb.big{font-size:20px;padding:18px;margin:0 0 12px;animation:pl 2.6s ease-in-out infinite}.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mb.sm{margin:0;padding:13px 6px;font-size:14px}.mb.sm small{font-size:10px;font-weight:400;opacity:.8}
+.lnk{background:none;border:0;color:#8a7a68;font:inherit;font-size:12px;padding:12px;text-decoration:underline}
 h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
 </style></head><body>
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.7';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.8';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -198,10 +204,13 @@ function vMenu(){return`<h3>Főmenü</h3><button class="b" style="width:100%" on
 async function share(){const d={title:'Drill Up',text:`A Drill Up-ban ${fd(S.max)} mélyre jutottam!`,url:location.href};try{if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(d.text+' '+d.url);toast('Link a vágólapon')}}catch(e){}}
 async function upd(){const r=await navigator.serviceWorker?.getRegistration();if(!r)return toast('Offline mód nem elérhető.');toast('Keresés…');await r.update();if(r.waiting)r.waiting.postMessage('skip');setTimeout(()=>location.reload(),700)}
 
-const setHTML=()=>`<div class="ttl" style="font-size:30px">Beállítások</div><div class="card" style="margin-top:20px;background:#221a13ee">Hangerő: <span id="vl">${S.set.vol}%</span><input type="range" min="0" max="100" value="${S.set.vol}" oninput="S.set.vol=+this.value;$('#vl').textContent=this.value+'%';snd()"><br><br>Időgyorsítás (valós idő = ×1)<select onchange="S.set.sc=+this.value">${[1,10,60,600,3600].map(x=>`<option ${x==S.set.sc?'selected':''} value="${x}">×${x}</option>`).join('')}</select><br><br><label><input type="checkbox" ${S.set.auto?'checked':''} onchange="S.set.auto=this.checked?1:0"> Automatikus visszafordulás a tartaléknál</label><br><br><label><input type="checkbox" ${S.set.dbg?'checked':''} onchange="S.set.dbg=this.checked?1:0"> 🐞 Hibakereső mód (FPS, adatok)</label></div><button class="mb pri" onclick="showMM()">◀ Vissza</button>`;
+const setBody=()=>`<div class="card" style="background:#1a1410ee;border-color:#4a3a2a">Hangerő: <span id="vl">${S.set.vol}%</span><input type="range" min="0" max="100" value="${S.set.vol}" oninput="S.set.vol=+this.value;$('#vl').textContent=this.value+'%';snd()"><br><br>Időgyorsítás (valós idő = ×1)<select onchange="S.set.sc=+this.value">${[1,10,60,600,3600].map(x=>`<option ${x==S.set.sc?'selected':''} value="${x}">×${x}</option>`).join('')}</select><br><br><label><input type="checkbox" ${S.set.auto?'checked':''} onchange="S.set.auto=this.checked?1:0"> Automatikus visszafordulás és tankolás</label><br><br><label><input type="checkbox" ${S.set.dbg?'checked':''} onchange="S.set.dbg=this.checked?1:0"> 🐞 Hibakereső mód (FPS, adatok)</label></div><button class="mb pri" onclick="showMM()">◀ Vissza</button>`;
 function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id='mm';document.body.appendChild(m)}const has=S.max>0||S.cash!=25e4;
- m.innerHTML='<canvas id="mc"></canvas><div class="in">'+(sub=='set'?setHTML():`<div class="ttl">DRILL UP</div><div class="sub">${D[S.u.d][0]} · ${H[S.u.h][0]}<br>Rekord: ${fd(S.max)} · ${ft(S.cash)}</div>
-<button class="mb pri" onclick="hideMM()">▶ ${has?'Folytatás':'Játék indítása'}</button><button class="mb" onclick="showMM('set')">⚙ Beállítások</button><button class="mb" onclick="upd()">🔄 Frissítés keresése (v${VER})</button><button class="mb" onclick="share()">📤 Megosztás</button>${ip?'<button class="mb" onclick="ip.prompt()">📲 Telepítés a telefonra</button>':''}<button class="mb" onclick="if(confirm('Biztosan törlöd a mentést?')){S=init();hideMM();view()}">🗑 Új játék</button><div class="mu" style="text-align:center">iPhone: Safari → Megosztás → Főképernyőhöz adás</div>`)+'</div>'}
+ m.innerHTML='<canvas id="mc"></canvas><div class="in">'+(sub=='set'?`<div class="top"><div class="ttl" style="font-size:32px">Beállítások</div></div><div class="sp"></div>${setBody()}`:`<div class="top"><div class="ttl">DRILL UP</div><div class="tag">Fúrj le a Föld magjáig · 6 371 km</div></div><div class="sp"></div>
+<div class="stats"><div class="stat"><small>REKORD</small><b>${fd(S.max)}</b></div><div class="stat"><small>PÉNZ</small><b>${ft(S.cash)}</b></div><div class="stat wide"><small>A GÉPED</small><b>${D[S.u.d][0]} · ${H[S.u.h][0]} · ${HD[S.u.f][0]}</b></div></div>
+<button class="mb pri big" onclick="hideMM()">▶ ${has?'FOLYTATÁS':'INDULÁS'}</button>
+<div class="mg"><button class="mb sm" onclick="showMM('set')">⚙ Beállítások</button><button class="mb sm" onclick="upd()">🔄 Frissítés <small>v${VER}</small></button><button class="mb sm" onclick="share()">📤 Megosztás</button>${ip?'<button class="mb sm" onclick="ip.prompt()">📲 Telepítés</button>':`<button class="mb sm" onclick="toast('iPhone: Safari → Megosztás → Főképernyőhöz adás. Android: böngészőmenü → Telepítés.')">📲 Telepítés</button>`}</div>
+<button class="lnk" onclick="if(confirm('Biztosan törlöd a mentést?')){S=init();hideMM();view()}">🗑 Új játék kezdése</button>`)+'</div>'}
 function hideMM(){const m=$('#mm');if(m)m.remove()}
 const vs=[vDrill,vShop,vStore,vMarket,vLog,vMenu],names=['⛏ Fúrás','🏭 Műhely','📦 Raktár','💰 Piac','📖 Tudás','☰ Menü'];
 function nav(){$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on':''}" onclick="${i==5?'showMM()':`tab=${i};view()`}">${n}${(i==1||i==3)&&base()?' <span class="ok">●</span>':''}</button>`).join('')}
@@ -302,7 +311,7 @@ function tunV(x,a,b,X,oy,kk,lc){const g0=Math.floor((a-oy)/5),n=Math.ceil((b-a)/
   if(rg(gi,kk+8)>.55){const z=2+rg(gi,kk+9)*3,q=rg(gi,kk+11)>.5,w0=q?f:e;chunk(x,w0[0]+(q?-z*.5:z*.5),w0[1]+rg(gi,kk+12)*4-2,z,gi*7+kk,q?lc:'#2b211a')}}}
 function capE(x,X,Y,dx,dy,kk,lc){x.fillStyle='#0e0a07';x.beginPath();x.moveTo(X,Y);for(let k=-4;k<=4;k++){const o=2+rg(k+9,kk)*9,pp=k*5.5;x.lineTo(dx?X+dx*o:X+pp,dx?Y+pp:Y+dy*o)}x.lineTo(X,Y);x.fill();
  x.beginPath();for(let k=-4;k<=4;k++){const o=2+rg(k+9,kk)*9,pp=k*5.5;const px=dx?X+dx*o:X+pp,py=dx?Y+pp:Y+dy*o;k==-4?x.moveTo(px,py):x.lineTo(px,py)}x.lineTo(dx?X:X+22,dx?Y+22:Y);x.lineTo(dx?X:X-22,dx?Y-22:Y);x.closePath();x.fill()}
-function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const mc=$('#mc');if(mc)icon(mc,ts);const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight||300;if(w<10)return;
+function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const cv=$('#cv');if(!cv)return;const dp=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight||300;if(w<10)return;
  if(cv.width!=Math.round(w*dp)||cv.height!=Math.round(h*dp)){cv.width=Math.round(w*dp);cv.height=Math.round(h*dp);dk=null}
  const x=cv.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const dt=Math.min(.05,(ts-pt)/1e3||0);pt=ts;
  if(Math.abs(S.x-rx)>60||Math.abs(S.depth-ry)>60){rx=S.x;ry=S.depth;pSX=S.x;pSY=S.depth}else{const a=1-Math.exp(-dt*18);rx+=(S.x-rx)*a;ry+=(S.depth-ry)*a}
@@ -397,7 +406,40 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  {const mx=w-20,my0=40,mh=230;LY.forEach(l=>{const a=Math.sqrt(l[1]/R)*mh,b=Math.sqrt(l[2]/R)*mh;x.fillStyle=l[4];x.fillRect(mx,my0+a,12,b-a+.5)});const q=my0+Math.sqrt(ry/R)*mh;x.fillStyle='#fff';x.beginPath();x.moveTo(mx-2,q);x.lineTo(mx-9,q-5);x.lineTo(mx-9,q+5);x.fill();x.font='9px Georgia';x.textAlign='right';x.fillText('0',mx-3,my0+8);x.fillText('6371 km',mx+12,my0+mh+11);x.textAlign='left'}
  if(S.set.dbg){x.font='10px monospace';x.fillStyle='rgba(0,0,0,.65)';x.fillRect(4,34,236,110);x.fillStyle='#7cff6a';const L=[`FPS ${DBG.fps|0}  dt ${(dt*1e3)|0} ms`,`st ${S.st} mode ${S.mode||'-'} turn ${tl|0}`,`x ${S.x.toFixed(2)}  d ${S.depth.toFixed(2)}`,`lag ${(rx-S.x).toFixed(2)}/${(ry-S.depth).toFixed(2)} m  v ${vsp|0} px/s`,`spin ${rate.toFixed(1)} pv ${pv.toFixed(2)} ang ${ang.toFixed(2)} yaw ${yaw.toFixed(2)}`,`part ${pr.length} lights ${LT.length} fuel ${S.fuel.toFixed(1)}`,`gomb ${DBG.btn||'-'}`];L.forEach((t,i)=>x.fillText(t,8,46+i*13));if(DBG.err){x.fillStyle='#ff6a5a';x.fillText(DBG.err.slice(0,42),8,46+L.length*13)}}
 }
-function draw(ts){requestAnimationFrame(draw);try{sim();if(ts-lastSnd>80){lastSnd=ts;snd()}drawF(ts)}catch(e){DBG.err=(e.message||e)+' '+((e.stack||'').split('\n')[1]||'').trim().slice(-30);const c=$('#cv');if(c)c.width=c.width}}
-requestAnimationFrame(draw);
+// ---- főmenü: élő fúrás-jelenet (a jelenlegi géppel) ----
+let hP=[],hT=0;
+function hero(c,ts){const dp=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;if(w<10||h<10)return;
+ if(c.width!=Math.round(w*dp)||c.height!=Math.round(h*dp)){c.width=Math.round(w*dp);c.height=Math.round(h*dp)}
+ const x=c.getContext('2d');x.setTransform(dp,0,0,dp,0,0);const dt=Math.min(.05,(ts-hT)/1e3||0);hT=ts;
+ const T=ts/1000,off=T*46,cy=Math.round(h*.42),k=Math.min(w*.8/12.7,28),nx=w*.93,s0=k/10,hh=.45+.25*Math.sin(T*1.3),lc=mix(LY[3][4],'#ffffff',.2),LTs=[];
+ x.fillStyle='#0b0806';x.fillRect(0,0,w,h);const cols=[1,2,3,4,5,7].map(i=>mix(LY[i][4],'#000000',.5));
+ for(let j=0;j<6;j++){const y0=j*h/6;x.fillStyle=cols[j];x.beginPath();x.moveTo(0,y0);for(let px=0;px<=w+20;px+=20)x.lineTo(px,y0+(j?12*Math.sin((px+off*(.35+j*.05))*.011+j*2)+7*Math.sin((px+off*.4)*.027+j):0));x.lineTo(w,h+30);x.lineTo(0,h+30);x.closePath();x.fill()}
+ for(let i=0;i<120;i++){const par=.45+rg(i,2)*.55,px=(((rg(i,1)*(w+60)-off*par)%(w+60))+(w+60))%(w+60)-30,py=rg(i,3)*h,z=1.5+rg(i,4)*4;x.fillStyle=i%3?'rgba(255,255,255,.1)':'rgba(0,0,0,.25)';x.fillRect(px,py,z*1.5,z*.8)}
+ // alagút (roncsolt fal, a föld mozog a gép mögött)
+ x.save();x.translate(0,cy);x.scale(s0,s0);const ox=-off/s0;tunH(x,0,nx/s0,0,ox,3.3,lc);
+ for(let g=Math.floor((0-ox)/80)*80;g+ox<nx/s0;g+=80){const lx=g+ox;if(lx<0)continue;x.fillStyle='#ffe9a0';x.fillRect(lx-3,-19,6,4);LTs.push([lx*s0,cy-14*s0])}x.restore();
+ // a fej előtti zúzott front
+ const P=(u,v)=>[nx+.6*k+u*s0,cy+v*s0];
+ x.fillStyle='rgba(10,6,4,.92)';x.beginPath();for(let q=0;q<=18;q++){const a=(q/18-.5)*Math.PI,r=1+.08*Math.sin(T*70+q*2)+.1*Math.sin(ts/230+q*1.9)+.06*Math.sin(ts/97+q*3.1),p=P(Math.cos(a)*20*r,Math.sin(a)*24*r);q?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])}x.closePath();x.fill();
+ for(let i=0;i<3;i++){const g=((T*2.2)+i/3)%1;x.strokeStyle=`rgba(230,215,190,${.25*(1-g)})`;x.lineWidth=1.5;x.beginPath();for(let q=0;q<=12;q++){const a=(q/12-.5)*Math.PI*.9,p=P(Math.cos(a)*(10+g*38),Math.sin(a)*(22+g*18));q?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])}x.stroke()}
+ for(let i=0;i<9;i++){const ph2=(T*1.4+i*.113)%1,sd=i*37+Math.floor(T*1.4+i*.113)*11,a=(rg(sd,1)-.5)*2.4,len=(10+rg(sd,2)*30)*Math.min(1,ph2*1.8),v0=(rg(sd,3)-.5)*30;let p=P(6,v0);x.beginPath();x.moveTo(p[0],p[1]);for(let j=1;j<=4;j++){const t4=j/4;p=P(6+Math.cos(a)*len*t4+(rg(sd+j,4)-.5)*5,v0+Math.sin(a)*len*t4+(rg(sd+j,5)-.5)*5);x.lineTo(p[0],p[1])}x.strokeStyle=`rgba(255,${130+hh*60|0},40,${(.7-.6*ph2)*.7})`;x.lineWidth=1.4;x.stroke()}
+ for(let i=0;i<14;i++){const w2=T*(1.6+rg(i,1))+rg(i,2)*6.28,p=P(6+rg(i,3)*30+Math.sin(w2)*4,(rg(i,4)-.5)*46+Math.cos(w2*1.3)*4);chunk(x,p[0],p[1],(2+rg(i,5)*rg(i,6)*5)*s0,i*13+5,rg(i,7)>.5?lc:mix(LY[3][4],'#000000',.45),w2)}
+ // részecskék: törmelék, por, szikra
+ let q=dt*80;while(q>0){if(Math.random()<Math.min(1,q))hP.push({t:'ch',x:nx+.5*k,y:cy+(Math.random()-.5)*1.8*k,vx:-(40+Math.random()*220),vy:20-Math.random()*160,l:1.2+Math.random()*1.2,z:3+Math.random()*7,rot:Math.random()*6.28,vr:(Math.random()-.5)*14,col:Math.random()<.55?lc:mix(LY[3][4],'#000000',.5),sd:pid++});q--}
+ q=dt*35;while(q>0){if(Math.random()<Math.min(1,q)){const l0=1.3+Math.random()*1.3;hP.push({t:'du',x:nx+.5*k,y:cy+(Math.random()-.5)*1.6*k,vx:-(30+Math.random()*80),vy:-(Math.random()*30),l:l0,L0:l0,r0:10+Math.random()*10,col:hexRgb(mix(LY[3][4],'#d8c8b0',.45))})}q--}
+ q=dt*70;while(q>0){if(Math.random()<Math.min(1,q)){const ag=Math.random()*6.283,sv=90+Math.random()*260;hP.push({t:'sp',x:nx+.55*k,y:cy,vx:Math.cos(ag)*sv-60,vy:Math.sin(ag)*sv,l:.35+Math.random()*.4})}q--}
+ hP=hP.filter(p=>(p.l-=dt)>0).slice(-260);const fl=cy+1.9*k,ce=cy-1.9*k;
+ hP.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.t=='ch'){p.vy+=620*dt;if(p.y>fl){p.y=fl;p.vy*=-.25;p.vx*=.85;p.vr*=.6}if(p.y<ce){p.y=ce;p.vy*=-.2}p.rot+=p.vr*dt;x.globalAlpha=clamp(p.l*2,0,1);chunk(x,p.x,p.y,p.z,p.sd,p.col,p.rot);x.globalAlpha=1}
+  else if(p.t=='du'){const a=.3*clamp(p.l/p.L0,0,1),r=p.r0+(p.L0-p.l)*40,g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r);g.addColorStop(0,`rgba(${p.col},${a})`);g.addColorStop(1,`rgba(${p.col},0)`);x.fillStyle=g;x.fillRect(p.x-r,p.y-r,r*2,r*2)}else p.vy+=500*dt});
+ // a gép (a jelenlegi modell)
+ x.save();x.translate(nx,cy);x.scale(k,k);const uu=(T/6)%1;mach(x,{ts,ph:T*.8,sp:T*11,sk:.6,dr:true,act:true,lit2:true,lw:()=>[0,0],GL:[],lamp:()=>{},dep:1,heat:hh,ht:S.u.f,stroke:.7*(uu<.92?uu/.92:(1-uu)/.08)});x.restore();
+ // fények, szikrák (additív)
+ x.globalCompositeOperation='lighter';LTs.forEach(l=>{const g=x.createRadialGradient(l[0],l[1],0,l[0],l[1],90);g.addColorStop(0,'rgba(255,190,100,.28)');g.addColorStop(1,'rgba(255,190,100,0)');x.fillStyle=g;x.fillRect(l[0]-90,l[1]-90,180,180)});
+ const gn=x.createRadialGradient(nx+.4*k,cy,0,nx+.4*k,cy,5*k);gn.addColorStop(0,`rgba(255,150,60,${.3+.15*Math.sin(T*5)})`);gn.addColorStop(1,'rgba(255,100,30,0)');x.fillStyle=gn;x.fillRect(nx-5*k,cy-5*k,10*k,10*k);
+ hP.forEach(p=>{if(p.t!='sp')return;x.strokeStyle=`rgba(255,${130+p.l*200|0},50,${Math.min(1,p.l*3)})`;x.lineWidth=1.8;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.vx*dt*2.5,p.y-p.vy*dt*2.5);x.stroke()});x.globalCompositeOperation='source-over';
+ const vg=x.createLinearGradient(0,0,0,h);vg.addColorStop(0,'rgba(11,8,6,.9)');vg.addColorStop(.28,'rgba(11,8,6,.1)');vg.addColorStop(.6,'rgba(11,8,6,.25)');vg.addColorStop(1,'rgba(11,8,6,.96)');x.fillStyle=vg;x.fillRect(0,0,w,h)}
+function heroLoop(ts){requestAnimationFrame(heroLoop);const mc=$('#mc');if(mc){try{hero(mc,ts)}catch(e){DBG.err='menü: '+(e.message||e);try{mc.width=mc.width}catch(_){}}}}
+function draw(ts){requestAnimationFrame(draw);try{sim();if(ts-lastSnd>80){lastSnd=ts;snd()}if(!$('#mm'))drawF(ts)}catch(e){DBG.err=(e.message||e)+' '+((e.stack||'').split('\n')[1]||'').trim().slice(-30);const c=$('#cv');if(c)c.width=c.width}}
+requestAnimationFrame(draw);requestAnimationFrame(heroLoop);
 tick();view();showMM();
 </script></body></html>
