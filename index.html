@@ -43,7 +43,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.6';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='1.7';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -132,7 +132,7 @@ function step(dt){const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;if(tl
   const L2=layer(S.depth);if(L2!=c.L)msg('Réteg: '+L2[0],1)}
  if(S.depth>=R){S.st='idle';S.won=1;msg('🌍 ELÉRTED A FÖLD KÖZEPÉT!');return}
  if(S.fuel<=1e-6&&!emerg()){if(S.depth>0)strand('Elfogyott az üzemanyag.');else{S.st='idle';msg('Elfogyott az üzemanyag a felszínen.')}return}
- if(!trav&&S.st!='idle'&&S.st!='H'&&S.set.auto&&S.fuel<=calc().need*1.05+c.fr*60){S.st='H';msg('⚠ Tartalék-határ: automatikus visszaindulás.')}
+ if(!trav&&S.st!='idle'&&S.st!='H'&&S.set.auto&&S.tr.length&&S.fuel<=calc().need*1.05+c.fr*60){S.st='H';msg('⚠ Tartalék-határ: a visszaúthoz '+fk(calc().need)+' kell, van '+fk(S.fuel)+'. Automatikus visszaindulás.')}
  if(S.depth>0){const r=Math.max(c.Tm/h[1],c.P/h[2])-1;if(r>0){S.hp-=(.02+r*.2)*dt;if(S.hp<=0)strand('A páncél összeroppant.')}}}
 function sim(){const now=Date.now();let real=Math.min((now-S.t)/1000,7*864e2);S.t=now;let rem=real,n=0;
  while(rem>1e-6&&S.st!='idle'&&n++<30000){const sc=S.st=='H'?1:S.mode=='travel'?Math.min(S.set.sc,3):S.set.sc,gd=Math.min(rem*sc,Math.max(20,real*sc/2e4));if(tl&&Date.now()-ldt<300)acc=0;else acc=Math.min(1,acc+gd/sc*1.1);step(gd*Math.max(.03,acc));rem-=gd/sc}
@@ -169,7 +169,8 @@ function sheetHTML(){const c=calc(),L=c.L,li=LY.indexOf(L),hd=HR[li],cp=HD[S.u.f
 const vDrill=()=>`<div id="stage"><canvas id="cv" onclick="sheetT&&shT(sheetT)"></canvas><div id="sh" class="sheet" style="display:${sheetT?'block':'none'}"></div></div>
 <div class="con dock" oncontextmenu="return false"><div class="lcd" id="lcd">■ KÉSZENLÉT</div><div class="tbs">${[['info','📊 Adatok'],['store','📦 Raktár'],['head','⛏ Fúrófej']].map(([k,n])=>`<button class="tb${sheetT==k?' on':''}" onclick="shT('${k}')">${n} ${sheetT==k?'▾':'▴'}</button>`).join('')}</div>
 <div class="pr">${pb('L','◀','Bal','#7cff6a','sm')}${pb('U','▲','Fel','#4fd0ff','sm')}${pb('D','▼','Le','#ff9a1a','sm')}${pb('R','▶','Jobb','#7cff6a','sm')}${pb('H','⌂','Haza','#5aa0ff','sm')}<button class="pb stop sm" style="--lc:#ff3b2f" onpointerdown="event.preventDefault();stp()"><b>■</b></button></div></div>`;
-function go(s){if(s!='idle'){if(S.fuel<=0&&!emerg())return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.')}
+function go(s){if(s!='idle'){if(S.fuel<=0&&!(s=='D'&&base()&&S.set.auto)&&!emerg())return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.');
+  if(s=='D'&&S.depth<2&&S.set.auto){const c=calc(),mn=c.fr*60*1.3+c.need*1.1;if(S.fuel<mn){if(base()){const tgt=Math.min(tank(),Math.max(mn*40,mn+1)),add=Math.max(0,Math.min(tgt-S.fuel,S.cash/c.f.p));if(S.fuel+add<mn)return toast('⛽ Kevés az üzemanyag ('+fk(S.fuel)+'), és nincs pénzed tankolni. Adj el rakományt a Piacon!');S.fuel+=add;S.cash-=add*c.f.p;msg('⛽ Automatikus tankolás: '+fk(add)+' ('+ft(add*c.f.p)+')')}else return toast('⛽ Kevés az üzemanyag az induláshoz – menj vissza a bázisra tankolni (⌂).')}}}
  if(s=='H')S.hTot=S.tr.reduce((a,t)=>a+t[1],0);aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);S.st=s;acc=0;S.t=Date.now();if(tab==0)live();else view()}
 function vShop(){const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
  for(const k in U){const[n,a,f]=U[k],i=S.u[k],nx=a[i+1];h+=`<div class="card"><b>${n}</b>: ${a[i][0]}<br><span class="mu">${f(a[i])}</span>${nx?`<br>Következő: ${nx[0]} <span class="mu">(${f(nx)})</span><br><button class="b" ${b?'':'disabled'} onclick="buy('${k}')">Fejlesztés – ${ft(nx.at(-1))}</button>`:'<br><i>Maximális szint</i>'}</div>`}
