@@ -14,6 +14,7 @@
 
 - Game includes a start animation (planned as part of "phase 1")
 - Planned UI components: engine, generator, workshop view (phase 1 scope)
+- Machines have multiple levels with distinct drawing
 
 ## Decisions, constraints & rationale
 
@@ -21,12 +22,13 @@
 - `index.html` and service worker cache both reference `js/base.js` — paths are consistent
 - `base.js` provides save protection and performance control features
 - Development is phased; phase 1 = engine, generator, workshop view, start animation
-- Test runner expects `tests` folder one level up from its current location — needs path adjustment to work from project root
+- Test runner configuration fixed — tests now run correctly from project root
+- All 33 tests pass; coverage includes saving, loading old saves, performance controller, drilling, fuel, and machine level drawing
+- Visual/touch/sound testing still needed (not covered by test suite)
 
 ## Open questions & assumptions
 
-- Test suite (`harness.js`, `run.js`) not yet runnable; path configuration likely broken from project root
-- Game has not been run or tested after the file move
+- Game has not been run or tested visually or on mobile after fixes
 - Phase 1 work awaits user confirmation before starting
 - Exact game genre, mechanics, and visual style still undefined
 - Whether `index.html` was already pointing to `js/base.js` before the move or was preconfigured for this structure is unclear

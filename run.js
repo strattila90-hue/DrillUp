@@ -1,5 +1,5 @@
 'use strict';
-/* Futtatás: node tests/run.js   (nincs külső függőség). Logikát és kivételeket ellenőriz – megjelenést, érintést, hangot nem. */
+/* Futtatás: node run.js   (nincs külső függőség). Logikát és kivételeket ellenőriz – megjelenést, érintést, hangot nem. */
 const {boot}=require('./harness');
 let pass=0,fail=0;const only=process.argv[2];let grp='';
 const group=n=>{grp=n;console.log('\n'+n)};
