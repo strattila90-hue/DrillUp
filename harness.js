@@ -4,7 +4,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const ROOT=__dirname;
 const P=()=>new Proxy(function(){},{get:(o,k)=>k=='sampleRate'?44100:k=='state'?'running':k=='length'?100:k=='currentTime'?0:k=='width'?50:k==Symbol.toPrimitive?()=>0:P(),apply:()=>P(),set:()=>true});
-const NAMES=['S','go','draw','drawF','hero','showMM','hideMM','step','sim','tick','calc','DBG','pd','pu','stp','tl','pr','hold','sanitizeSave','init','EV','save','D','H','T','C','HD','HR','LY','FD','R','fd','fk','ft','layer','cargoKg','cap','tank','base','emerg','view','sheetHTML','sell','fill','buy','repair','expSave','impSave','toast','msg','HEAT','sheetT'];
+const NAMES=['S','go','draw','drawF','hero','showMM','hideMM','step','sim','tick','calc','DBG','pd','pu','stp','tl','pr','hold','sanitizeSave','init','EV','save','D','H','T','C','HD','HR','LY','FD','R','fd','fk','ft','layer','cargoKg','cap','tank','base','emerg','view','sheetHTML','vShop','sell','fill','buy','repair','expSave','impSave','toast','msg','HEAT','sheetT'];
 function boot(o={}){
  const store=Object.assign({},o.store||{}),st={quota:false,sets:0},toasts=[];let menu=!!o.menu;
  const ls={getItem:k=>(k in store?store[k]:null),setItem:(k,v)=>{if(st.quota)throw new Error('QuotaExceededError');store[k]=String(v);st.sets++},removeItem:k=>{delete store[k]}};
