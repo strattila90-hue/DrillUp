@@ -4,6 +4,7 @@
   "private": true,
   "description": "Drill Up - böngészős játék",
   "scripts": {
+    "build": "node run.js",
     "test": "node run.js"
   }
 }
