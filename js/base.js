@@ -8,7 +8,7 @@ W.HK=W.HK||{};
 W.on=(e,f)=>{(W.HK[e]=W.HK[e]||[]).push(f)};
 W.off=(e,f)=>{const h=W.HK[e];if(h){const i=h.indexOf(f);if(i>=0)h.splice(i,1)}};
 // ---------- mentés ----------
-const KEY='drillup1',BAK='drillup1_bak',BAK2='drillup1_bak2',VER=2;
+const KEY='drillup1',BAK='drillup1_bak',BAK2='drillup1_bak2',VER=3;
 const ls={get(k){try{return W.localStorage.getItem(k)}catch(e){return null}},set(k,v){try{W.localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{W.localStorage.removeItem(k)}catch(e){}}};
 const isObj=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
 const clone=v=>v==null||typeof v!=='object'?v:JSON.parse(JSON.stringify(v));
@@ -16,8 +16,9 @@ const clone=v=>v==null||typeof v!=='object'?v:JSON.parse(JSON.stringify(v));
 function fill(t,d){for(const k in d){if(t[k]===undefined||t[k]===null)t[k]=clone(d[k]);else if(isObj(d[k])&&isObj(t[k]))fill(t[k],d[k])}return t}
 // migrációk: MIG[n] az n. verzióról az n+1-edikre emel (idempotens)
 const MIG={1:o=>{o.u=isObj(o.u)?o.u:{};if(o.u.f==null)o.u.f=0;if(typeof o.st!=='string'||o.st.length>1)o.st='idle';if(!Array.isArray(o.tr))o.tr=[];if(!Array.isArray(o.tn))o.tn=[];if(o.depth>0&&!o.tr.length)o.tr=[['D',o.depth]]}};
+function addMig(from,fn){const prev=MIG[from];MIG[from]=prev?o=>{prev(o);fn(o)}:fn}
 function migrate(o,from){for(let v=from;v<VER;v++)if(MIG[v])MIG[v](o)}
-const Save={VER,KEY,lastBak:0,err:null,info:null,
+const Save={VER,KEY,addMig,lastBak:0,err:null,info:null,
  load(init,san){let raw=ls.get(KEY),obj=null,src='new';
   if(raw!==null){try{obj=JSON.parse(raw);if(!isObj(obj))throw 0;src='main'}catch(e){ls.set('drillup1_corrupt',raw);obj=null}}
   if(!obj){for(const b of [BAK,BAK2]){const s=ls.get(b);if(!s)continue;try{const o=JSON.parse(s);if(isObj(o)){obj=o;src=b;break}}catch(e){}}}

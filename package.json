@@ -5,6 +5,6 @@
   "description": "Drill Up - böngészős játék",
   "scripts": {
     "build": "node check.js",
-    "test": "node run.js"
+    "test": "node tests/run.js"
   }
 }
