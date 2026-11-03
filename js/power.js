@@ -20,7 +20,7 @@ const ENG={rpm:0,hyd:0,ld:0,cr:0,phase:'off',idleT:0,flash:0,burst:0,inited:fals
  // valós idejű (nem időgyorsított) frissítés a szimuláció elején
  update(real){ENG.init();
   if(!S.en){if(ENG.rpm>0){ENG.rpm=Math.max(0,ENG.rpm-real/1.6);ENG.hyd=Math.max(0,ENG.hyd-real/1.2);ENG.phase=ENG.rpm>0?'stop':'off'}else ENG.phase='off';ENG.ld*=Math.pow(.2,Math.min(real,5));return}
-  if(S.fuel<=1e-6&&!emerg()){S.en=0;ENG.phase='stop';msg('⚙ A motor leállt: nincs üzemanyag.');alarm3();return}
+  if(S.fuel<=1e-6&&!emerg()){S.en=0;ENG.phase='stop';msg('⚙ A motor leállt: nincs üzemanyag.');alarm3();if(W.NET)NET.slip();return}
   if(ENG.phase==='crank'){ENG.cr+=real;ENG.rpm=Math.min(.18,ENG.cr*.3);if(ENG.cr>=.8){ENG.phase='run';ENG.burst=1;ENG.snd('ignite')}}
   else{ENG.phase='run';const tgt=1-.12*Math.max(0,ENG.ld-.8);ENG.rpm+=(tgt-ENG.rpm)*(1-Math.exp(-real*1.1));ENG.hyd+=((ENG.rpm>.5?1:0)-ENG.hyd)*(1-Math.exp(-real*1.3))}
   if(ENG.phase==='run'&&!ENG.wasReady&&ENG.ready()){ENG.wasReady=1;ENG.flash=1;ENG.snd('ready')}
@@ -47,7 +47,7 @@ W.ENG=ENG;
 const GEN={lf:.2,idleT:0,stepped:false,
  g(){return GN[S.u.g]},
  running(){return !!S.gon&&S.gf>1e-6},
- demand(){return 25+(S.mode==='drill'?40:0)+(S.depth>2?15:0)}, // kW – a későbbi fázisok további fogyasztókkal bővítik
+ demand(){return 25+(S.mode==='drill'?40:0)+(S.depth>2?15:0)+Math.min(60,.05*(S.lamps?S.lamps.length:0))}, // kW – a későbbi fázisok további fogyasztókkal bővítik
  sat(){return GEN.running()?Math.min(1,GN[S.u.g][1]/GEN.demand()):0},
  mult(){return 1-.10*(1-.85*GEN.sat())}, // a hajtómotor teljesítmény-szorzója: generátor nélkül a segédberendezések a motort terhelik
  step(dg){if(!GEN.running())return;const g=GN[S.u.g];GEN.lf=clamp(GEN.demand()/g[1],.2,1);

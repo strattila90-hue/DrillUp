@@ -81,4 +81,52 @@ t('blueprint: rajz, kiválasztás, százalék, fejlesztés a bázison',()=>{cons
 t('blueprint: a bázison kívül nem fejleszthető, a gomb letiltva és indoklással',()=>{const g=base0(),T=g.T,S=T.S,B=g.sb.BP;S.depth=50;B.sel='h';const h=B.html();ok(/Fejleszteni csak a bázison/.test(h)&&/disabled/.test(h));const c0=S.cash;B.buy();eq(S.cash,c0)});
 t('blueprint: maximális szinten nincs vásárlás, 100%',()=>{const g=base0(),T=g.T,S=T.S,B=g.sb.BP;S.u.h=T.H.length-1;B.sel='h';const h=B.html();ok(/Maximális szint/.test(h));eq(B.pct(B.parts.find(p=>p.k==='h')),100)});
 
+group('F) 2. fázis: járathálózat, szabadesés, fék, lámpák');
+const shaft=(tn,o={})=>{const g=boot();g.engineOn();const T=g.T,S=T.S;S.tn=tn;S.fuel=800;S.set.sc=o.sc||1;S.set.abk=o.abk===undefined?1:o.abk;S.depth=o.d||0;S.x=o.x||0;S.tr=o.tr||(S.depth>0?[['D',S.depth]]:[]);S.cg={};return g};
+const until=(g,cond,max=3000)=>{let n=0;const E=[];for(;n<max&&!cond();n++){E.push(...g.frames(1))}return{n,errs:E}};
+t('szabad tér: kapszula-vizsgálat (4,4 m széles járat, a végén nincs túlnyúlás)',()=>{const g=shaft([[0,0,0,100],[0,100,50,100]]),N=g.sb.NET;
+ ok(N.free(0,50)&&N.free(2.2,50)&&!N.free(2.3,50));ok(N.free(10,100)&&N.free(10,102.2)&&!N.free(10,102.3));ok(!N.free(10,50));ok(!N.free(0,100.01+2.3));
+ ok(N.free(0,100.01),'a függőleges akna alja a vízszintes járatba csatlakozik')});
+t('padló és távolság: láncolt járatokon át (akna + vízszintes járat)',()=>{const g=shaft([[0,0,0,100],[0,100,50,100]]),N=g.sb.NET;ok(Math.abs(N.floor(0,50)-102.2)<1e-6,'padló '+N.floor(0,50));ok(Math.abs(N.reach(0,100,1,0)-50)<1e-6);ok(Math.abs(N.ahead(0,100,1,0)-50)<1e-6);eq(N.ahead(50,100,1,0),0)});
+t('szabadesés asszisztenssel: puhán ér le, nincs sérülés, a visszaút-verem frissül',()=>{const g=shaft([[0,0,0,300]]),T=g.T,S=T.S,N=g.sb.NET;S.st='D';let vmax=0,started=false;const r=until(g,()=>{vmax=Math.max(vmax,N.vz);if(N.falling)started=true;return started&&!N.falling},2500);
+ eq(r.errs,[]);ok(vmax>25,'max sebesség '+vmax.toFixed(1));ok(Math.abs(S.depth-300)<.01,'mélység '+S.depth);eq(S.hp,100);eq(S.tr,[['D',300]]);ok(S.log.some(m=>/Landolás/.test(m)))});
+t('szabadesés közben nem fogy az üzemanyag, és a játékidő nem gyorsul (×60-nál is valós idejű)',()=>{const g=shaft([[0,0,0,150]],{sc:60,abk:1}),T=g.T,S=T.S,N=g.sb.NET;const f0=S.fuel;S.st='D';let started=false;const r=until(g,()=>{if(N.falling)started=true;return started&&!N.falling},1500);ok(r.n>300&&r.n<900,'esés ideje '+(r.n*16.7/1000).toFixed(1)+' mp');ok(Math.abs(S.fuel-f0)<.5,'üzemanyag')});
+t('becsapódás fék nélkül: a váz sérül (5 m-es esés ≈ 30-40%)',()=>{const g=shaft([[0,0,0,5]],{abk:0}),T=g.T,S=T.S,N=g.sb.NET;S.st='D';until(g,()=>S.depth>1&&!N.falling,600);ok(S.hp<75&&S.hp>55,'hp '+S.hp.toFixed(1));ok(S.log.some(m=>/Becsapódás/.test(m)))});
+t('végzetes zuhanás: a gép elvész, a járatok és a pénz megmaradnak',()=>{const g=shaft([[0,0,0,300]],{abk:0}),T=g.T,S=T.S,N=g.sb.NET;S.cash=4321;S.u.d=2;S.st='D';until(g,()=>S.log.some(m=>/összeroppant/.test(m)),1500);ok(S.log.some(m=>/összeroppant/.test(m)));eq(S.u.d,0);eq(S.depth,0);eq(S.cash,4321);eq(S.tn.length,1);eq(N.falling,false)});
+t('kézi fék: mélyen megállítja a zuhanó gépet (asszisztens nélkül)',()=>{const g=shaft([[0,0,0,300]],{abk:0}),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK;S.st='D';g.frames(120);ok(N.falling&&N.vz>15);B.down();let bkmax=0;const r=until(g,()=>{bkmax=Math.max(bkmax,N.bk);return !N.falling},300);eq(r.errs,[]);ok(S.depth>20&&S.depth<150,'megállt: '+S.depth.toFixed(1));eq(S.st,'idle');eq(S.hp,100);ok(bkmax>.9,'a fék teljes nyomásra kapcsolt: '+bkmax.toFixed(2));ok(S.log.some(m=>/rögzítőfék/.test(m)));B.up();eq(N.bkIn,0)});
+t('fék: a pu() (felengedés) elengedi',()=>{const g=boot(),B=g.sb.BK;B.down();eq(g.sb.NET.bkIn,1);g.T.pu();eq(B.held,false);eq(g.sb.NET.bkIn,0)});
+t('motorral mászás az aknában nem esés; üresjáratban az akna közepén sem esik le',()=>{const g=shaft([[0,0,0,100]],{d:100}),T=g.T,S=T.S,N=g.sb.NET;T.go('U');g.frames(400);ok(S.depth<99,'mászik: '+S.depth.toFixed(1));eq(N.falling,false);S.st='idle';const d=S.depth;g.frames(180);eq(N.falling,false);ok(Math.abs(S.depth-d)<1e-6)});
+t('áttörés: lefelé fúrva a meglévő vízszintes járatba beleesik, a padlón áll, majd a középvonalra áll fel',()=>{const g=shaft([[0,0,0,17.6],[-20,20,20,20]],{d:17.6,sc:60}),T=g.T,S=T.S,N=g.sb.NET;S.st='D';const r=until(g,()=>S.depth>22&&!N.falling,2000);eq(r.errs,[]);ok(Math.abs(S.depth-22.2)<.05,'padló '+S.depth);
+ const cg0=T.cargoKg(),n0=S.tn.length;S.set.sc=1;T.go('R');g.frames(150);eq(S.tn.length,n0,'nem fúr újra');ok(Math.abs(S.depth-20)<.06,'középvonal '+S.depth);ok(S.x>5,'halad: '+S.x.toFixed(1));ok(Math.abs(T.cargoKg()-cg0)<1e-9,'nincs hozam a kész járatban')});
+t('meglévő vízszintes járatban nem fúr újra: nincs új szakasz, nincs hozam, kevés üzemanyag',()=>{const g=shaft([[0,50,100,50]],{d:50,x:0,tr:[['R',0.001]]}),T=g.T,S=T.S;const f0=S.fuel;T.go('R');g.frames(600);ok(S.x>40,'x '+S.x.toFixed(1));eq(S.tn.length,1);eq(T.cargoKg(),0);ok(f0-S.fuel<5,'fogyasztás '+(f0-S.fuel).toFixed(2))});
+t('esés után a hazatérés a verem mentén működik',()=>{const g=shaft([[0,0,0,300]]),T=g.T,S=T.S,N=g.sb.NET;S.st='D';until(g,()=>S.depth>299&&!N.falling,2500);S.st='idle';T.go('H');let f=0;for(;f<900&&S.st=='H';f++)g.frames(1);ok(f*16.7<8000,'hazaút '+(f*16.7/1000).toFixed(1)+' mp');eq(S.depth,0)});
+t('lámpák: 8 m-enként kerülnek ki az új járatba, pénzbe kerülnek',()=>{const g=boot(),T=g.T,S=T.S,L=g.sb.LMP;S.cash=1e6;S.mode='drill';S.x=0;S.depth=0;T.EV('step',1);for(let i=0;i<40;i++){S.depth+=1;T.EV('step',1)}eq(S.lamps.length,5);eq(S.cash,1e6-5*800);ok(S.lamps.every(l=>l[2]===1));for(let i=1;i<S.lamps.length;i++)ok(Math.abs(S.lamps[i][1]-S.lamps[i-1][1]-8)<1e-6)});
+t('lámpák: a már megvilágított szakaszon nem ismétel, új helyen igen',()=>{const g=boot(),T=g.T,S=T.S,L=g.sb.LMP;S.cash=1e6;S.mode='drill';const drill=(x)=>{S.x=x;S.depth=0;L.px=null;L.dist=0;T.EV('step',1);for(let i=0;i<40;i++){S.depth+=1;T.EV('step',1)}};drill(0);eq(S.lamps.length,5);drill(3);eq(S.lamps.length,5,'párhuzamos, 3 m-re: már fényes');drill(30);eq(S.lamps.length,10)});
+t('lámpák: kikapcsolható, pénz nélkül nem telepít, utólag sem lóg a régi',()=>{const g=boot(),T=g.T,S=T.S,L=g.sb.LMP;S.mode='drill';S.set.alp=0;S.cash=1e6;T.EV('step',1);for(let i=0;i<20;i++){S.depth+=1;T.EV('step',1)}eq(S.lamps.length,0);S.set.alp=1;S.cash=100;L.px=null;L.dist=0;S.depth=0;T.EV('step',1);for(let i=0;i<20;i++){S.depth+=1;T.EV('step',1)}eq(S.lamps.length,0)});
+t('mentés-migráció 3→4: a régi járatok lámpát kapnak, térköz ≥ 5,5 m',()=>{const g=boot({store:{drillup1:legacy({v:3,tn:[[0,0,0,100],[0,100,40,100]]})}}),S=g.T.S;ok(S.lamps.length>=14&&S.lamps.length<=20,'lámpák '+S.lamps.length);for(let i=0;i<S.lamps.length;i++)for(let j=i+1;j<S.lamps.length;j++)ok(Math.hypot(S.lamps[i][0]-S.lamps[j][0],S.lamps[i][1]-S.lamps[j][1])>=5.5);eq(S.v,g.sb.Save.VER);eq(S.set.alp,1);eq(S.set.abk,1)});
+t('mentés-ellenőrzés: hibás lámpa/járat adatok kiszűrve, túl hosszú lista levágva',()=>{const g=boot({store:{drillup1:legacy({lamps:[[1,2]],tn:Array.from({length:3100},(_,i)=>[0,i,0,i+1])})}}),S=g.T.S;eq(S.lamps,[]);eq(S.tn.length,3000)});
+t('gép elvesztésekor a járatok és a lámpák megmaradnak',()=>{const g=boot(),T=g.T,S=T.S;S.tn=[[0,0,0,50]];S.lamps=[[0,8,1]];S.depth=40;T.strand('teszt');eq(S.tn.length,1);eq(S.lamps.length,1);eq(S.depth,0)});
+t('a lámpák terhelik a generátort',()=>{const g=boot(),T=g.T,S=T.S,G=g.sb.GEN;const a=G.demand();S.lamps=Array.from({length:200},(_,i)=>[i,0,0]);ok(G.demand()>a+9)});
+t('kezelőfelület: fék gomb a sorban, 7 oszlop; a rajz hibátlan szabadesés + fékezés közben',()=>{const g=shaft([[0,0,0,300]],{abk:0}),T=g.T,S=T.S;ok(/id="bBK"/.test(g.sb.BK.btn()));S.st='D';let e=[];e=e.concat(g.frames(100));g.sb.BK.down();e=e.concat(g.frames(80));g.sb.BK.up();e=e.concat(g.frames(60));eq(e,[])});
+
+t('mély akna asszisztenssel: sebességkorlát 35 m/s, puha landolás; a fék hűtéséhez a motor kell',()=>{const run=en=>{const g=shaft([[0,0,0,900]]),T=g.T,S=T.S,N=g.sb.NET;if(!en){S.en=0;g.sb.ENG.rpm=0;g.sb.ENG.phase='off'}S.st='D';let vmax=0,started=false,tmax=0;const r=until(g,()=>{vmax=Math.max(vmax,N.vz);tmax=Math.max(tmax,N.bkT);if(N.falling)started=true;return started&&!N.falling},4000);return{S,vmax,tmax,hp:S.hp,d:S.depth,errs:r.errs}};
+ const a=run(true),b=run(false);eq(a.errs,[]);ok(a.vmax>25&&a.vmax<=37,'max sebesség '+a.vmax.toFixed(1));ok(a.tmax<1,'motoros hűtés mellett a fék nem fut túl: '+a.tmax.toFixed(2));eq(a.hp,100);ok(Math.abs(a.d-900)<.01);ok(b.tmax>a.tmax*1.5,'motor nélkül jobban melegszik: '+b.tmax.toFixed(2)+' vs '+a.tmax.toFixed(2))});
+
+group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
+const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
+for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
+ S.cash=5e7;S.fuel=800;S.set.sc=[1,10,60][seed%3];S.set.abk=seed%2;S.u.d=seed%4;S.u.h=seed%3;S.u.f=seed%3;
+ // véletlen járathálózat
+ S.tn=[];let x=0,d=0;for(let i=0;i<30;i++){const v=R()<.5,l=5+R()*80;if(v){S.tn.push([x,d,x,d+l]);d+=l}else{const dir=R()<.5?-1:1;S.tn.push([x,d,x+dir*l,d]);x+=dir*l}}
+ const acts=['D','U','L','R','H','idle'];let errs=[];
+ for(let f=0;f<2000;f++){
+  if(f%25===0){const a=R();if(a<.5)T.go(acts[(R()*acts.length)|0]);else if(a<.6){B.down()}else if(a<.7){B.up()}else if(a<.75)P.toggleEng();else if(a<.8)g.sb.GEN.toggle();else if(a<.83){S.depth=Math.max(0,Math.min(300,S.depth+(R()-.5)*100));S.x+=(R()-.5)*50}else if(a<.86){S.fuel=800;S.gf=60}else if(a<.88){S.cash=5e7}}
+  errs=errs.concat(g.frames(1));
+  if(f%100===0){const fin=v=>typeof v==='number'&&isFinite(v);
+   ok(fin(S.x)&&fin(S.depth)&&fin(S.fuel)&&fin(S.hp)&&fin(S.cash)&&fin(N.vz)&&fin(N.bk)&&fin(N.bkT),'véges értékek @'+f);
+   ok(S.depth>=0&&S.depth<=6371e3,'mélység @'+f+': '+S.depth);ok(S.hp>=0&&S.hp<=100,'hp @'+f);ok(S.fuel>=0&&S.gf>=0,'üzemanyag @'+f);ok(N.vz>=0&&N.bk>=0&&N.bk<=1.0001,'fék/sebesség @'+f);
+   ok(Array.isArray(S.tr)&&S.tr.every(e=>e[1]>=0&&isFinite(e[1])),'verem @'+f);ok(S.lamps.every(l=>l.every(isFinite)),'lámpák @'+f);
+   ok(S.st==='idle'||'UDLRH'.includes(S.st),'állapot @'+f)}}
+ eq(errs,[]);T.save();const g2=boot({store:g.store});ok(g2.T.S.tn.length>=1&&g2.T.S.v===g2.sb.Save.VER,'a fuzz utáni mentés betölthető')})}
+
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);

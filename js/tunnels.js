@@ -7,18 +7,31 @@ W.MODS=W.MODS||[];W.MODS.push('tunnels');
 const HW=2.2,G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
- // ---------- gyors keresés: a függőleges szakaszok x szerint, a vízszintesek mélység szerint rendezve ----------
- build(){const V=[],Hh=[];for(const g of S.tn){if(g[0]===g[2])V.push(g);else if(g[1]===g[3])Hh.push(g)}V.sort((a,b)=>a[0]-b[0]);Hh.sort((a,b)=>a[1]-b[1]);NET.idx={ref:S.tn,n:S.tn.length,V,H:Hh}},
- ensure(){const I=NET.idx;if(!I||I.ref!==S.tn||I.n!==S.tn.length)NET.build()},
- q(arr,k,key,cb){let lo=0,hi=arr.length;const t=k-HW;while(lo<hi){const m=(lo+hi)>>1;if(arr[m][key]<t)lo=m+1;else hi=m}
-  for(let i=lo;i<arr.length&&arr[i][key]<=k+HW;i++)if(cb(arr[i])===true)return true;return false},
- free(x,d){NET.ensure();const I=NET.idx;
-  return NET.q(I.V,x,0,g=>d>=Math.min(g[1],g[3])-1e-9&&d<=Math.max(g[1],g[3])+1e-9)||NET.q(I.H,d,1,g=>x>=Math.min(g[0],g[2])-1e-9&&x<=Math.max(g[0],g[2])+1e-9)},
- // a szabad téren belül egy irányban megtehető távolság (összefüggő járatok láncán át)
- reach(x,d,dx,dd){NET.ensure();const I=NET.idx;let cx=x,cd=d,total=0;
+ // ---------- gyors keresés: 32 m-es rács (az utolsó, éppen növekvő szakasz és a nagyon hosszúak külön listában) ----------
+ CELL:32,
+ cells(g,fn){const P=HW+.1,x0=Math.min(g[0],g[2])-P,x1=Math.max(g[0],g[2])+P,d0=Math.min(g[1],g[3])-P,d1=Math.max(g[1],g[3])+P,C=NET.CELL;
+  const nx=Math.floor(x1/C)-Math.floor(x0/C)+1,nd=Math.floor(d1/C)-Math.floor(d0/C)+1;if(nx*nd>400)return false;
+  for(let i=Math.floor(x0/C);i<=Math.floor(x1/C);i++)for(let j=Math.floor(d0/C);j<=Math.floor(d1/C);j++)fn(i+','+j);return true},
+ addStatic(g){const I=NET.idx;if(!NET.cells(g,k=>{(I.grid.get(k)||I.grid.set(k,[]).get(k)).push(g)}))I.long.push(g)},
+ build(){const t=S.tn,I={ref:t,n:t.length,first:t[0],grid:new Map(),long:[],last:t[t.length-1]};NET.idx=I;for(let i=0;i<t.length-1;i++)NET.addStatic(t[i])},
+ ensure(){const I=NET.idx,t=S.tn,n=t.length;
+  if(!I||I.ref!==t||I.first!==t[0]||n<I.n||n>I.n+1)return NET.build();
+  if(n===I.n+1){if(I.last)NET.addStatic(I.last);I.last=t[n-1];I.n=n}},
+ each(x,d,fn){NET.ensure();const I=NET.idx,C=NET.CELL,a=I.grid.get(Math.floor(x/C)+','+Math.floor(d/C));
+  if(a)for(let i=0;i<a.length;i++)if(fn(a[i])===true)return true;
+  for(let i=0;i<I.long.length;i++)if(fn(I.long[i])===true)return true;
+  return I.last?fn(I.last)===true:false},
+ // a szakasz kapszulája (4,4 m széles) tartalmazza-e a pontot; pad: tűrés
+ hit(g,x,d,pad){const E=HW+1e-6;if(g[0]===g[2])return Math.abs(x-g[0])<=E+pad&&d>=Math.min(g[1],g[3])-pad-1e-9&&d<=Math.max(g[1],g[3])+pad+1e-9;
+  if(g[1]===g[3])return Math.abs(d-g[1])<=E+pad&&x>=Math.min(g[0],g[2])-pad-1e-9&&x<=Math.max(g[0],g[2])+pad+1e-9;return false},
+ free(x,d){return NET.each(x,d,g=>NET.hit(g,x,d,0))},
+ // a szabad téren belül egy irányban megtehető távolság (összefüggő járatok láncán át; 6 cm-es tűréssel)
+ reach(x,d,dx,dd){const PD=.06;let cx=x,cd=d,total=0;
   for(let it=0;it<64;it++){let best=0;
-   NET.q(I.V,cx,0,g=>{const lo=Math.min(g[1],g[3]),hi=Math.max(g[1],g[3]);if(cd<lo-1e-9||cd>hi+1e-9)return false;const p=dd>0?hi-cd:dd<0?cd-lo:(dx>0?g[0]+HW-cx:cx-(g[0]-HW));if(p>best)best=p;return false});
-   NET.q(I.H,cd,1,g=>{const lo=Math.min(g[0],g[2]),hi=Math.max(g[0],g[2]);if(cx<lo-1e-9||cx>hi+1e-9)return false;const p=dx>0?hi-cx:dx<0?cx-lo:(dd>0?g[1]+HW-cd:cd-(g[1]-HW));if(p>best)best=p;return false});
+   NET.each(cx,cd,g=>{if(!NET.hit(g,cx,cd,PD))return false;let p;
+    if(g[0]===g[2]){const lo=Math.min(g[1],g[3]),hi=Math.max(g[1],g[3]);p=dd>0?hi-cd:dd<0?cd-lo:(dx>0?g[0]+HW-cx:cx-(g[0]-HW))}
+    else{const lo=Math.min(g[0],g[2]),hi=Math.max(g[0],g[2]);p=dx>0?hi-cx:dx<0?cx-lo:(dd>0?g[1]+HW-cd:cd-(g[1]-HW))}
+    if(p>best)best=p;return false});
    if(best<=1e-9)break;total+=best;cx+=dx*best;cd+=dd*best}
   return total},
  floor(x,d){return d+NET.reach(x,d,0,1)},
@@ -30,13 +43,13 @@ const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
   while(left>1e-9&&tr.length&&tr.at(-1)[0]===op){const t=tr.at(-1),use=Math.min(t[1],left);t[1]-=use;left-=use;if(t[1]<1e-6)tr.pop()}
   if(left>1e-9){const t=tr.at(-1);if(t&&t[0]===m)t[1]+=left;else tr.push([m,left])}},
  // vízszintes járatban a gép a járat tengelyére "felül" (az esés után a padlón áll)
- settle(dt){if(S.st!=='L'&&S.st!=='R')return;NET.ensure();const I=NET.idx;let ds=null;
-  NET.q(I.H,S.depth,1,g=>{if(S.x>=Math.min(g[0],g[2])-1e-9&&S.x<=Math.max(g[0],g[2])+1e-9){ds=g[1];return true}return false});
-  if(ds===null||Math.abs(S.depth-ds)<.02)return;
-  if(NET.q(I.V,S.x,0,g=>S.depth>=Math.min(g[1],g[3])-1e-9&&S.depth<=Math.max(g[1],g[3])+1e-9))return;
-  const dd=clamp(ds-S.depth,-4*dt,4*dt);S.depth+=dd;NET.trail(dd>0?'D':'U',Math.abs(dd))},
+ settle(dt){if(S.st!=='L'&&S.st!=='R')return;let ds=null,inV=false;
+  NET.each(S.x,S.depth,g=>{if(!NET.hit(g,S.x,S.depth,0))return false;if(g[0]===g[2])inV=true;else if(ds===null)ds=g[1];return false});
+  if(ds===null||inV||Math.abs(S.depth-ds)<.02)return;
+  const dd=Math.max(-S.depth,clamp(ds-S.depth,-4*dt,4*dt));S.depth+=dd;NET.trail(dd>0?'D':'U',Math.abs(dd))},
  hcap(){return 1.2e8*(1+S.u.h)},
- begin(){if(NET.falling)return;NET.falling=true;S.mode='';NET.alarmT=0;
+ cool(){return .04+(W.ENG&&ENG.ready()?.2:0)}, // a fék hűlése: működő motor (olajhűtő) mellett sokkal gyorsabb
+ begin(){if(NET.falling)return;if(!NET.free(S.x,S.depth)){S.depth+=.05;NET.trail('D',.05)}NET.falling=true;NET.assist=false;S.mode='';NET.alarmT=0;
   msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a FÉK gombbal te is fékezhetsz).':'⚠ SZABADESÉS! Tartsd nyomva a FÉK gombot!');if(W.alarm3)alarm3()},
  slip(){if(!NET.falling&&NET.openBelow(S.x,S.depth)&&(S.st==='U'||S.st==='H')){S.st='idle';NET.begin()}},
  crash(v){const tol=VTOL[S.u.h],dmg=Math.max(0,Math.pow(v/tol,2)-.36)*55;NET.shake=clamp(v/tol,0,1);
@@ -48,13 +61,16 @@ const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
   if(!NET.falling){if(S.st==='D'&&S.depth<R-1&&NET.openBelow(S.x,S.depth))NET.begin();else{NET.settle(dt);return false}}
   const m=mass(),k=.6*A/m,d0=S.depth;let left=dt;
   while(left>1e-9&&NET.falling){const h=Math.min(left,.02);left-=h;
-   const fl=NET.floor(S.x,S.depth),dist=fl-S.depth;let tgt=NET.bkIn?1:0;
-   if(S.set.abk&&NET.vz>1){const vl=Math.min(6,VTOL[S.u.h]*.5);if(NET.vz>vl){const need=(NET.vz*NET.vz-vl*vl)/(2*Math.max(.3,dist));if(dist<NET.vz*NET.vz/(2*AB*.5)+8)tgt=Math.max(tgt,clamp(need/(AB*.85),0,1))}}
+   const fl=NET.floor(S.x,S.depth),dist=fl-S.depth,eff=NET.bkT<1?1:Math.max(.4,1-(NET.bkT-1)*.5);let tgt=NET.bkIn?1:0;
+   if(S.set.abk){const vl=Math.min(6,VTOL[S.u.h]*.5),avail=Math.max(1,AB*eff-G),need=NET.vz>vl?(NET.vz*NET.vz-vl*vl)/(2*Math.max(.3,dist)):0;
+    if(!NET.assist&&need>.3*avail)NET.assist=true;
+    if(NET.assist)tgt=Math.max(tgt,clamp((NET.vz>vl?need*1.15+G-k*NET.vz*NET.vz:G-k*NET.vz*NET.vz)/(AB*eff),0,1));
+    if(NET.vz>35)tgt=Math.max(tgt,clamp((G-k*NET.vz*NET.vz+3)/(AB*eff),0,1))} // sebességkorlátozó: mély aknában sem gyorsul 35 m/s fölé
    NET.bk+=(tgt-NET.bk)*Math.min(1,h/.25);
-   const eff=NET.bkT<1?1:Math.max(.4,1-(NET.bkT-1)*.5),ab=NET.bk*AB*eff;let a=G-k*NET.vz*NET.vz-ab;if(NET.vz<=0&&a<0)a=0;
+   const ab=NET.bk*AB*eff;let a=G-k*NET.vz*NET.vz-ab;if(NET.vz<=0&&a<0)a=0;
    const vN=Math.max(0,NET.vz+a*h),dd=(NET.vz+vN)/2*h;
-   NET.bkT=Math.max(0,NET.bkT+m*ab*(NET.vz+vN)/2*h/NET.hcap()-.04*h);
-   if(S.depth+dd>=fl-1e-9){S.depth=fl;NET.falling=false;NET.vz=0;NET.crash(vN);break}
+   NET.bkT=Math.max(0,NET.bkT+m*ab*(NET.vz+vN)/2*h/NET.hcap()-NET.cool()*h);
+   if(S.depth+dd>=fl-1e-9){S.depth=fl;NET.falling=false;NET.assist=false;NET.vz=0;NET.crash(vN);break}
    S.depth+=dd;NET.vz=vN;
    if(NET.vz<.05&&NET.bk>.3){NET.falling=false;NET.vz=0;if(S.st==='D')S.st='idle';msg('A gép megállt a járatban (rögzítőfék).');break}}
   const fell=S.depth-d0;if(fell>1e-9){S.max=Math.max(S.max,S.depth);NET.trail('D',fell)}
@@ -77,10 +93,10 @@ function aud(){if(typeof AC==='undefined'||!AC)return;if(!AU){AU={};AU.so=AC.cre
 const rr=(x,a,b,c,d,r)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,r);else x.rect(a,b,c,d)};
 if(W.on){
  // nem eséskor: a fék nyomása és hűlése valós időben, rázkódás lecsengése, riasztás
- on('frame',dt=>{if(!NET.falling){NET.bk+=((NET.bkIn?1:0)-NET.bk)*Math.min(1,dt/.25);NET.bkT=Math.max(0,NET.bkT-.05*dt)}
+ on('frame',dt=>{if(!NET.falling){NET.bk+=((NET.bkIn?1:0)-NET.bk)*Math.min(1,dt/.25);NET.bkT=Math.max(0,NET.bkT-NET.cool()*dt)}
   NET.shake=Math.max(0,NET.shake-dt/.8);
   if(NET.falling&&NET.vz>12&&NET.bk<.5){NET.alarmT+=dt;if(NET.alarmT>.35){NET.alarmT=0;if(W.beep)beep(1500,.1,.1)}}
-  NET.t=(NET.t||0)+dt;if(NET.t>=.08){NET.t=0;try{aud()}catch(e){}}});
+  NET.t=(NET.t||0)+dt;if(NET.t>=.08){NET.t=0;try{aud()}catch(e){}const b=$('#bBK');if(b)b.classList.toggle('on',NET.bk>.1)}});
  on('world.front',V=>{if(NET.bk>.2&&NET.vz>4&&V.lw){const n=V.dt*60*NET.bk*Math.min(1,NET.vz/30);for(let i=0;i<n+Math.random();i++)[-1,1].forEach(sg=>{const[a,b]=V.lw(-7.4,sg*1.95);pr.push({x:V.rx+(a-V.cx)/V.K,y:V.ry+(b-V.cy)/V.K,vx:(Math.random()-.5)*5,vy:(Math.random()-.3)*5,l:.3+Math.random()*.4,t:'sp'})});
    if(NET.bkT>1&&Math.random()<V.dt*8){const[a,b]=V.lw(-7.4,1.9);pr.push({x:V.rx+(a-V.cx)/V.K,y:V.ry+(b-V.cy)/V.K,vx:0,vy:-1.5,l:2,t:'k'})}}});
  on('hud',V=>{if(!NET.falling&&NET.bk<.05&&NET.shake<.02)return;const x=V.x,w=V.w;x.save();
