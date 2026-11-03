@@ -4,13 +4,13 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const ROOT=path.join(__dirname,'..');
 const P=()=>new Proxy(function(){},{get:(o,k)=>k=='sampleRate'?44100:k=='state'?'running':k=='length'?100:k=='currentTime'?0:k=='width'?50:k==Symbol.toPrimitive?()=>0:P(),apply:()=>P(),set:()=>true});
-const NAMES=['S','go','draw','drawF','hero','showMM','hideMM','step','sim','tick','calc','DBG','pd','pu','stp','tl','pr','hold','sanitizeSave','init','EV','save','D','H','T','C','HD','HR','LY','FD','R','fd','fk','ft','layer','cargoKg','cap','tank','base','emerg','view','sheetHTML','sell','fill','buy','repair','expSave','impSave','toast','msg','HEAT','sheetT','U','F','mass','acc','strand','Math'].filter(n=>n!=='Math');
+const NAMES=['S','go','draw','drawF','hero','showMM','hideMM','step','sim','tick','calc','DBG','pd','pu','stp','tl','pr','hold','sanitizeSave','init','EV','save','D','H','T','C','HD','HR','LY','FD','R','fd','fk','ft','layer','cargoKg','cap','tank','base','emerg','view','sheetHTML','sell','fill','buy','repair','expSave','impSave','toast','msg','HEAT','sheetT','U','F','mass','acc','strand','tab','vs','names','price','Math'].filter(n=>n!=='Math');
 function boot(o={}){
  const store=Object.assign({},o.store||{}),st={quota:false,sets:0},toasts=[];let menu=!!o.menu;
  const ls={getItem:k=>(k in store?store[k]:null),setItem:(k,v)=>{if(st.quota)throw new Error('QuotaExceededError');store[k]=String(v);st.sets++},removeItem:k=>{delete store[k]}};
- const ctx2d=P(),mkc=(w,h)=>({clientWidth:w,clientHeight:h,width:0,height:0,getContext:()=>ctx2d}),cv=mkc(360,420),mc=mkc(360,740);
+ const ctx2d=P(),mkc=(w,h)=>({clientWidth:w,clientHeight:h,width:0,height:0,getContext:()=>ctx2d}),cv=mkc(360,420),mc=mkc(360,740),dpc=mkc(360,170);
  const stub=()=>({innerHTML:'',textContent:'',style:{setProperty(){}},className:'',classList:{add(){},remove(){},toggle(){}},remove(){},appendChild(){},click(){}});
- const doc={querySelector:s=>s=='#cv'?(o.noCanvas?null:cv):s=='#mc'?(menu?mc:null):s=='#mm'?(menu?{set innerHTML(v){},remove(){menu=false}}:null):s=='#toast'?{set textContent(v){toasts.push(v)},style:{}}:stub(),
+ const doc={querySelector:s=>s=='#dpc'?dpc:s=='#cv'?(o.noCanvas?null:cv):s=='#mc'?(menu?mc:null):s=='#mm'?(menu?{set innerHTML(v){},remove(){menu=false}}:null):s=='#toast'?{set textContent(v){toasts.push(v)},style:{}}:stub(),
   createElement:()=>Object.assign(mkc(0,0),stub()),addEventListener(){},body:{appendChild(){}},head:{appendChild(){}},hidden:false};
  const sb={document:doc,localStorage:ls,navigator:{hardwareConcurrency:8,deviceMemory:8},devicePixelRatio:o.dpr||1,AudioContext:function(){return P()},requestAnimationFrame(){},setInterval(){return 0},
   setTimeout(f){sb.__timers.push(f);return sb.__timers.length},clearTimeout(){},addEventListener(){},location:{href:'',reload(){sb.__reloaded=1}},confirm:()=>true,

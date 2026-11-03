@@ -36,6 +36,29 @@ const BIT={
   h+=`<div style="margin-top:10px"><b>Új tartalék fúrófej vásárlása</b><div class="mu">Csak már birtokolt szintű fejek vehetők.</div>`;
   for(let k=0;k<=S.u.f;k++)h+=`<button class="b g" style="width:100%" ${b&&S.hs.length<MAXS&&S.cash>=price(k)?'':'disabled'} onclick="BIT.buy(${k})">${HD[k][0]} – ${ft(price(k))}</button>`;
   return h+'</div></div>'}};
-W.BIT=BIT;
-if(W.BP)BP.extras.push(()=>BIT.html());
+// ---------- fúrófej-katalógus: grafikus kártyák (rajz, keménységi határ, fúrható rétegek) ----------
+const PAL=[{body:'#9aa5b1',edge:'#dfe6ee',ins:'#c3ccd6',acc:'#6b7683'},{body:'#59616d',edge:'#9aa5b1',ins:'#1b1f26',acc:'#aeb9c6'},{body:'#6b6f77',edge:'#e8c25a',ins:'#f6e9b8',acc:'#e8c25a'},{body:'#7c6a46',edge:'#d9c08a',ins:'#fff6d8',acc:'#ffe9a8'},{body:'#cfd7e3',edge:'#8fd3ff',ins:'#8fd3ff',acc:'#bfe9ff'},{body:'#1b1030',edge:'#c78bff',ins:'#c78bff',acc:'#ff8be6'}];
+const hh=x=>26*(1-(x-16)/62),hash=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v)};
+function bitSVG(t){const c=PAL[t]||PAL[0];let o=`<svg viewBox="0 0 84 64" class="bgs${t===5?' glow':''}"><rect x="1" y="22" width="16" height="20" rx="3" fill="#39414b" stroke="${c.acc}" stroke-width="1"/><path d="M16 6L78 32L16 58Z" fill="${c.body}" stroke="${c.edge}" stroke-width="1.6" stroke-linejoin="round"/>`;
+ const n=3+(t>>1);for(let i=0;i<n;i++){const x=20+i*11;o+=`<path d="M${x} ${32-hh(x)}L${x+13} ${32+hh(x+13)}" stroke="${c.acc}" stroke-opacity=".55" stroke-width="${t>=2?2.2:1.4}" fill="none"/>`}
+ if(t===2)for(const a of[-1,0,1])o+=`<path d="M17 32L77 ${32+a*7}" stroke="${c.edge}" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>`;
+ if(t===3)for(let i=0;i<22;i++){const x=22+hash(i)*50,y=32+(hash(i+40)-.5)*2*hh(x)*.8;o+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(.7+hash(i+9)*.9).toFixed(1)}" fill="${c.ins}" opacity=".9"/>`}
+ if(t===4)o+=`<path d="M20 20L74 31" stroke="#fff" stroke-opacity=".55" stroke-width="2"/><path d="M20 44L74 33" stroke="${c.edge}" stroke-opacity=".6" stroke-width="1.4"/>`;
+ if(t===5)o+=`<path d="M18 32H80M24 14L60 30M24 50L60 34" stroke="${c.acc}" stroke-width="1.2" opacity=".85" fill="none"/>`;
+ const m=5+t;for(let k=0;k<m;k++){const x=22+k*(50/m),r=t>=2?2.3:1.8;for(const sg of[-1,1])o+=`<circle cx="${x.toFixed(1)}" cy="${(32+sg*hh(x)*.9).toFixed(1)}" r="${r}" fill="${c.ins}" stroke="${c.edge}" stroke-width=".6"/>`}
+ return o+`<circle cx="77" cy="32" r="3.2" fill="${c.ins}" stroke="${c.edge}" stroke-width="1"/></svg>`}
+BIT.gallery=function(){const mxL=Math.log(HD[HD.length-1][1]);
+ const cards=HD.map((h,t)=>{const can=LY.map((l,i)=>HR[i]<=h[1]),n=can.filter(Boolean).length,inst=S.hf===t,sp=S.hs.filter(e=>e[0]===t).length,lock=t>S.u.f,c=PAL[t].edge;
+  const strip=LY.map((l,i)=>`<s title="${l[0].split(' (')[0]}: ${HR[i]} MPa${can[i]?' ✔':' ✖'}" style="background:${l[4]};opacity:${can[i]?1:.18}"></s>`).join('');
+  const state=inst?'<b style="color:#7be07b">Felszerelve</b>':lock?(t===S.u.f+1?'Következő szint':'Zárolt'):'Birtokolt'+(sp?' · raktár ×'+sp:'');
+  return `<div class="bgc${inst?' cur':''}${lock?' lock':''}" style="--c:${c}">${bitSVG(t)}<div class="bgn">${h[0].replace(' fúrófej','')}</div><div class="mu">${state}</div>
+  <div class="mu">Határ: <b>${h[1]} MPa</b></div><div class="bgb"><i style="width:${Math.max(4,Math.log(h[1])/mxL*100)}%"></i></div>
+  <div class="mu">Fúrható rétegek: <b>${n}/${LY.length}</b></div><div class="bgl">${strip}</div></div>`}).join('');
+ return `<div class="card">🔩 <b>Fúrófej-katalógus</b><div class="mu">Erősség (keménységi határ) és képesség (melyik rétegeket bontja) szerint. A sáv színei a rétegek, a halvány négyzet: még nem fúrható.</div><div class="bg">${cards}</div></div>`};
+const sty=document.createElement('style');sty.textContent=`.bg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}.bgc{background:#0e1620;border:1px solid color-mix(in srgb,var(--c) 40%,#222c38);border-radius:10px;padding:6px;text-align:center}
+.bgc.cur{box-shadow:0 0 0 2px #59d65a inset}.bgc.lock{opacity:.55}.bgs{width:100%;height:auto;max-height:70px}.bgs.glow{filter:drop-shadow(0 0 4px #c78bff)}.bgn{font:700 11px Georgia;color:var(--c);margin:2px 0}
+.bgb{height:6px;border-radius:3px;background:#1d2a38;margin:3px 0;overflow:hidden}.bgb i{display:block;height:100%;background:var(--c)}.bgl{display:flex;gap:1px;margin-top:3px}.bgl s{flex:1;height:8px;border-radius:1px}`;
+(document.head||document.body).appendChild(sty);
+BIT.pal=PAL;W.BIT=BIT;
+if(W.BP)BP.extras.push(()=>BIT.gallery()+BIT.html());
 })(typeof window!=='undefined'?window:globalThis);

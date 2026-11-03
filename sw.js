@@ -1,4 +1,4 @@
-const V='drillup-v19',A=['./','index.html','js/base.js','js/power.js','js/blueprint.js','js/tunnels.js','js/lamps.js','js/bits.js','manifest.webmanifest','icon.svg'];
+const V='drillup-v20',A=['./','index.html','js/base.js','js/power.js','js/blueprint.js','js/tunnels.js','js/lamps.js','js/bits.js','js/depot.js','js/face.js','manifest.webmanifest','icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!=V).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 self.addEventListener('message',e=>{if(e.data=='skip')self.skipWaiting()});

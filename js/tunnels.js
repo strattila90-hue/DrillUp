@@ -4,9 +4,9 @@
 (function(W){
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('tunnels');
-const HW=2.2,G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60];
+const HW=2.2,G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60],VMIN=1.6,SAFE=3;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
+const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
  // ---------- gyors keresés: 32 m-es rács (az utolsó, éppen növekvő szakasz és a nagyon hosszúak külön listában) ----------
  CELL:32,
  cells(g,fn){const P=HW+.1,x0=Math.min(g[0],g[2])-P,x1=Math.max(g[0],g[2])+P,d0=Math.min(g[1],g[3])-P,d1=Math.max(g[1],g[3])+P,C=NET.CELL;
@@ -49,10 +49,10 @@ const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
   const dd=Math.max(-S.depth,clamp(ds-S.depth,-4*dt,4*dt));S.depth+=dd;NET.trail(dd>0?'D':'U',Math.abs(dd))},
  hcap(){return 1.2e8*(1+S.u.h)},
  cool(){return .04+(W.ENG&&ENG.ready()?.2:0)}, // a fék hűlése: működő motor (olajhűtő) mellett sokkal gyorsabb
- begin(){if(NET.falling)return;if(!NET.free(S.x,S.depth)){S.depth+=.05;NET.trail('D',.05)}NET.falling=true;NET.assist=false;S.mode='';NET.alarmT=0;
-  msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a FÉK gombbal te is fékezhetsz).':'⚠ SZABADESÉS! Tartsd nyomva a FÉK gombot!');if(W.alarm3)alarm3()},
+ begin(){if(NET.falling)return;if(!NET.free(S.x,S.depth)){S.depth+=.05;NET.trail('D',.05)}NET.falling=true;NET.assist=false;NET.fd=0;S.mode='';NET.alarmT=0;
+  msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a FÉK gombbal te is fékezhetsz – a gép a fékezés közben is tovább süllyed).':'⚠ SZABADESÉS! Tartsd nyomva a FÉK gombot – lassít, de a gép tovább zuhan a járat aljáig!');if(W.alarm3)alarm3()},
  slip(){if(!NET.falling&&NET.openBelow(S.x,S.depth)&&(S.st==='U'||S.st==='H')){S.st='idle';NET.begin()}},
- crash(v){const tol=VTOL[S.u.h],dmg=Math.max(0,Math.pow(v/tol,2)-.36)*55;NET.shake=clamp(v/tol,0,1);
+ crash(v){const tol=VTOL[S.u.h],dmg=NET.fd<SAFE?0:Math.max(0,Math.pow(v/tol,2)-.36)*55;NET.shake=clamp(v/tol,0,1);
   if(dmg>0){S.hp=Math.max(0,S.hp-dmg);msg('💥 Becsapódás '+v.toFixed(1)+' m/s sebességgel – a váz '+dmg.toFixed(0)+'%-ot sérült.');if(W.clank){clank(1);scr(.5,200,50,.8)}}
   else if(v>2){msg('⬇ Landolás '+v.toFixed(1)+' m/s sebességgel – sérülés nélkül.');if(W.clank)clank(.4)}
   if(S.hp<=0)strand('A gép a becsapódástól összeroppant.')},
@@ -68,11 +68,10 @@ const NET={hw:HW,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
     if(NET.vz>35)tgt=Math.max(tgt,clamp((G-k*NET.vz*NET.vz+3)/(AB*eff),0,1))} // sebességkorlátozó: mély aknában sem gyorsul 35 m/s fölé
    NET.bk+=(tgt-NET.bk)*Math.min(1,h/.25);
    const ab=NET.bk*AB*eff;let a=G-k*NET.vz*NET.vz-ab;if(NET.vz<=0&&a<0)a=0;
-   const vN=Math.max(0,NET.vz+a*h),dd=(NET.vz+vN)/2*h;
+   let vN=Math.max(0,NET.vz+a*h);if(NET.vz>=VMIN&&vN<VMIN)vN=VMIN;const dd=(NET.vz+vN)/2*h;
    NET.bkT=Math.max(0,NET.bkT+m*ab*(NET.vz+vN)/2*h/NET.hcap()-NET.cool()*h);
    if(S.depth+dd>=fl-1e-9){S.depth=fl;NET.falling=false;NET.assist=false;NET.vz=0;NET.crash(vN);break}
-   S.depth+=dd;NET.vz=vN;
-   if(NET.vz<.05&&NET.bk>.3){NET.falling=false;NET.vz=0;if(S.st==='D')S.st='idle';msg('A gép megállt a járatban (rögzítőfék).');break}}
+   S.depth+=dd;NET.vz=vN;NET.fd+=dd}
   const fell=S.depth-d0;if(fell>1e-9){S.max=Math.max(S.max,S.depth);NET.trail('D',fell)}
   return true}};
 W.NET=NET;
