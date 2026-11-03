@@ -8,7 +8,7 @@ W.HK=W.HK||{};
 W.on=(e,f)=>{(W.HK[e]=W.HK[e]||[]).push(f)};
 W.off=(e,f)=>{const h=W.HK[e];if(h){const i=h.indexOf(f);if(i>=0)h.splice(i,1)}};
 // ---------- mentés ----------
-const KEY='drillup1',BAK='drillup1_bak',BAK2='drillup1_bak2',VER=4;
+const KEY='drillup1',BAK='drillup1_bak',BAK2='drillup1_bak2',VER=5;
 const ls={get(k){try{return W.localStorage.getItem(k)}catch(e){return null}},set(k,v){try{W.localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{W.localStorage.removeItem(k)}catch(e){}}};
 const isObj=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
 const clone=v=>v==null||typeof v!=='object'?v:JSON.parse(JSON.stringify(v));

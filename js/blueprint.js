@@ -4,7 +4,7 @@
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('blueprint');
 const X=m=>326+24*m,Y=m=>92+24*m;
-const BP={sel:'d',parts:[],
+const BP={sel:'d',parts:[],extras:[],
  register(p){BP.parts.push(p)},
  pick(k){BP.sel=k;view()},
  buy(){buy(BP.sel)},
@@ -41,7 +41,7 @@ function svc(){const b=base(),d=calc(),dis=b?'':'disabled';let h=b?'':'<div clas
  return h+`<div class="card">🔧 <b>Páncél</b>: ${nf(S.hp,1)}%<br><button class="b" ${b&&S.hp<100?'':'disabled'} onclick="repair()">Javítás – ${ft((100-S.hp)*2e3*Math.pow(8,S.u.h))}</button></div>`}
 BP.html=function(){const b=base(),p=BP.parts.find(q=>q.k===BP.sel)||BP.parts[0],t=p.t(),i=S.u[p.k]||0,mx=t.length-1,nx=t[i+1],pct=Math.round(i/mx*100),price=nx?nx.at(-1):0;
  const note=!nx?'<div class="mu" style="margin-top:8px"><b>Maximális szint ✔</b></div>':`<div style="margin-top:6px">Következő: <b>${nx[0]}</b><br><span class="mu">${p.st(nx)}</span></div><div class="mu" style="margin-top:4px">Hatás: ${p.fx}</div><button class="b" style="width:100%;margin-top:8px" ${b&&S.cash>=price?'':'disabled'} onclick="BP.buy()">Fejlesztés – ${ft(price)}</button>${!b?'<div class="mu bad">Fejleszteni csak a bázison lehet.</div>':S.cash<price?'<div class="mu bad">Nincs elég pénzed.</div>':''}`;
- return `<div class="bpw">${svg()}</div><div class="card"><b>${BP.parts.indexOf(p)+1}. ${p.n}</b> <span class="mu">· ${i+1}/${mx+1}. szint</span><div class="bar" style="margin:6px 0"><i style="width:${pct}%"></i></div><div class="mu">Fejlesztettség: <b>${pct}%</b></div><div style="margin-top:6px">Most: <b>${t[i][0]}</b><br><span class="mu">${p.st(t[i])}</span></div>${note}</div>${svc()}`};
+ return `<div class="bpw">${svg()}</div><div class="card"><b>${BP.parts.indexOf(p)+1}. ${p.n}</b> <span class="mu">· ${i+1}/${mx+1}. szint</span><div class="bar" style="margin:6px 0"><i style="width:${pct}%"></i></div><div class="mu">Fejlesztettség: <b>${pct}%</b></div><div style="margin-top:6px">Most: <b>${t[i][0]}</b><br><span class="mu">${p.st(t[i])}</span></div>${note}</div>${svc()}${BP.extras.map(f=>f()).join('')}`};
 const st=document.createElement('style');st.textContent=`.bpw{background:#0e2a47;border:1px solid #2d6a9f;border-radius:10px;padding:4px;margin-bottom:8px}.bpw svg{display:block;width:100%;height:auto}
 .bpw .ln{stroke:#7fc8ff;stroke-width:1.1;fill:none}.bpw .ln.dash{stroke-dasharray:4 3}.bpw .dm{stroke:#7fc8ff88;fill:none;stroke-width:.8}.bpw .tt{fill:#9fd4ff;font:8px Georgia}
 .bpw .part.sel .ln{stroke:#f0a030;stroke-width:1.8}.bpw .pin{cursor:pointer}.bpw .pin .ld{stroke:#7fc8ff88;stroke-width:.8}.bpw .pin circle{fill:#0e2a47;stroke:#7fc8ff;stroke-width:1.4}
