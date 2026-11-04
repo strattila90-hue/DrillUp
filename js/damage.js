@@ -154,7 +154,18 @@ const DMG={P:[],B:null,fl:0,hot:0,lastHp:100,tt:0,
    if(p.hot&&u<2.5){x.globalCompositeOperation='lighter';x.fillStyle=`rgba(255,140,40,${Math.max(0,.6-u*.25)})`;x.fillRect(-p.w*K*.5,-p.h*K*.5,p.w*K,p.h*K)}x.restore()}
   // szikrák
   x.save();x.globalCompositeOperation='lighter';for(const p of B.sp){const q=p.l/p.L;if(q>=1)continue;x.strokeStyle=`rgba(255,${220-q*120|0},100,${1-q})`;x.lineWidth=1.6;x.beginPath();x.moveTo(p.x*K,p.y*K);x.lineTo((p.x-p.vx*.04)*K,(p.y-p.vy*.04)*K);x.stroke()}x.restore()},
- hud(V){if(DMG.fl>.01){const x=V.x;x.save();x.fillStyle=`rgba(255,248,230,${Math.min(1,DMG.fl)})`;x.fillRect(0,0,V.w,V.h);x.restore()}
+ gauge(V){const x=V.x,hp=cl(S.hp==null?100:S.hp,0,100),r=DMG.heatR(),u=hp/100,bl=(hp<25||r>1)&&Math.floor(V.ts/280)%2===0;
+  const X=6,Y=58,w=122,h=S.depth>0?40:30;x.save();x.fillStyle='rgba(8,10,12,.62)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
+  // pajzs-ikon
+  const col=u>.6?'#58e07c':u>.3?'#f0b83a':'#ff5a45';x.translate(X+13,Y+15);x.fillStyle=col;x.beginPath();x.moveTo(0,-9);x.lineTo(8,-6);x.lineTo(7,3);x.quadraticCurveTo(4,8,0,10);x.quadraticCurveTo(-4,8,-7,3);x.lineTo(-8,-6);x.closePath();x.globalAlpha=.9;x.fill();x.globalAlpha=1;
+  x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.moveTo(0,-9);x.lineTo(8,-6);x.lineTo(7,3);x.quadraticCurveTo(4,8,0,10);x.closePath();x.fill();
+  if(hp<95){x.strokeStyle='rgba(0,0,0,.8)';x.lineWidth=1.2;x.beginPath();x.moveTo(-2,-8);x.lineTo(1,-3);x.lineTo(-2,1);x.lineTo(1,6);x.stroke()}x.translate(-(X+13),-(Y+15));
+  x.font='bold 9px Georgia';x.fillStyle='#cdbfa8';x.textAlign='left';x.fillText('PÁNCÉL',X+27,Y+11);x.font='bold 12px Georgia';x.fillStyle=col;x.textAlign='right';x.fillText(Math.round(hp)+'%',X+w-8,Y+12);
+  // szegmentált sáv
+  for(let i=0;i<10;i++){x.fillStyle=(i+.5)/10<=u?col:'rgba(255,255,255,.12)';x.fillRect(X+27+i*9,Y+17,7,6)}
+  if(S.depth>0){const hr=cl(r,0,1.3),hc=hr<.7?'#58b8ff':hr<1?'#f0b83a':'#ff5a45';x.font='8px Georgia';x.fillStyle='#9aa0a8';x.textAlign='left';x.fillText('HŐ',X+8,Y+34);x.fillStyle='rgba(255,255,255,.12)';x.fillRect(X+27,Y+29,90,5);x.fillStyle=hc;x.fillRect(X+27,Y+29,90*Math.min(1,hr/1.3),5);x.fillStyle='rgba(255,255,255,.5)';x.fillRect(X+27+90/1.3,Y+27,1,9)}
+  x.restore()},
+ hud(V){if(!DMG.B)try{DMG.gauge(V)}catch(e){}if(DMG.fl>.01){const x=V.x;x.save();x.fillStyle=`rgba(255,248,230,${Math.min(1,DMG.fl)})`;x.fillRect(0,0,V.w,V.h);x.restore()}
   if(DMG.B&&DMG.B.t>=DUR.jet+.8){const x=V.x,a=Math.min(1,(DMG.B.t-DUR.jet-.8)/1.2);x.save();x.fillStyle=`rgba(0,0,0,${.55*a})`;x.fillRect(0,0,V.w,V.h);x.fillStyle=`rgba(255,120,90,${a})`;x.font='bold 22px Georgia';x.textAlign='center';x.fillText('A GÉP ELPUSZTULT',V.w/2,V.h*.42);x.font='13px Georgia';x.fillStyle=`rgba(240,230,210,${a})`;x.fillText('Rekordmélység: '+DMG.fd(S.dm&&S.dm.pend?S.dm.pend.rec:S.max),V.w/2,V.h*.42+26);x.fillText('Újrakezdés nulláról…',V.w/2,V.h*.42+46);x.restore()}}
 };
 const clamp01=v=>cl(v,0,1);

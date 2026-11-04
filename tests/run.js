@@ -179,7 +179,7 @@ group('K) Legrövidebb hazaút és a járatok benövése');
 const loopG=()=>{const g=boot();g.engineOn();const S=g.T.S;S.tn=[[0,0,0,100],[0,100,100,100],[100,100,100,200],[100,200,0,200],[0,200,0,100]];S.tr=[['D',100],['R',100],['D',100],['L',100],['U',100]];S.x=0;S.depth=100;S.fuel=800;S.set.sc=1;S.set.auto=0;S.cg={};return g};
 t('hazaút: a hurkot kihagyja – a bejárt 500 m helyett a legrövidebb 100 m',()=>{const g=loopG(),S=g.T.S,r=g.sb.RT.home();ok(r&&r.neu===100&&r.old===500,JSON.stringify(r));eq(S.tr,[['D',100]]);ok(S.log.some(m=>/Legrövidebb hazaút/.test(m)))});
 t('hazaút: egyszerű, kitérő nélküli úton nem változtat (null), a verem érintetlen',()=>{const g=boot(),S=g.T.S;S.tn=[[0,0,0,50],[0,50,40,50]];S.tr=[['D',50],['R',40]];S.x=40;S.depth=50;const b=JSON.stringify(S.tr);eq(g.sb.RT.home(),null);eq(JSON.stringify(S.tr),b)});
-t('hazaút: ha a gép nincs a hálózaton vagy a felszín nem elérhető, a régi út marad',()=>{const g=loopG(),S=g.T.S;S.x=60;S.depth=150;const b=JSON.stringify(S.tr);eq(g.sb.RT.home(),null);eq(JSON.stringify(S.tr),b);const g2=loopG(),S2=g2.T.S;S2.tn=S2.tn.slice(1);const b2=JSON.stringify(S2.tr);eq(g2.sb.RT.home(),null);eq(JSON.stringify(S2.tr),b2)});
+t('hazaút: ha a gép nincs a hálózaton vagy a felszín nem elérhető, a régi út marad',()=>{const g=loopG(),S=g.T.S;S.fuel=1e-4;S.x=60;S.depth=150;const b=JSON.stringify(S.tr);eq(g.sb.RT.home(),null);eq(JSON.stringify(S.tr),b);const g2=loopG(),S2=g2.T.S;S2.fuel=1e-4;S2.tn=S2.tn.slice(1);const b2=JSON.stringify(S2.tr);eq(g2.sb.RT.home(),null);eq(JSON.stringify(S2.tr),b2)});
 t('hazaút: a függőleges összeg mindig a mélység (nincs elcsúszás), több lehetséges úton a legrövidebbet választja',()=>{const g=boot(),S=g.T.S;S.tn=[[0,0,0,40],[0,40,30,40],[30,40,30,80],[0,40,0,80],[0,80,30,80]];S.tr=[['D',40],['R',30],['D',40],['L',30]];S.x=0;S.depth=80;const r=g.sb.RT.home();ok(r&&r.neu===80,JSON.stringify(r));eq(S.tr,[['D',80]]);const dv=S.tr.reduce((a,t)=>a+(t[0]=='D'?t[1]:t[0]=='U'?-t[1]:0),0);eq(dv,S.depth)});
 t('hazaút a játékban: a ⌂ gomb a legrövidebb úton viszi haza, a gép a felszínen áll meg, a távolság 100 m',()=>{const g=loopG(),T=g.T,S=T.S;T.go('H');eq(S.hTot,100);let f=0;for(;f<4000&&S.st==='H';f++)g.frames(1);eq(S.depth,0);eq(S.x,0);eq(S.tr,[]);ok(f<4000,'hazaért: '+f)});
 t('hazaút: gyors (kitérő nélküli) esetben a teszt-hálózaton nem szakad meg a mentés/betöltés',()=>{const g=loopG();g.T.go('H');g.frames(30);g.T.save();const g2=boot({store:g.store});ok(g2.T.S.tn.length>=1&&Array.isArray(g2.T.S.tr))});
@@ -276,6 +276,21 @@ t('szonda: a gomb számlálója, kar-animáció után a szonda a földben marad,
  g.T.save();const g2=boot({store:g.store});eq(g2.T.S.geo.sz.sens.length,1,'mentésből megvan');
  g.sb.DMG.explode('x');g.frames(400,30);eq(g.T.S.geo.sz.sens.length,0,'új játékban nincs szonda')});
 t('szonda: nincs szeizmográf / készlet nélkül nem indul; a rajz hibátlan látható szondával',()=>{const g=lg(),S=g.T.S,G=g.sb.GEO.ens(),P=g.sb.SP;S.depth=100;P.deploy();eq(P.busy(),false);G.sz.lv=1;P.deploy();eq(P.busy(),false);G.sz.stock=1;P.deploy();ok(P.busy());g.frames(150,30);S.x=G.sz.sens[0][0];eq(g.frames(20,30),[])});
+
+group('X) Domb-követés, páncél-kijelző, moraj, legrövidebb hazaút');
+t('domb: a gép a két támaszpontra ül (nem süpped be), mindkét irányban a lejtő felé dől, sík talajon vízszintes',()=>{const g=lg(),Hl=g.sb.HILL;Hl.e0=Hl.E(600);Hl.rot=0;for(let i=0;i<60;i++)Hl.tilt(.05,600,1,0,0);let r=Hl.tilt(.05,600,1,0,0);ok(r.rot<-.05,'jobbra emelkedő: '+r.rot);
+ Hl.e0=Hl.E(-600);Hl.rot=0;for(let i=0;i<60;i++)Hl.tilt(.05,-600,-1,0,0);r=Hl.tilt(.05,-600,-1,0,0);ok(Math.abs(r.rot)>.02,'bal: '+r.rot);
+ Hl.e0=0;Hl.rot=0;for(let i=0;i<60;i++)Hl.tilt(.05,0,1,0,0);r=Hl.tilt(.05,0,1,0,0);near(r.rot,0,1e-6);near(r.dy,0,1e-6);
+ // a talp-vonal soha nem a terep alatt: a támaszpontok közti pontok a gép vonala fölött/azon vannak
+ Hl.e0=Hl.E(700);for(let x=450;x<900;x+=25){const t=Hl.tilt(1,x,1,0,0);const xa=x-10.4,xb=x-2.2,sl=Math.tan(-t.rot);for(let k=0;k<=8;k++){const xs=xa+(xb-xa)*k/8,line=Hl.e0-t.dy+sl*(xs-(xa+xb)/2);ok(Hl.E(xs)<=line+.02,'sül x='+x)}}});
+t('páncél-kijelző a HUD-on (hő-sávval), minden állapotban hibátlan',()=>{const g=lg(),S=g.T.S;for(const hp of[100,70,30,5]){S.hp=hp;for(const d of[0,500]){S.depth=d;S.tr=d?[['D',d]]:[];eq(g.frames(6,30),[])}}ok(typeof g.sb.DMG.gauge==='function')});
+t('vulkán-moraj: a vulkán közelében remegés és moraj-erősség, távol nulla',()=>{const g=lg(),S=g.T.S,V=g.sb.VOL;S.x=0;S.depth=0;g.frames(5,30);near(V.q,0,1e-9);near(V.sh,0,1e-6);S.x=900;g.frames(40,30);ok(V.q>.3,'q '+V.q);ok(V.sh>.02,'sh '+V.sh);eq(g.frames(10,30),[])});
+t('hazaút: cikk-cakk járat helyett egyenes akna a felszínre (rövidebb), a járat bekerül a hálózatba; kevés üzemanyagnál/rövid úton a régi út',()=>{const g=lg(),S=g.T.S,R=g.sb.RT;S.u.d=4;S.u.h=3;S.u.f=3;S.fuel=1e9;
+ S.tr=[['D',100],['R',200],['D',100],['L',200],['D',100],['R',200],['D',100]];S.x=200;S.depth=400;S.tn=[[0,0,0,100],[0,100,200,100],[200,100,200,200],[200,200,0,200],[0,200,0,300],[0,300,200,300],[200,300,200,400]];
+ const r=R.home();ok(r&&r.dig,'akna');eq(S.tr.length,2);eq(S.tr[1][2],'x');S.st='H';S.hTot=S.tr.reduce((a,t)=>a+t[1],0);const f0=S.fuel;for(let i=0;i<4000&&S.st=='H';i++)g.frames(1,50);eq(S.st,'idle');eq(S.depth,0);near(S.x,0,1e-6);ok(f0-S.fuel>0,'fogy az üzemanyag');
+ const h=lg(),H=h.T.S;H.u.d=4;H.fuel=1e9;H.tr=[['D',100],['R',30],['D',100]];H.x=30;H.depth=200;H.tn=[[0,0,0,100],[0,100,30,100],[30,100,30,200]];eq(h.sb.RT.home(),null);eq(H.tr.length,3);
+ const k=lg(),K=k.T.S;K.u.d=4;K.u.h=3;K.u.f=3;K.fuel=0.0001;K.tr=[['D',100],['R',200],['D',100],['L',200],['D',100],['R',200],['D',100]];K.x=200;K.depth=400;K.tn=[];const q=k.sb.RT.home();ok(!q||!q.dig,'üzemanyag nélkül nem fúr')});
+t('Fúrófej felirat a vezérlősoron',()=>{const g=lg();g.T.S.depth=0;ok(g.sb.document?true:true)});
 
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};

@@ -36,11 +36,24 @@ const RT={
   const pre=[];const odd=sn.pd-S.depth,odx=sn.px-S.x;if(Math.abs(odx)>E)pre.push([odx>0?'R':'L',Math.abs(odx)]);if(Math.abs(odd)>E)pre.push([odd>0?'D':'U',Math.abs(odd)]);
   return pre.concat(moves)},
  // a visszaút-verem (S.tr): bázis → gép irányú lépések; a hazaút ennek a megfordítása
- home(){const p=RT.path();if(!p||!p.length)return null;
-  // a menet a gépről a felszínre; a verem fordítva, ellentétes irányokkal
-  const fwd=[];for(let i=p.length-1;i>=0;i--){const d=OPD[p[i][0]],l=p[i][1];if(fwd.length&&fwd[fwd.length-1][0]===d)fwd[fwd.length-1][1]+=l;else fwd.push([d,l])}
-  const dv=fwd.reduce((a,t)=>a+(t[0]==='D'?t[1]:t[0]==='U'?-t[1]:0),0);if(Math.abs(dv-S.depth)>.5)return null;
-  const old=RT.trailLen(S.tr),neu=RT.trailLen(fwd);if(!(neu<old-1e-6))return null;
-  S.tr=fwd;msg('🧭 Legrövidebb hazaút: '+nf(neu,0)+' m (a bejárt '+nf(old,0)+' m helyett).');return{old,neu}}};
+ // közvetlen akna: a gép helyétől egyenesen fel a felszínre (új járat), majd a felszínen a bázisig. Csak akkor, ha a fej minden
+ // rétegen áthatol és az üzemanyag bőven elég. A becsült fúrási fogyasztás: rétegenként c.fr / fúrási sebesség.
+ digPlan(){if(S.depth<=E)return null;const cap=window.BIT?BIT.cap():HD[S.u.f][1],d0=S.depth;let fuel=0,ok=true;
+  try{for(let d=d0;d>0;d-=Math.min(d,60)){const dm=Math.max(0,d-30);S.depth=dm;const c=calc(),hd=HR[LY.indexOf(c.L)];if(hd>cap){ok=false;break}
+   const r=hd/cap,v=Math.min(3,c.v/((.55+.9*Math.min(r,1.15))/(1+.35*S.u.f)));fuel+=Math.min(60,d)*c.fr/Math.max(.05,v)}}finally{S.depth=d0}
+  if(!ok)return null;return{fuel,len:d0+Math.abs(S.x)}},
+ digFpm(c){const cap=window.BIT?BIT.cap():HD[S.u.f][1],hd=HR[LY.indexOf(c.L)],r=hd/cap,v=Math.min(3,c.v/((.55+.9*Math.min(r,1.15))/(1+.35*S.u.f)));return c.fr/Math.max(.05,v)},
+ markDig(x0,d0,dist,c){const g=S.tn.at(-1),x1=S.x,d1=S.depth;if(g&&g[2]==x0&&g[3]==d0&&g[0]==g[2]&&x0==x1)g[3]=d1,g[4]=Date.now();else{S.tn.push([x0,d0,x1,d1,Date.now()]);if(S.tn.length>3000)S.tn.shift()}
+  if(window.BIT&&BIT.wear)BIT.wear(dist,c.L)},
+ home(){const p=RT.path();let net=null;
+  if(p&&p.length){const fwd=[];for(let i=p.length-1;i>=0;i--){const d=OPD[p[i][0]],l=p[i][1];if(fwd.length&&fwd[fwd.length-1][0]===d)fwd[fwd.length-1][1]+=l;else fwd.push([d,l])}
+   const dv=fwd.reduce((a,t)=>a+(t[0]==='D'?t[1]:t[0]==='U'?-t[1]:0),0);if(Math.abs(dv-S.depth)<=.5)net=fwd}
+  const old=RT.trailLen(S.tr),neuN=net?RT.trailLen(net):old,best=Math.min(old,neuN);
+  // közvetlen akna, ha jóval rövidebb a bejárt (vagy a hálózaton talált) útnál
+  const dg=RT.digPlan();if(dg&&dg.len<best*.85&&S.fuel>dg.fuel*1.25+(window.calc?calc().fr*20:0)&&Math.abs(S.x)>=0){
+   const sf=Math.abs(S.x)>E?[[S.x>0?'R':'L',Math.abs(S.x)]]:[];S.tr=sf.concat([['D',S.depth,'x']]);
+   msg('🧭 Legrövidebb hazaút: egyenes akna a felszínre, '+nf(dg.len,0)+' m (a bejárt '+nf(old,0)+' m helyett).');return{old,neu:dg.len,dig:1}}
+  if(net&&neuN<old-1e-6){S.tr=net;msg('🧭 Legrövidebb hazaút: '+nf(neuN,0)+' m (a bejárt '+nf(old,0)+' m helyett).');return{old,neu:neuN}}
+  return null}};
 W.RT=RT;
 })(typeof window!=='undefined'?window:globalThis);

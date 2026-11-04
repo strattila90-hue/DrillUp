@@ -32,10 +32,23 @@ const VOL={SITES,FACTS,VR,PIT,HOT,TLAVA,EDGE,t:0,vp:[],msgT:0,okShown:0,near:nul
    if(d<40&&dx<VR)T=Math.max(T,TLAVA*Math.exp(-Math.max(0,dx-PIT)/24));
    const r=Math.hypot((x-s.x)/CH_RX,(d-CH_D)/CH_RY);T=Math.max(T,r<1?1200:1200*Math.exp(-(r-1)*1.8))}
   return T},
+ // földrengés-morajlás: a vulkán 600 m-es körzetében mély, zúgó moraj (barna zaj, 20–80 Hz) és remegés; időnként erősebb lökés
+ sh:0,_rt:6,_ra:null,
+ rumble(dt,s,d){const q=Math.max(0,Math.min(1,(650-d)/650)),er=s?VOL.e(s,VOL.t):0,I=q*q*(.45+.55*Math.min(1,er+.3));VOL.q=q;
+  VOL._rt-=dt;let burst=0;if(q>.05&&VOL._rt<=0){VOL._rt=3+Math.random()*(9-6*q);burst=.35+Math.random()*.5}
+  VOL.sh=Math.max(VOL.sh-dt*1.6,0);VOL.sh=Math.max(VOL.sh,I*.16+burst*q*.7);
+  try{if(typeof AC==='undefined'||!AC)return;
+   if(!VOL._ra){const b=AC.createBuffer(1,AC.sampleRate*3,AC.sampleRate),a=b.getChannelData(0);let l=0;for(let i=0;i<a.length;i++){l=(l+.02*(Math.random()*2-1))/1.02;a[i]=l*5}
+    const src=AC.createBufferSource();src.buffer=b;src.loop=true;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=85;lp.Q.value=2.2;const g=AC.createGain();g.gain.value=0;
+    const lf=AC.createOscillator(),lg=AC.createGain();lf.frequency.value=.35;lg.gain.value=.25;lf.connect(lg);lg.connect(g.gain);lf.start();src.connect(lp);lp.connect(g);g.connect(AC.destination);src.start();VOL._ra={g,lp}}
+   const vol=(S.set&&S.set.vol!=null?S.set.vol:60)/100,tgt=AC.state==='running'?Math.min(.9,I*1.6+burst*.5)*vol:0;
+   VOL._ra.g.gain.setTargetAtTime(tgt,AC.currentTime,.25);VOL._ra.lp.frequency.setTargetAtTime(60+I*90+burst*80,AC.currentTime,.2);
+   if(burst&&typeof toast==='function'&&!VOL._tm){VOL._tm=1;toast('🌋 Földrengés-moraj – a magma közel van…')}}catch(e){}},
  nearest(x){let b=null,bd=1e9;for(const s of SITES){const d=Math.abs(x-s.x);if(d<bd){bd=d;b=s}}return[b,bd]},
  // ---- játékszabályok: pálya széle, forró zóna belépési feltétele
  frame(dt){if(typeof S==='undefined')return;VOL.t+=dt;VOL.msgT=Math.max(0,VOL.msgT-dt);
   const[s,d]=VOL.nearest(S.x);VOL.near=d<450?s:null;
+  VOL.rumble(dt,s,d);
   if(VOL.near&&S.depth<5){const v=VOL.ens();if(!v.s[s.id]){v.s[s.id]=1;if(typeof msg==='function')msg('🌋 Vulkáni zóna: '+s.name+' ('+s.type+'). A Tudás fülön megtalálod a tudnivalókat.');if(typeof toast==='function')toast('🌋 '+s.name+' – '+s.type)}}
   if(S.depth<3&&Math.abs(S.x)>EDGE){S.x=Math.sign(S.x)*EDGE;if(S.st!=='idle'){S.st='idle';S.mode=''}if(VOL.msgT<=0){VOL.msgT=4;if(typeof toast==='function')toast('🏔 A pálya széle – tovább nem lehet menni a felszínen.')}}
   if(S.depth<3&&d<HOT){if(!VOL.gearOk()){const sg=Math.sign(S.x-s.x)||1;S.x=s.x+sg*(HOT+.5);if(S.st!=='idle'){S.st='idle';S.mode=''}

@@ -20,8 +20,12 @@ const HILL={e0:0,rot:0,sl:0,
   else if(typeof S.e0==='number'&&isFinite(S.e0)&&Math.abs(S.e0-HILL.e0)>.001&&S.depth>=.5&&!HILL._fz){HILL.e0=S.e0}
   HILL._fz=S.depth>=.5},
  // a gép dőlése és függőleges eltolása a lejtőn (pixelben K-val szorozva a hívó oldalon)
- tilt(dt,rx,face,ry,ang){const on=ry<.6?1:0,vert=Math.abs(Math.sin(ang||0));const g=HILL.gAvg(rx,face||1),target=on*(1-vert)*-Math.atan(g);HILL.rot+=(target-HILL.rot)*Math.min(1,dt*7);
-  const dy=on*(1-vert)*-(HILL.E(rx-6*(face||1))-HILL.E(rx));return{rot:HILL.rot,dy}},
+ tilt(dt,wx,face,ry,ang){const on=ry<.6?1:0,vert=Math.abs(Math.sin(ang||0)),f=face||1;
+  // a lánctalp két támaszpontja (-10,4 és -2,2 m a fúrófej csúcsától): a gép e két pontra, a köztes terepre pedig fölé ül
+  const xa=wx-10.4*f,xb=wx-2.2*f,s0=Math.min(xa,xb),s1=Math.max(xa,xb),y0=HILL.E(s0),y1=HILL.E(s1),sl=(y1-y0)/(s1-s0);
+  let lift=0;for(let k=1;k<8;k++){const xs=s0+(s1-s0)*k/8;lift=Math.max(lift,HILL.E(xs)-(y0+sl*(xs-s0)))}
+  const target=on*(1-vert)*-Math.atan(sl);HILL.rot+=(target-HILL.rot)*Math.min(1,dt*9);
+  const dy=on*(1-vert)*-((y0+y1)/2+lift-HILL.e0);return{rot:HILL.rot,dy}},
  // haladás a lejtőn: sebesség- és fogyasztás-szorzó (a motor teljesítménye szerint)
  drive(c,x,dx){const g=HILL.gAvg(x,1)*Math.sign(dx||1),rr=.1;let res=Math.max(.03,rr+g);const m=c.m||1e5,P=(c.d?c.d[1]:1)*1e6;
   let vNew=Math.min(5,P*.28/(m*G*res)),vh=Math.min(5,P*.28/(m*G*rr));let rv=vh>0?vNew/vh:1;
