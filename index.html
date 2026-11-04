@@ -47,7 +47,7 @@ html,body{overscroll-behavior:none}.pb,.dock,.tb{touch-action:none}#stage{overfl
 .lnk{background:none;border:0;color:#8a7a68;font:inherit;font-size:12px;padding:12px;text-decoration:underline}
 h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6px;background:var(--l);color:var(--tx);border:0;border-radius:6px}
 </style></head><body>
-<div id="top"><b>⛏ Drill Up</b><span id="hd"></span></div><div id="toast"></div><div id="v"></div>
+<div id="top"><b>⛏ Drill Up</b><span class="rg"><span id="hd"></span><button class="tbn" id="tbU" aria-label="Frissítés" onclick="upd()">🔄</button><button class="tbn" id="tbM" aria-label="Menü" onclick="showMM()">☰</button></span></div><div id="toast"></div><div id="v"></div>
 <nav id="nv"></nav>
 <script src="js/base.js"></script>
 <script src="js/power.js"></script>
@@ -64,7 +64,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
-<script src="js/mechfx.js"></script><script src="js/rpm.js"></script>
+<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
@@ -236,7 +236,7 @@ function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id=
  m.innerHTML='<canvas id="mc"></canvas><div class="in">'+(sub=='set'?`<div class="top"><div class="ttl" style="font-size:32px">Beállítások</div></div><div class="sp"></div>${setBody()}`:`<div class="top"><div class="ttl">DRILL UP</div><div class="tag">Fúrj le a Föld magjáig · 6 371 km</div></div><div class="sp"></div>
 <div class="stats"><div class="stat"><small>REKORD</small><b>${fd(S.max)}</b></div><div class="stat"><small>PÉNZ</small><b>${ft(S.cash)}</b></div><div class="stat wide"><small>A GÉPED</small><b>${D[S.u.d][0]} · ${H[S.u.h][0]} · ${HD[S.u.f][0]}</b></div></div>
 <button class="mb pri big" onclick="hideMM()">▶ ${has?'FOLYTATÁS':'INDULÁS'}</button>
-<div class="mg"><button class="mb sm" onclick="showMM('set')">⚙ Beállítások</button><button class="mb sm" onclick="upd()">🔄 Frissítés <small>v${VER}</small></button><button class="mb sm" onclick="share()">📤 Megosztás</button>${ip?'<button class="mb sm" onclick="ip.prompt()">📲 Telepítés</button>':`<button class="mb sm" onclick="toast('iPhone: Safari → Megosztás → Főképernyőhöz adás. Android: böngészőmenü → Telepítés.')">📲 Telepítés</button>`}</div>
+<div class="mg"><button class="mb sm" onclick="showMM('set')">⚙ Beállítások</button><button class="mb sm" onclick="upd()">🔄 Frissítés <small>v${VER}</small></button><button class="mb sm" onclick="share()">📤 Megosztás</button>${window.NAT&&NAT.app?'<button class="mb sm" disabled>✔ Telepítve</button>':ip?'<button class="mb sm" onclick="ip.prompt()">📲 Telepítés</button>':`<button class="mb sm" onclick="toast('iPhone: Safari → Megosztás → Főképernyőhöz adás. Android: böngészőmenü → Telepítés.')">📲 Telepítés</button>`}</div>
 <button class="lnk" onclick="if(confirm('Biztosan törlöd a mentést?')){S=init();hideMM();view()}">🗑 Új játék kezdése</button>`)+'</div>'}
 function hideMM(){const m=$('#mm');if(m)m.remove()}
 const vs=[vDrill,vShop,vStore,()=>window.DEP?DEP.html():vMarket(),vLog,vMenu],names=['⛏ Fúrás','🏭 Műhely','📦 Raktár','🏗 Depó','📖 Tudás','☰ Menü'];
@@ -436,9 +436,10 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  // gép: tájolás (3D fordulás: yaw = jobb↔bal, fel↔le)
  const ld=(window.NET&&NET.falling)?(lastD='D'):dir!='idle'?(lastD=dir):lastD;if(ld=='L'||ld=='R')hf=ld=='L'?-1:1;
  let angT=ld=='U'||ld=='D'?Math.PI/2:0,faceT=ld=='D'?1:ld=='U'?-1:hf;if(ry<1&&dir!='D'){angT=0;faceT=hf}
- const yawT=faceT>0?0:Math.PI,arcR=tlA&&act?Math.max(.55,Math.min(1.5,.5+Math.abs(vsp)/(K*7))):1,mvv=(a,b)=>{const d=b-a;return a+Math.sign(d)*Math.min(Math.abs(d),dt*(tlA&&act?(.55+1.1*Math.abs(d))*arcR:1.2+3.2*Math.abs(d)))};if(tlA&&act){ang=mvv(ang,angT);yaw=mvv(yaw,yawT);window._vA=window._vY=0}else{const sm2=(c,t0,vk)=>{const d=t0-c,tg=Math.sign(d)*(Math.abs(d)>.002?.35+2.3*Math.abs(d):0);let v=window[vk]||0;v+=(tg-v)*Math.min(1,dt*7);const n=c+v*dt;if(Math.abs(t0-n)<.004||(d>0)!=(t0-n>0)){window[vk]=0;return t0}window[vk]=v;return n};ang=sm2(ang,angT,'_vA');yaw=sm2(yaw,yawT,'_vY')}tl=Math.abs(yaw-yawT)>.22||Math.abs(ang-angT)>.22;tlA=(window.NET&&NET.free(S.x,S.depth)&&Math.abs(yaw-yawT)<=.22)?1:0;ldt=Date.now();
+ const yawT=faceT>0?0:Math.PI,arcR=tlA&&act?Math.max(.55,Math.min(1.5,.5+Math.abs(vsp)/(K*7))):1,mvv=(a,b)=>{const d=b-a;return a+Math.sign(d)*Math.min(Math.abs(d),dt*(tlA&&act?(.55+1.1*Math.abs(d))*arcR:1.2+3.2*Math.abs(d)))};if(tlA&&act){ang=mvv(ang,angT);yaw=mvv(yaw,yawT);window._vA=window._vY=0}else{const sm2=(c,t0,vk)=>{const d=t0-c,tg=Math.sign(d)*(Math.abs(d)>.002?.9+1.2*Math.abs(d):0);let v=window[vk]||0;v+=(tg-v)*Math.min(1,dt*7);const n=c+v*dt;if(Math.abs(t0-n)<.004||(d>0)!=(t0-n>0)){window[vk]=0;return t0}window[vk]=v;return n};ang=sm2(ang,angT,'_vA');yaw=sm2(yaw,yawT,'_vY')}tl=Math.abs(yaw-yawT)>.22||Math.abs(ang-angT)>.22;tlA=(window.NET&&NET.free(S.x,S.depth)&&Math.abs(yaw-yawT)<=.22)?1:0;ldt=Date.now();
  const sY=Math.sin(yaw),sc=Math.cos(yaw),fc=sc>=0?1:-1,fa=Math.abs(Math.sin(ang)),lift=ry<1?20*(1-fa):0,Ty=cy-lift,cA=Math.cos(ang),sA=Math.sin(ang),lw=(a,b)=>[cx+K*(sc*a*cA-b*sA),Ty+K*(sc*a*sA+b*cA)];
  if(ry<1&&day>.15){x.fillStyle=`rgba(0,0,0,${.3*day*(1-fa)})`;x.beginPath();x.ellipse(cx-60*sc,Ys,70+20*Math.abs(sY),5,0,0,7);x.fill()}
+ if(tl&&ry<1.5&&Math.abs(sY)>.05&&Math.random()<dt*26){const[a,b]=lw(-5.5-Math.random()*6,2.0);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*2.4,vy:-.3-Math.random()*.7,l:1.4,L0:1.4,r0:3+Math.random()*3,col:hexRgb(mix(layer(ry)[4],'#d8c8b0',.5)),t:'du'})}
  if((act||(window.ENG&&ENG.rpm>.1))&&Math.random()<dt*(tier<2?14:tier<4?8:0)*(window.ENG?Math.max(.2,ENG.rpm):1)){const[a,b]=tier<2?lw(-11.15,-2.1-sk):lw(-10,-2.9);pr.push({x:rx+(a-cx)/K,y:ry+(b-cy)/K,vx:(Math.random()-.5)*.8,vy:-2.2,l:2.2,t:tier<2?'s':'k'})}
  if(dr){const dri=clamp(rate/14,0,1),f2=lw(.6,0),fx=fc*cA,fy=fc*sA,qx=-fy,qy=fx,n0x=rx+(f2[0]-cx)/K,n0y=ry+(f2[1]-cy)/K,hzt=Math.abs(fx)>.5,cc=hzt?ry:rx,lc2=layer(ry)[4];
   let q=dt*(34+70*dri+hh*40)*GR();while(q>0){if(Math.random()<Math.min(1,q)){const v=(Math.random()-.5)*3.4,sp0=1.5+Math.random()*4.5;pr.push({t:'ch',x:n0x+qx*v,y:n0y+qy*v,vx:-fx*sp0+qx*(Math.random()-.5)*5,vy:-fy*sp0+qy*(Math.random()-.5)*5-1.5,l:1.1+Math.random()*1.3,z:1.5+Math.random()*3.8,rot:Math.random()*6.28,vr:(Math.random()-.5)*16,ax:hzt,c:cc,col:Math.random()<.55?mix(lc2,'#ffffff',.2):mix(lc2,'#000000',.5),sd:pid++})}q--}
@@ -457,9 +458,9 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   else if(p.t=='sp'){p.vy+=16*dt;x.strokeStyle=`rgba(255,${130+p.l*200|0},50,${Math.min(1,p.l*3)})`;x.lineWidth=1.6;x.beginPath();x.moveTo(X,Y);x.lineTo(X-p.vx*dt*K*2.5,Y-p.vy*dt*K*2.5);x.stroke()}
   else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
- const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=Math.pow(clamp(Math.abs(sY)*1.5,0,1),1.3);
- x.save();x.globalAlpha=1-.6*fo;x.transform(1,0,sY*.05*fc,1,0,0);x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.fillStyle=`rgba(0,0,0,${.28*Math.abs(sY)})`;x.fillRect(-12,-2.1,12.6,4.2);x.restore();
- if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K,K);front(x,sp,hl,dep*grip,hh,S.u.f);x.restore();x.globalAlpha=1}
+ const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=(()=>{const u=clamp((Math.abs(sY)-.5)/.42,0,1);return u*u*(3-2*u)})();
+ x.save();x.globalAlpha=1-.25*fo;x.transform(1,0,sY*.05*fc,1,0,0);x.translate(0,1.6*K);x.scale(1,1-.09*Math.abs(sY));x.translate(0,-1.6*K);x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.restore();
+ if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K*(1+.08*Math.abs(sY)),K*(1+.08*Math.abs(sY)));front(x,sp,hl,dep*grip,hh,S.u.f);x.restore();x.globalAlpha=1}
  x.restore();
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
  // fények
