@@ -233,6 +233,8 @@ t('RPM: a fúrás sebessége és a fejkopás ténylegesen változik; a csúszka 
 t('páncél/legénység/remegés: a MX állapotgép halad, a rajzok és hangok kivétel nélkül futnak',()=>{const g=lg(),S=g.T.S,M=g.sb.MX;ok(!!M);g.T.tab=0;eq(g.frames(20),[]);ok(M.cl<.05,'nyitva indul');S.st='D';eq(g.frames(60,50),[]);ok(M.cl>.99&&M.sh()>.99&&M.rt()>.99,'zár');
  const j=M.jit(1000);ok(Math.abs(j[0])<.2&&Math.abs(j[1])<.2,'remegés kicsi');S.st='idle';S.depth=0;eq(g.frames(60,50),[]);ok(M.cl<.01,'kinyit');for(const k of ['crank','ignite','ready','stop','retract','close','locked','unlock'])M.sound(k);S.u.h=5;S.hw=80;S.depth=3000;eq(g.frames(30,50),[])});
 
+t('3D fordulás: a modell minden szögben, minden fejszinten kivétel nélkül rajzol; a fordulás közben a játék hibátlanul fut',()=>{const g=lg(),S=g.T.S;ok(!!g.sb.T3);const x=g.sb.document?null:null;g.T.tab=0;for(const d of['L','R','D','U','L'])for(let h=0;h<3;h++){S.u.f=h*2;g.T.go(d);eq(g.frames(25,40),[])}});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

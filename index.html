@@ -64,7 +64,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
-<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script>
+<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
@@ -134,7 +134,7 @@ const cap=()=>C[S.u.c][1],tank=()=>T[S.u.t][1],mass=()=>(D[S.u.d][4]+H[S.u.h][3]
 function calc(){const d0=D[S.u.d],pm=window.GEN?GEN.mult():1,d=[d0[0],d0[1]*pm,d0[2],d0[3],d0[4],d0[5]],f=F[d[3]],L=layer(S.depth),P=lerp(PT,S.depth),Tm=lerp(TT,S.depth),m=mass();
  const e=L[3]*(1+P/100),v=Math.min(3,d[1]/(e*A)),fr=d0[1]/(d[2]*f.e),fm=m*G/(.5*d[2]*f.e*1e6),vu=Math.min(5,d[1]*1e6*.5/(m*G));
  const fh=fm*.1,vh=Math.min(5,d[1]*1e6*.5/(m*G*.1));return{d,f,L,P,Tm,m,v,fr,fm,vu,fh,vh,need:S.tr.reduce((a,t)=>a+t[1]*(t[0]=='D'?fm:t[0]=='U'?fm*.2:fh),0)}}
-let wasB=false,tl=0,tlA=0,ldt=0,acc=0,HEAT=0,STALL=0;
+let t3c=null,wasB=false,tl=0,tlA=0,ldt=0,acc=0,HEAT=0,STALL=0;
 const EM={'Kőszén':24,'Humusz':12,'Borostyán':30,'Kén':9,'Uránérc':2000};
 const emGain=n=>{const d=D[S.u.d],nuc=d[3]=='uran';return nuc!=(n=='Uránérc')?0:EM[n]*(d[3]=='coal'||nuc?1:.6)/F[d[3]].e};
 const emStock=()=>Object.keys(EM).reduce((a,n)=>a+(S.cg[n]||0)*emGain(n),0);
@@ -459,8 +459,9 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
  const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=(()=>{const u=clamp((Math.abs(sY)-.5)/.42,0,1);return u*u*(3-2*u)})();
- x.save();x.globalAlpha=1-.25*fo;x.transform(1,0,sY*.05*fc,1,0,0);x.translate(0,1.6*K);x.scale(1,1-.09*Math.abs(sY));x.translate(0,-1.6*K);x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.restore();
- if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K*(1+.08*Math.abs(sY)),K*(1+.08*Math.abs(sY)));front(x,sp,hl,dep*grip,hh,S.u.f);x.restore();x.globalAlpha=1}
+ const u3=window.T3?(()=>{const u=clamp((Math.abs(sY)-.02)/.3,0,1);return u*u*(3-2*u)})():0;if(u3<.999){x.save();x.globalAlpha=1-u3;x.transform(1,0,sY*.05*fc,1,0,0);x.translate(0,1.6*K);x.scale(1,1-.09*Math.abs(sY));x.translate(0,-1.6*K);x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.restore()}
+ if(u3>.001){try{const R3=Math.min(3,window.devicePixelRatio||1),W3=Math.ceil(28*K*R3),H3=Math.ceil(8*K*R3);if(!t3c||t3c.width!==W3||t3c.height!==H3){t3c=document.createElement('canvas');t3c.width=W3;t3c.height=H3}const c3=t3c.getContext('2d');c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,W3,H3);c3.translate(W3/2,H3/2);c3.scale(K*R3,K*R3);T3.draw(c3,{yaw,sp,hl,ht:S.u.f,heat:hh,lit:lit2});x.save();x.globalAlpha=u3;x.drawImage(t3c,-W3/2/R3,-H3/2/R3,W3/R3,H3/R3);x.restore()}catch(e){DBG.err='t3: '+e.message}}
+ if(!window.T3&&fo>.02){x.globalAlpha=fo;x.save();x.scale(K*(1+.08*Math.abs(sY)),K*(1+.08*Math.abs(sY)));front(x,sp,hl,dep*grip,hh,S.u.f);x.restore();x.globalAlpha=1}
  x.restore();
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
  // fények
