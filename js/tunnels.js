@@ -55,7 +55,7 @@ const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:
  crash(v){const tol=VTOL[S.u.h],dmg=NET.fd<SAFE?0:Math.max(0,Math.pow(v/tol,2)-.36)*55;NET.shake=clamp(v/tol,0,1);
   if(dmg>0){S.hp=Math.max(0,S.hp-dmg);msg('💥 Becsapódás '+v.toFixed(1)+' m/s sebességgel – a váz '+dmg.toFixed(0)+'%-ot sérült.');if(W.clank){clank(1);scr(.5,200,50,.8)}}
   else if(v>2){msg('⬇ Landolás '+v.toFixed(1)+' m/s sebességgel – sérülés nélkül.');if(W.clank)clank(.4)}
-  if(S.hp<=0)strand('A gép a becsapódástól összeroppant.')},
+  if(S.hp<=0){if(window.DMG)DMG.explode('A gép a becsapódástól szétroncsolódott, a pajzs nem bírta.');else strand('A gép a becsapódástól összeroppant.')}},
  // a szimuláció lépése előtt hívódik; igaz, ha a lépést a szabadesés fizikája elvégezte
  physics(dt){if(!S)return false;
   if(!NET.falling){if(S.st==='D'&&S.depth<R-1&&NET.openBelow(S.x,S.depth))NET.begin();else{NET.settle(dt);return false}}
