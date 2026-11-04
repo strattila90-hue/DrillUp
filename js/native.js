@@ -15,5 +15,5 @@
  d.addEventListener('visibilitychange',()=>{if(!d.hidden)lock()});['pointerdown','touchstart'].forEach(n=>d.addEventListener(n,lock,{passive:true,once:false}));lock();
  try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{})}catch(e){}
  // Android vissza-gomb: ne lépjen ki a játékból, hanem nyissa meg a menüt
- try{history.replaceState({g:1},'');history.pushState({g:2},'');W.addEventListener('popstate',()=>{history.pushState({g:2},'');try{if(!d.getElementById('mm'))showMM()}catch(e){}})}catch(e){}
+ try{history.replaceState({g:1},'');history.pushState({g:2},'');W.addEventListener('popstate',()=>{history.pushState({g:2},'');if(NAT.back&&NAT.back())return;try{if(!d.getElementById('mm'))showMM()}catch(e){}})}catch(e){}
 })(typeof window!=='undefined'?window:globalThis);

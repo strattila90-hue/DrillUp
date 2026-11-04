@@ -16,7 +16,7 @@ const CIN={on:false,k:0,cap:null,capT:0,hint:0,vg:null,vgW:0,vgH:0,vgS:0,gr:null
   const b=document.createElement('button');b.id='cinBtn';b.setAttribute('aria-label','Cinematic mód');b.textContent='🎬';b.onpointerdown=e=>{e.preventDefault();e.stopPropagation();CIN.enter()};st.appendChild(b)},
  step(dt){CIN.bt+=dt;if(CIN.bt>.6){CIN.bt=0;CIN.btn()}
   CIN.k+=((CIN.on?1:0)-CIN.k)*Math.min(1,dt*2.5);
-  if(CIN.on){const t=(Date.now()-CIN.t0)/1000;if(W.ZM){ZM.t=1.3+.3*Math.sin(t/11)+.08*Math.sin(t/4.3);ZM.ox=Math.sin(t/7.7)*26;ZM.oy=Math.cos(t/9.3)*10}
+  if(CIN.on){const t=(Date.now()-CIN.t0)/1000;if(W.ZM&&!(W.NAT&&NAT.reduced&&NAT.reduced())){ZM.t=1.3+.3*Math.sin(t/11)+.08*Math.sin(t/4.3);ZM.ox=Math.sin(t/7.7)*26;ZM.oy=Math.cos(t/9.3)*10}
    if(CIN.cap){CIN.capT+=dt;if(CIN.capT>Math.min(22,9+CIN.cap.s.length*.045)){CIN.cap=null;if(W.STO)STO.cur=null}}
    if(CIN.hint>0)CIN.hint=Math.max(0,CIN.hint-dt/5)}},
  vgC(w,h,s){if(CIN.vg&&CIN.vgW===w&&CIN.vgH===h&&CIN.vgS===s)return CIN.vg;const c=CIN.vg||(CIN.vg=document.createElement('canvas'));c.width=Math.max(2,w>>1);c.height=Math.max(2,h>>1);const g=c.getContext('2d'),r=g.createRadialGradient(c.width/2,c.height/2,Math.min(c.width,c.height)*.28,c.width/2,c.height/2,Math.hypot(c.width,c.height)*.55);r.addColorStop(0,'rgba(0,0,0,0)');r.addColorStop(1,`rgba(0,0,0,${s})`);g.fillStyle=r;g.fillRect(0,0,c.width,c.height);CIN.vgW=w;CIN.vgH=h;CIN.vgS=s;return c},
