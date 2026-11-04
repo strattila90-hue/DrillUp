@@ -75,7 +75,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='4.3';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='4.4';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -155,11 +155,11 @@ function step(dt){if(window.NET&&NET.physics(dt))return;const c=calc(),h=H[S.u.h
  const tp=S.tr.at(-1);if(m=='H'){if(!tp){S.st='idle';S.mode='';msg('☀ Hazaértél a bázisra!');return}m=OP[tp[0]]}
  const[dx,dd]=DV[m],vert=dd!=0,back=tp&&tp[0]==OP[m],fa=window.NET?NET.ahead(S.x,S.depth,dx,dd):0,trav=back||(S.depth==0&&!vert)||fa>.02;
  if(m=='U'&&!back&&S.depth<=0){S.st='idle';return}
- S.mode=trav?'travel':'drill';let v,fpm;if(trav){v=vert?c.vu:c.vh;fpm=vert?(dd<0?c.fm:c.fm*.2):c.fh;if(window.ENG){const w=ENG.work(c,{trav:1,vert,dd});v*=w.spd}if(window.DMG&&!vert)v*=DMG.spd();if(window.HILL&&S.depth<=.01&&!vert){const hd=HILL.drive(c,S.x,dx);v*=hd.v;fpm*=hd.f;if(hd.v<=0&&S.st!='idle'&&Date.now()-(window._hlT||0)>4000){window._hlT=Date.now();toast('⛰ Túl meredek: a lánctalp nem tud felkapaszkodni.')}}if(S.st=='H')v=Math.max(v,(S.hTot||0)/3);if(tp&&tp[2]==='x'&&back&&window.RT)fpm=RT.digFpm(c)}else{if(window.BIT&&BIT.broken()){BIT.stop();return}const hd=HR[LY.indexOf(c.L)],r=hd/(window.BIT?BIT.cap():HD[S.u.f][1]);HEAT=Math.min(1.2,r);v=Math.min(3,c.v/((.55+.9*Math.min(r,1.15))/(1+.35*S.u.f)));const w=window.ENG?ENG.work(c,{trav:0,r}):{spd:1,fuel:1};v*=w.spd*(window.BIT?BIT.spd():1);fpm=c.fr*w.fuel/v}
+ S.mode=trav?'travel':'drill';let v,fpm;if(trav){v=vert?c.vu:c.vh;fpm=vert?(dd<0?c.fm:c.fm*.2):c.fh;if(window.ENG){const w=ENG.work(c,{trav:1,vert,dd});v*=w.spd}if(window.DMG&&!vert)v*=DMG.spd();window._hs=0;if(window.HILL&&S.depth<=.01&&!vert){const hd=HILL.drive(c,S.x,dx,v);v*=hd.v;fpm*=hd.f;window._hs=hd.s||0;if(hd.v<=.02&&S.st!='idle'&&Date.now()-(window._hlT||0)>4000){window._hlT=Date.now();toast('⛰ Túl meredek ('+Math.round(hd.g*100)+'%): a lánctalp tapadása csak '+Math.round(hd.mu*100)+'% – fejleszd a meghajtást (nagyobb, szélesebb lánctalp)!')}}if(S.st=='H')v=Math.max(v,(S.hTot||0)/3);if(tp&&tp[2]==='x'&&back&&window.RT)fpm=RT.digFpm(c)}else{if(window.BIT&&BIT.broken()){BIT.stop();return}const hd=HR[LY.indexOf(c.L)],r=hd/(window.BIT?BIT.cap():HD[S.u.f][1]);HEAT=Math.min(1.2,r);v=Math.min(3,c.v/((.55+.9*Math.min(r,1.15))/(1+.35*S.u.f)));const w=window.ENG?ENG.work(c,{trav:0,r}):{spd:1,fuel:1};v*=w.spd*(window.BIT?BIT.spd():1);fpm=c.fr*w.fuel/v}
  let dist=v*dt*arcF;if(back)dist=Math.min(dist,tp[1]);if(fa>.02&&!back)dist=Math.min(dist,fa);if(fpm*dist>S.fuel)dist=S.fuel/fpm;
  const bk=x=>x[2]<100?.05:1,per=c.L[5].reduce((a,x)=>a+x[1]*bk(x),0);
  if(!trav){{const Ln=layer(S.depth+dd*dist);if(Ln!=c.L&&dd!=0){const h2=HR[LY.indexOf(Ln)];if(h2>(window.BIT?BIT.cap():HD[S.u.f][1])){const lim=dd>0?c.L[2]-S.depth:S.depth-c.L[1];dist=Math.max(0,Math.min(dist,lim-1e-4));if(dist<1e-3){stall(Ln,h2);return}}}}const room=window.DEP?DEP.room():cap()-cargoKg();if(per*dist>room){dist=Math.max(0,room/per);S.st='idle';msg('📦 A raktér megtelt – indulj haza (🏠) eladni!')}if(dd>0&&S.depth+dist>R)dist=R-S.depth;if(dd<0&&dist>S.depth)dist=S.depth}
- if(dd<0&&dist>S.depth)dist=S.depth;if(dd<0&&S.depth<=1e-9){S.st='idle';S.mode='';if(S.tr.length&&S.tr.every(t=>t[0]=='D'||t[0]=='U'))S.tr=[];return}const x0=S.x,d0=S.depth;S.fuel-=fpm*dist;S.x+=dx*dist;S.depth+=dd*dist;S.max=Math.max(S.max,S.depth);
+ if(dd<0&&dist>S.depth)dist=S.depth;if(dd<0&&S.depth<=1e-9){S.st='idle';S.mode='';if(S.tr.length&&S.tr.every(t=>t[0]=='D'||t[0]=='U'))S.tr=[];return}const x0=S.x,d0=S.depth;S.fuel-=fpm*dist;S.x+=dx*dist;if(window._hs>0&&S.depth<=.01)S.x-=dx*window._hs*dt;S.depth+=dd*dist;S.max=Math.max(S.max,S.depth);
  if(back){if(tp[2]==='x'&&window.RT&&dist>0)RT.markDig(x0,d0,dist,c);tp[1]-=dist;if(tp[1]<1e-6)S.tr.pop()}else if(dist>0){if(tp&&tp[0]==m)tp[1]+=dist;else S.tr.push([m,dist])}
  if(!trav&&dist>0){const g=S.tn.at(-1);if(g&&g[2]==x0&&g[3]==d0&&(dx?g[1]==g[3]:g[0]==g[2])){g[2]=S.x;g[3]=S.depth;g[4]=Date.now()}else{S.tn.push([x0,d0,S.x,S.depth,Date.now()]);if(S.tn.length>3000)S.tn.shift()}
   window.BIT&&BIT.wear(dist,c.L);c.L[5].forEach(x=>{const a=x[1]*bk(x)*dist;if(window.DEP)DEP.add(x[0],a);else S.cg[x[0]]=(S.cg[x[0]]||0)+a});
