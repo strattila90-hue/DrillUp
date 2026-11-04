@@ -1,9 +1,9 @@
 'use strict';
 /* Futtatás: node tests/run.js   (nincs külső függőség). Logikát és kivételeket ellenőriz – megjelenést, érintést, hangot nem. */
 const {boot}=require('./harness');
-let pass=0,fail=0;const only=process.argv[2];let grp='';
-const group=n=>{grp=n;console.log('\n'+n)};
-function t(name,fn){if(only&&!grp.toLowerCase().includes(only.toLowerCase()))return;try{fn();pass++;console.log('  ✓',name)}catch(e){fail++;console.log('  ✗',name,'→',e.message)}}
+let pass=0,fail=0;const only=process.argv[2]&&!/^\d+\/\d+$/.test(process.argv[2])?process.argv[2]:undefined;let grp='',gi=-1;const SH=(process.env.SHARD||(/^\d+\/\d+$/.test(process.argv[2]||'')?process.argv[2]:'')).split('/').map(Number);const shardOn=SH.length===2&&SH[1]>0;
+const group=n=>{grp=n;gi++;console.log('\n'+n)};
+function t(name,fn){if(only&&!grp.toLowerCase().includes(only.toLowerCase()))return;if(shardOn&&gi%SH[1]!==SH[0])return;try{fn();pass++;console.log('  ✓',name)}catch(e){fail++;console.log('  ✗',name,'→',e.message)}}
 const eq=(a,b,m)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw new Error((m||'')+' várt: '+JSON.stringify(b)+' kapott: '+JSON.stringify(a))};
 const near=(a,b,e,m)=>{if(!(Math.abs(a-b)<=e))throw new Error((m||'')+' várt ≈ '+b+' kapott: '+a)};
 const ok=(c,m)=>{if(!c)throw new Error(m||'feltétel hamis')};
@@ -316,6 +316,12 @@ t('kijelzők: elrejtés/előhívás, mentésben megmarad, rejtve nem rajzolódik
 group('N) Natív-app érzet');
 t('manifest: érvényes, maskable ikon létezik, offline fájllista tartalmazza az új fájlokat',()=>{const fs=require('fs'),m=JSON.parse(fs.readFileSync(__dirname+'/../manifest.webmanifest','utf8'));ok(m.display==='standalone'&&m.orientation==='portrait');const mk=m.icons.find(i=>i.purpose==='maskable');ok(mk&&fs.existsSync(__dirname+'/../'+mk.src));const sw=fs.readFileSync(__dirname+'/../sw.js','utf8');for(const f of['js/appshell.js','js/panels.js','js/cine.js','js/story.js','js/zoom.js','js/surface.js','icon-maskable-512.png'])ok(sw.includes(f),f)});
 t('natív segédek: rezgés és párbeszéd hibátlan, a vissza-gomb nem dob hibát, nincs böngésző-felugró a kódban',()=>{const g=lg(),N=g.sb.NAT;ok(N&&typeof N.hap==='function'&&typeof N.ask==='function'&&typeof N.back==='function');N.hap(10);g.T.S.set.hap=0;N.hap(10);let hit=0;N.ask('x','ok',()=>hit++);ok(hit>=0);ok(N.back()===false||N.back()===true);const html=require('fs').readFileSync(__dirname+'/../index.html','utf8');ok(!/onclick="[^"]*confirm\(/.test(html),'confirm() maradt')});
+
+group('M) Mérföldkövek, diagnosztika, hang');
+t('mérföldkövek: elért mélységért egyszeri jutalom, nem fizet kétszer, mentésben marad',()=>{const g=lg(),S=g.T.S,L=g.sb.GL;ok(!!L);const c0=S.cash;S.max=1200;S.depth=1200;L.check();ok(L.has('d100')&&L.has('d1k'));const c1=S.cash;ok(c1>c0);L.check();eq(S.cash,c1);g.T.save();const h=boot({store:g.store});ok(h.sb.GL.has('d1k'));ok(L.html().includes('Mérföldkövek'))});
+t('mérföldkövek: gyűjtemény-jutalom a beszámolók száma szerint',()=>{const g=lg(),S=g.T.S,L=g.sb.GL;S.sty=[1,2,3,4,5];const c0=S.cash;L.check();ok(L.has('c5')&&S.cash>c0)});
+t('diagnosztika: képességek lekérdezése hibátlan, a szöveg a mért adatból áll',()=>{const g=lg(),D=g.sb.DIAG;ok(!!D);const c=D.caps();ok(c.dpr>0);const r=Object.assign(c,{fps:60,avgMs:16.7,p95Ms:20,maxMs:30,frames:300,qStart:2,ver:'x',depth:0,save:1,verdict:'ok'});ok(D.text(r).includes('FPS: 60'))});
+t('fúróhang: a rajz/hang-lépés kemény és puha kőzetben is hibátlan',()=>{const g=lg(),S=g.T.S;for(const d of[10,5000,60000]){S.depth=d;S.tr=[['D',d]];g.T.go('D');eq(g.frames(8,30),[])}});
 
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};

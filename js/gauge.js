@@ -26,7 +26,7 @@ const GG={
   const L=LY[ps.i],T=window.VOL?VOL.tm(S.x,d,lerp(TT,d)):lerp(TT,d),Pg=lerp(PT,d),name=SHORT[ps.i]||L[0];
   const lines=[[name,'bold 11px Georgia','#ffffff'],[d<1?'Felszín':GG.fd(d)+' mélyen','11px Georgia','#f2eadb'],['🌡 '+Math.round(T)+' °C · '+(Pg<1?Math.round(Pg*1000)+' MPa':Pg.toFixed(Pg<10?1:0).replace('.',',')+' GPa'),'9px Georgia','#ffcf9a'],['réteg alja: '+GG.fd(L[2])+(L[2]-d>0?' (még '+GG.fd(L[2]-d)+')':''),'8px Georgia','#b8ab96']];
   x.font='bold 11px Georgia';let bw2=0;for(const t of lines){x.font=t[1];bw2=Math.max(bw2,x.measureText(t[0]).width)}bw2+=14;const bh=lines.length*13+8;
-  let by=Math.min(Math.max(my-bh/2,y0-10),y1+14-bh),bxx=bx-12-bw2;{const q=window.SZ&&SZ.rect?SZ.rect(V):null;if(q&&bxx<q.x+q.w+4&&bxx+bw2>q.x-4&&by<q.y+q.h+4&&by+bh>q.y-4){const dn=q.y+q.h+6;by=dn+bh<=y1+14?dn:Math.max(y0-10,q.y-bh-6)}}
+  let by=Math.min(Math.max(my-bh/2,y0-10),y1+14-bh),bxx=bx-12-bw2;for(const id of['sz','lab']){const q=window.PN?PN.rc(id):(id==='sz'&&window.SZ&&SZ.rect?SZ.rect(V):null);if(q&&bxx<q.x+q.w+4&&bxx+bw2>q.x-4&&by<q.y+q.h+4&&by+bh>q.y-4){const dn=q.y+q.h+6;by=dn+bh<=y1+14?dn:Math.max(y0-10,q.y-bh-6)}}
   if(window.PN&&!PN.vis('gg')){x.restore();return}if(window.PN)PN.reg('gg',bxx,by,bw2,bh);
   x.fillStyle='rgba(10,12,14,.82)';x.strokeStyle=L[4];x.lineWidth=1.2;x.beginPath();x.roundRect?x.roundRect(bxx,by,bw2,bh,6):x.rect(bxx,by,bw2,bh);x.fill();x.stroke();
   x.fillStyle='rgba(10,12,14,.82)';x.beginPath();x.moveTo(bxx+bw2,my-4);x.lineTo(bxx+bw2+4,my);x.lineTo(bxx+bw2,my+4);x.fill();

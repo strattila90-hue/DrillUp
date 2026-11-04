@@ -91,7 +91,7 @@ const SRF={Q:[],H:[],pills:[],card:null,seen:0,
    const rx=sx+150;x.fillStyle='#6a5236';x.fillRect(rx,Y0-26,34,3);x.fillRect(rx,Y0-14,34,3);x.fillRect(rx+1,Y0-26,2,26);x.fillRect(rx+31,Y0-26,2,26);const cc=['#a88a55','#9a9a88','#b06a6a','#4a4f5a','#3f6f3a'];for(let r=0;r<2;r++)for(let i=0;i<4;i++){x.fillStyle=cc[(i+r*2)%5];x.fillRect(rx+4+i*7,Y0-23+r*12-0,5,7)}
    SRF.hit('lab',sx-14,Y0-72,196,72);SRF.pill(x,V,'lab',sx+78,Y0-(l>=3?98:l>=2?92:68))}
   if(l<1){SRF.hit('lab',sx+8,Y0-72,150,72);SRF.pill(x,V,'lab',sx+70,Y0-84)}},
- frame(V){if(typeof S==='undefined')return;SRF.H=[];SRF.Q=[];
+ frame(V){if(typeof S==='undefined')return;SRF.H=[];SRF.Q=[];try{SRF.btn(V)}catch(e){}
   // naplemente: egyszeri útmutató
   if(V.day<.55&&!SRF.seen&&V.Ys>-100){SRF.seen=1;toast('🌙 Beesteledett – érintsd meg az épületet vagy a lámpát a világításhoz.')}
   const x=V.x,Y0=V.Ys;if(!(Y0>-190&&Y0<V.h+190))return;const night=V.day<.55;
@@ -109,6 +109,10 @@ SRF.front=function(V){const x=V.x,Y0=V.Ys;if(!(Y0>-190&&Y0<V.h+190))return;
    if(L>=3){x.strokeStyle='#555';x.lineWidth=1.5;x.beginPath();x.moveTo(wsx+196,Y0-90);x.lineTo(wsx+196,Y0-132);x.stroke();x.fillStyle='#d44';x.beginPath();x.arc(wsx+196,Y0-133,2,0,7);x.fill()}
    if(SRF.lv('fu')>=2){x.fillStyle='#8c9aa5';x.beginPath();x.ellipse(tx+28,Y0-38,18,5,0,0,7);x.fill()}}
 };
+SRF.ids=['ws','fu','tr','lab','lp0','lp1','lp2'];
+SRF.all=()=>{const o=SRF.st().on,any=SRF.ids.some(k=>o[k]),v=any?0:1;for(const k of SRF.ids)o[k]=v;try{beep(v?880:520,.06,.05,'square')}catch(e){}toast(v?'💡 Minden világítás be':'🌑 Minden világítás ki');try{save()}catch(e){}};
+SRF.btn=V=>{if(typeof document==='undefined'||!document.getElementById)return;const st=document.getElementById('stage');if(!st)return;let b=document.getElementById('lgBtn');const show=V.day<.55&&V.Ys>-100&&V.Ys<V.h+100&&!(W.CIN&&CIN.on);
+ if(!b&&show){b=document.createElement('button');b.id='lgBtn';b.setAttribute('aria-label','Minden világítás');b.textContent='💡';b.onpointerdown=e=>{e.preventDefault();e.stopPropagation();SRF.all()};st.appendChild(b)}if(b)b.style.display=show?'block':'none'};
 W.SRF=SRF;
 if(W.on){
  on('world.back',V=>{try{SRF.frame(V)}catch(e){DBG.err='surface: '+(e.message||e)}});
