@@ -38,7 +38,7 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
   // kőzet-szemcsék és rétegcsíkok csúsznak a fej mellett
   const sc=T*sz*(.18+.5*rt),ns=[14,30,46][q]||30;for(let i=0;i<ns;i++){const x0=((hash(i)*sz-sc)%sz+sz)%sz,y0=hash(i+50)*sz,r=.8+hash(i+90)*2.6;x.fillStyle=i%3?'rgba(255,255,255,.07)':'rgba(0,0,0,.22)';x.beginPath();x.ellipse(x0,y0,r*1.6,r,hash(i)*3,0,7);x.fill()}
   if(q>0){x.strokeStyle='rgba(0,0,0,.18)';x.lineWidth=1;for(let i=0;i<4;i++){const y0=sz*(.15+i*.22);x.beginPath();for(let k=0;k<=8;k++){const xx=sz*k/8,yy=y0+Math.sin(k*1.3+i*2)*4;k?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke()}}
-  const tx=sz*.6,ty=sz*.5,pal=(W.BIT&&BIT.pal&&BIT.pal[tier])||{body:'#9aa5b1',edge:'#dfe6ee',ins:'#c3ccd6',acc:'#6b7683'};
+  const tx=sz*.72,ty=sz*.5;
   // zúzott zóna a fej előtt
   const pu=1+.08*Math.sin(T*23)*rt,cg=x.createRadialGradient(tx,ty,0,tx,ty,sz*.34*pu);cg.addColorStop(0,'rgba(10,6,4,.92)');cg.addColorStop(1,'rgba(10,6,4,0)');x.fillStyle=cg;x.fillRect(tx-sz*.4,ty-sz*.4,sz*.8,sz*.8);
   // repedés-hálózat (nagyítva)
@@ -47,12 +47,10 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
    x.globalAlpha=clamp(fade,0,1);draw(x,C,Math.min(1,c.p*1.3),(a,b)=>[tx+8+a*u,ty+b*u],1.3+(1-hard)*.9,'rgba(255,236,205,.4)');
    if(c.p>.8&&c.p<.99){const t2=(c.p-.8)/.19,e=C.pts[C.pts.length-1];x.globalAlpha=1-t2;x.fillStyle=mix(L[4],'#000000',.35);const fx=tx+8+e[0]*u+t2*sz*.2,fy=ty+e[1]*u+t2*t2*sz*.25;x.beginPath();x.moveTo(fx,fy-4);x.lineTo(fx+5,fy+1);x.lineTo(fx+1,fy+5);x.lineTo(fx-4,fy+2);x.closePath();x.fill()}}
   x.globalAlpha=1;
-  // a fúrófej: kúp, forgó spirálcsíkok és vágóélek
-  const len2=sz*.5,hh2=sz*.2,wear=clamp((S.hw||0)/100,0,1),body=mix(pal.body,'#2b2b2b',wear*.7);
-  x.beginPath();x.moveTo(tx-len2,ty-hh2);x.lineTo(tx,ty);x.lineTo(tx-len2,ty+hh2);x.closePath();x.fillStyle=body;x.fill();x.strokeStyle=pal.edge;x.lineWidth=2;x.stroke();
-  x.save();x.clip();x.strokeStyle=pal.acc;x.globalAlpha=.6;x.lineWidth=2.2;const ph=(T*(1.5+5*rt))%1,sp=sz*.12;for(let i=-2;i<8;i++){const xx=tx-len2+(i+ph)*sp,hv=hh2*(1-(xx-(tx-len2))/len2);x.beginPath();x.moveTo(xx,ty-hv*1.2);x.lineTo(xx+sp*.9,ty+hv*1.2);x.stroke()}x.restore();
-  x.fillStyle=pal.ins;x.strokeStyle=pal.edge;x.lineWidth=.8;for(let k=0;k<5+tier;k++){const t3=(k+.6)/(5+tier),cx2=tx-len2*(1-t3*.95),hv=hh2*(1-t3*.95)*.92,sw=Math.sin(T*(6+rt*20)+k)>.3?1:.55;x.globalAlpha=sw;for(const sg of[-1,1]){x.beginPath();x.arc(cx2,ty+sg*hv,2.2+tier*.12,0,7);x.fill();x.stroke()}}x.globalAlpha=1;
-  x.fillStyle='#39414b';x.fillRect(tx-len2-sz*.25,ty-sz*.1,sz*.26,sz*.2);
+  // a fúrófej: UGYANAZ a rajz, mint a játékbeli gépen (BG.head + pajzs), nagyítva
+  const wear=clamp((S.hw||0)/100,0,1),scl=sz*.19;x.save();x.translate(tx-.5*scl,ty);x.scale(scl,scl);
+  if(W.BG){BG.shield(x,S.u.h);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);BG.head(x,{sp:T*(1.5+9*rt),heat,ht:tier,ts:V.ts})}
+  x.restore();
   if(heat>.4){const hg=x.createRadialGradient(tx,ty,0,tx,ty,sz*.3);hg.addColorStop(0,`rgba(255,${160-heat*50|0},50,${.55*Math.min(1,heat)})`);hg.addColorStop(1,'rgba(255,100,20,0)');x.fillStyle=hg;x.fillRect(tx-sz*.3,ty-sz*.3,sz*.6,sz*.6)}
   // szikrák és por
   const nsp=Math.floor((q?8:3)*(.3+heat*1.4)*rt);x.strokeStyle='#ffd27a';x.lineWidth=1.3;for(let i=0;i<nsp;i++){const g=(T*3+i*.37)%1,a=(hash(i+Math.floor(T*3+i*.37))-.5)*2.2,dd=g*sz*.28;x.globalAlpha=1-g;x.beginPath();x.moveTo(tx+Math.cos(a)*dd*.4,ty+Math.sin(a)*dd*.4);x.lineTo(tx+Math.cos(a)*dd,ty+Math.sin(a)*dd+g*g*10);x.stroke()}x.globalAlpha=1;

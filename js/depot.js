@@ -118,23 +118,52 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
   const cv=$('#dpc');if(!cv||!cv.getContext)return;const w=cv.clientWidth|0,h=cv.clientHeight|0;if(w<20||h<20)return;
   const d=W.Gov&&W.Gov.dpr?W.Gov.dpr(W.devicePixelRatio||1):Math.min(W.devicePixelRatio||1,1.5);if(cv.width!==(w*d|0)){cv.width=w*d|0;cv.height=h*d|0}
   const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);
-  const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#1d3a5a');g.addColorStop(1,'#6a93a8');x.fillStyle=g;x.fillRect(0,0,w,h);
-  const gy=h*.78;x.fillStyle='#3d6b34';x.fillRect(0,gy,w,h-gy);x.fillStyle='#2a4a24';x.fillRect(0,gy,w,4);
-  // gép-garat (hopper) a bal oldalon
-  const bx=w*.05,bw=w*.17,by=gy-h*.34;x.fillStyle='#5c5f66';x.fillRect(bx,by,bw,h*.34);x.fillStyle='#3b3d42';x.fillRect(bx,by,bw,8);
-  const used=Math.min(1,DEP.used()/cap());x.fillStyle='#8a6a3a';x.fillRect(bx+4,by+8+(h*.34-12)*(1-used),bw-8,(h*.34-12)*used);x.fillStyle='#e8ecf5';x.font='11px sans-serif';x.fillText('Gép',bx+6,by-5);
-  // szállítószalag: csatlakozik a hoppertől a depó tetejéig
+  const t=DEP.tt=(DEP.tt||0)+(dt||.016),lowq=W.Gov&&W.Gov.q===0,job=!!DEP.job;
+  // ég: lassú napszak-váltás, nap/hold, felhők, madarak
+  const dayP=(t/90)%1,sun=Math.sin(dayP*Math.PI*2),dk=Math.max(0,Math.min(1,.5-sun*.7));
+  const mixc=(a,b,u)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*u)).join(',')+')';
+  const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,mixc([38,92,150],[8,14,34],dk));g.addColorStop(1,mixc([150,196,222],[44,50,84],dk));x.fillStyle=g;x.fillRect(0,0,w,h);
+  const ang=dayP*Math.PI*2,cx=w*.5+Math.cos(ang+Math.PI)*w*.42,cy=h*.62-Math.sin(ang)*h*.5;
+  if(sun>-.15){x.fillStyle='rgba(255,224,140,.25)';x.beginPath();x.arc(cx,cy,16,0,7);x.fill();x.fillStyle='#ffe08a';x.beginPath();x.arc(cx,cy,8,0,7);x.fill()}
+  if(dk>.3){x.fillStyle='rgba(255,255,255,'+(dk*.8)+')';for(let i=0;i<14;i++)x.fillRect((i*97.3)%w,(i*41.7)%(h*.5),1.5,1.5)}
+  x.fillStyle='rgba(255,255,255,'+(.55-dk*.35)+')';
+  for(let i=0;i<4;i++){const px=((t*(5+i*2)+i*w*.3)%(w+120))-60,py=h*.1+i*h*.07;for(const[ex,ey,er,eh]of[[0,0,26,7],[14,-4,16,7],[-14,-2,14,6]]){x.beginPath();x.ellipse(px+ex,py+ey,er,eh,0,0,7);x.fill()}}
+  if(!lowq&&dk<.6){x.strokeStyle='rgba(20,20,30,.6)';x.lineWidth=1.2;for(let i=0;i<2;i++){const bx=((t*22+i*70)%(w+80))-40,by=h*.2+Math.sin(t*2+i)*6,fl=Math.sin(t*14+i*2)*3;x.beginPath();x.moveTo(bx-6,by+fl);x.quadraticCurveTo(bx-3,by-3,bx,by);x.quadraticCurveTo(bx+3,by-3,bx+6,by+fl);x.stroke()}}
+  // dombok (parallax)
+  const gy=h*.78;for(const[c,a,s,k]of[['#2d4a58',.4,.006,1],['#2f5a3a',.25,.011,2]]){x.fillStyle=mixc(c==='#2d4a58'?[45,74,88]:[47,90,58],[10,16,26],dk*.8);x.beginPath();x.moveTo(0,gy);for(let i=0;i<=w;i+=12)x.lineTo(i,gy-h*(a*.3+.06*Math.sin(i*s*k+k*2)+.03*Math.sin(i*s*3.1)));x.lineTo(w,gy);x.fill()}
+  x.fillStyle=mixc([61,107,52],[16,30,24],dk*.8);x.fillRect(0,gy,w,h-gy);x.fillStyle=mixc([42,74,36],[10,20,16],dk*.8);x.fillRect(0,gy,w,4);
+  // gép-garat a bal oldalon + a kirakodó gép
+  const bx=w*.04,bw=w*.18,bh=h*.34,by=gy-bh,used=Math.min(1,DEP.used()/cap());
+  x.fillStyle='#575b63';x.fillRect(bx,by,bw,bh);x.fillStyle='#3b3d42';x.fillRect(bx,by,bw,8);x.fillStyle='#6a6e77';for(let i=1;i<4;i++)x.fillRect(bx+i*bw/4-1,by+8,2,bh-8);
+  x.fillStyle='#8a6a3a';const fh=(bh-14)*used;x.fillRect(bx+4,by+10+(bh-14)-fh,bw-8,fh);
+  x.fillStyle='rgba(255,236,160,'+(.25+dk*.5)+')';x.fillRect(bx+bw*.15,by+bh*.28,bw*.2,6);x.fillStyle='#e8ecf5';x.font='11px sans-serif';x.fillText('Gép',bx+6,by-5);
+  // szalag + vödrök + por
   const x0=bx+bw,y0=gy-h*.06,x1=w*.52,y1=gy-h*.34;x.save();x.strokeStyle='#26282c';x.lineWidth=11;x.lineCap='round';x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();
   x.strokeStyle='#4a4d54';x.lineWidth=7;x.setLineDash([6,6]);x.lineDashOffset=-DEP.ph*40;x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();x.setLineDash([]);
-  if(DEP.job){x.fillStyle='#8a6a3a';for(let i=0;i<8;i++){const u=((i/8)+DEP.ph*.25)%1;x.beginPath();x.arc(x0+(x1-x0)*u,y0+(y1-y0)*u-7,3+(i%3),0,7);x.fill()}}x.restore();
-  // depó (siló) – a töltöttség a készlet
-  const sx=w*.52,sw=w*.2,sy=gy-h*.5,sh=h*.5,fill=Math.min(1,DEP.stock()/val('s'));x.fillStyle='#6b6f78';x.fillRect(sx,sy,sw,sh);x.fillStyle='#8a6a3a';x.fillRect(sx+4,sy+sh-4-(sh-8)*fill,sw-8,(sh-8)*fill);
-  x.fillStyle='#4a4d54';x.beginPath();x.moveTo(sx-4,sy);x.lineTo(sx+sw/2,sy-16);x.lineTo(sx+sw+4,sy);x.fill();x.fillStyle='#e8ecf5';x.fillText('Depó',sx+6,sy-20);
+  x.fillStyle='#1c1d20';const L=Math.hypot(x1-x0,y1-y0),an=Math.atan2(y1-y0,x1-x0);for(let i=0;i<5;i++){const u=i/4;x.save();x.translate(x0+(x1-x0)*u,y0+(y1-y0)*u+6);x.rotate(an);x.fillRect(-2,0,4,gy-(y0+(y1-y0)*u)-4);x.restore()}
+  if(job){x.fillStyle='#8a6a3a';for(let i=0;i<9;i++){const u=((i/9)+DEP.ph*.25)%1;x.beginPath();x.arc(x0+(x1-x0)*u,y0+(y1-y0)*u-7-Math.sin(u*9+t*6)*.8,3+(i%3),0,7);x.fill()}
+   if(!lowq){x.fillStyle='rgba(150,120,80,.35)';for(let i=0;i<7;i++){const u=((t*.9+i*.14)%1);x.beginPath();x.arc(x1-4+Math.sin(i*3+t*3)*8,y1+4+u*(gy-y1-h*.22),2+u*5,0,7);x.fill()}}}
+  x.restore();
+  // siló
+  const sx=w*.52,sw=w*.2,sy=gy-h*.5,sh=h*.5,fill=Math.min(1,DEP.stock()/val('s'));
+  const sg=x.createLinearGradient(sx,0,sx+sw,0);sg.addColorStop(0,'#868b95');sg.addColorStop(.5,'#6b6f78');sg.addColorStop(1,'#4c5058');x.fillStyle=sg;x.fillRect(sx,sy,sw,sh);
+  x.fillStyle='rgba(0,0,0,.18)';for(let i=1;i<5;i++)x.fillRect(sx,sy+i*sh/5,sw,1.5);
+  x.fillStyle='#8a6a3a';x.fillRect(sx+4,sy+sh-4-(sh-8)*fill,sw-8,(sh-8)*fill);x.fillStyle='rgba(255,255,255,.14)';x.fillRect(sx+6,sy+sh-4-(sh-8)*fill,3,(sh-8)*fill);
+  x.fillStyle='#4a4d54';x.beginPath();x.moveTo(sx-4,sy);x.lineTo(sx+sw/2,sy-16);x.lineTo(sx+sw+4,sy);x.fill();
+  x.fillStyle=dk>.3?'#ffd66b':'#9fb4c8';x.fillRect(sx+sw*.42,sy+sh*.12,sw*.16,7);
+  x.fillStyle='#d33';x.beginPath();x.arc(sx+sw/2,sy-20,2.2+(job?Math.abs(Math.sin(t*6)):Math.abs(Math.sin(t*2)))*1.2,0,7);x.fill();
+  x.fillStyle='#e8ecf5';x.fillText('Depó',sx+6,sy-26);
   // sín + vonat
-  const ry=gy+(h-gy)*.45;x.fillStyle='#2b2b2e';x.fillRect(0,ry,w,3);x.fillStyle='#5a4630';for(let t=((-DEP.ph*0)%14);t<w;t+=14)x.fillRect(t,ry-2,5,7);
-  const T=DEP.trainPhase(),N=3+lv('v'),wl=Math.min(34,(w*.7)/(N+1)),home=sx+sw*.1+N*wl+wl*1.2,pos=home+T.f*(w-home+N*wl+wl*2);
-  for(let i=0;i<=N;i++){const lx=pos-wl*1.3-i*(wl+2);if(lx>w||lx+wl<0)continue;x.fillStyle=i===0?'#9a2b24':'#44484f';x.fillRect(lx,ry-wl*.55,i===0?wl*1.3:wl,wl*.5);if(i>0&&T.loaded){x.fillStyle='#8a6a3a';x.fillRect(lx+2,ry-wl*.62,wl-4,5)}x.fillStyle='#16171a';x.fillRect(lx+3,ry-3,6,6);x.fillRect(lx+wl-9,ry-3,6,6)}
-  x.fillStyle='#9a2b24';x.fillRect(pos-wl*1.3,ry-wl*.55,wl*1.3,wl*.5);x.fillStyle='#ffe9a0';x.fillRect(pos-4,ry-wl*.4,4,5);
+  const ry=gy+(h-gy)*.45;x.fillStyle='#2b2b2e';x.fillRect(0,ry,w,3);x.fillStyle='#5a4630';const T=DEP.trainPhase(),N=3+lv('v'),wl=Math.min(34,(w*.7)/(N+1)),home=sx+sw*.1+N*wl+wl*1.2,pos=home+T.f*(w-home+N*wl+wl*2),mv=T.f>0&&T.f<1;
+  for(let q=(-(mv?pos:0)%14);q<w;q+=14)x.fillRect(q,ry-2,5,7);
+  for(let i=0;i<=N;i++){const lx=pos-wl*1.3-i*(wl+2);if(lx>w||lx+wl<0)continue;const bw2=i===0?wl*1.3:wl;
+   x.fillStyle=i===0?'#9a2b24':'#44484f';x.fillRect(lx,ry-wl*.55,bw2,wl*.5);x.fillStyle='rgba(255,255,255,.15)';x.fillRect(lx,ry-wl*.55,bw2,3);
+   if(i>0&&T.loaded){x.fillStyle='#8a6a3a';x.beginPath();x.moveTo(lx+2,ry-wl*.55);x.quadraticCurveTo(lx+bw2/2,ry-wl*.8,lx+bw2-2,ry-wl*.55);x.fill()}
+   x.fillStyle='#16171a';for(const wx of[lx+7,lx+bw2-7]){x.beginPath();x.arc(wx,ry,4,0,7);x.fill();x.strokeStyle='#888';x.lineWidth=1;x.beginPath();const a=(mv?pos:0)*.3;x.moveTo(wx,ry);x.lineTo(wx+Math.cos(a)*3.5,ry+Math.sin(a)*3.5);x.stroke()}}
+  x.fillStyle='#9a2b24';x.fillRect(pos-wl*1.3,ry-wl*.55,wl*1.3,wl*.5);x.fillStyle='#2a2b30';x.fillRect(pos-wl*.35,ry-wl*.85,wl*.22,wl*.3);x.fillStyle='#ffe9a0';x.fillRect(pos-4,ry-wl*.4,4,5);
+  if(mv){x.fillStyle='rgba(255,236,160,.12)';x.beginPath();x.moveTo(pos,ry-wl*.38);x.lineTo(pos+60,ry-wl*.9);x.lineTo(pos+60,ry+wl*.2);x.fill()}
+  // gőz a mozdony kéményéből (állva is pöfög, menet közben erősebben)
+  if(!lowq){for(let i=0;i<6;i++){const u=((t*(mv?1.1:.45)+i/6)%1),px=pos-wl*.24-u*(mv?44:8),py=ry-wl*.88-u*h*.2;x.fillStyle='rgba(235,235,240,'+(.5*(1-u))+')';x.beginPath();x.arc(px,py,3+u*7,0,7);x.fill()}}
  },
  sync(dt){DEP.ph+=dt*(DEP.job?1:0);DEP.step(dt);
   if(DEP.job){DEP.tk-=dt;if(DEP.tk<=0){DEP.tk=.38;if(W.clank)clank(.1)}}
