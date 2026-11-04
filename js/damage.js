@@ -154,8 +154,8 @@ const DMG={P:[],B:null,fl:0,hot:0,lastHp:100,tt:0,
    if(p.hot&&u<2.5){x.globalCompositeOperation='lighter';x.fillStyle=`rgba(255,140,40,${Math.max(0,.6-u*.25)})`;x.fillRect(-p.w*K*.5,-p.h*K*.5,p.w*K,p.h*K)}x.restore()}
   // szikrák
   x.save();x.globalCompositeOperation='lighter';for(const p of B.sp){const q=p.l/p.L;if(q>=1)continue;x.strokeStyle=`rgba(255,${220-q*120|0},100,${1-q})`;x.lineWidth=1.6;x.beginPath();x.moveTo(p.x*K,p.y*K);x.lineTo((p.x-p.vx*.04)*K,(p.y-p.vy*.04)*K);x.stroke()}x.restore()},
- gauge(V){const x=V.x,hp=cl(S.hp==null?100:S.hp,0,100),r=DMG.heatR(),u=hp/100,bl=(hp<25||r>1)&&Math.floor(V.ts/280)%2===0;
-  const X=6,Y=58,w=122,h=S.depth>0?40:30;x.save();x.fillStyle='rgba(8,10,12,.62)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
+ gauge(V){if(W.PN&&!PN.vis('hull'))return;const x=V.x,hp=cl(S.hp==null?100:S.hp,0,100),r=DMG.heatR(),u=hp/100,bl=(hp<25||r>1)&&Math.floor(V.ts/280)%2===0;
+  const fr=W.PN?PN.rc('face'):null,X=6,Y=fr?fr.y+fr.h+6:58,w=122,h=S.depth>0?40:30;if(W.PN)PN.reg('hull',X,Y,w,h);x.save();x.fillStyle='rgba(8,10,12,.62)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
   // pajzs-ikon
   const col=u>.6?'#58e07c':u>.3?'#f0b83a':'#ff5a45';x.translate(X+13,Y+15);x.fillStyle=col;x.beginPath();x.moveTo(0,-9);x.lineTo(8,-6);x.lineTo(7,3);x.quadraticCurveTo(4,8,0,10);x.quadraticCurveTo(-4,8,-7,3);x.lineTo(-8,-6);x.closePath();x.globalAlpha=.9;x.fill();x.globalAlpha=1;
   x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.moveTo(0,-9);x.lineTo(8,-6);x.lineTo(7,3);x.quadraticCurveTo(4,8,0,10);x.closePath();x.fill();

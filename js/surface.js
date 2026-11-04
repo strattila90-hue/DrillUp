@@ -30,7 +30,7 @@ const SRF={Q:[],H:[],pills:[],card:null,seen:0,
   c.style.display='block';SRF.card=id;clearTimeout(SRF._ct);SRF._ct=setTimeout(SRF.close,14000)},
  close(){if(typeof document==='undefined'||!document.getElementById)return;const c=document.getElementById('srfCard');if(c)c.style.display='none';SRF.card=null},
  hit(id,x,y,w,h,k){SRF.H.push({id,x,y,w,h,k})},
- tap(px,py){if(window.ZM&&(ZM.t>1||ZM.z>1.02||ZM.on(px,py)))return false;for(let i=SRF.H.length-1;i>=0;i--){const r=SRF.H[i];if(px>=r.x&&px<=r.x+r.w&&py>=r.y&&py<=r.y+r.h){if(r.k==='pill')SRF.showCard(r.id);else SRF.toggle(r.id);return true}}return false},
+ tap(px,py){if(window.PN&&PN.at(px,py))return false;if(window.ZM&&(ZM.t>1||ZM.z>1.02||ZM.on(px,py)))return false;for(let i=SRF.H.length-1;i>=0;i--){const r=SRF.H[i];if(px>=r.x&&px<=r.x+r.w&&py>=r.y&&py<=r.y+r.h){if(r.k==='pill')SRF.showCard(r.id);else SRF.toggle(r.id);return true}}return false},
  // ---- rajz
  pill(x,V,id,px,py){const l=SRF.lv(id),t=INFO[id].e+' '+INFO[id].n+' '+'★'.repeat(Math.max(l,0))+(l<3?' ⬆':'');x.save();x.font='bold 9px Georgia';const w=x.measureText(t).width+12;x.restore();py=Math.max(py,18);SRF.Q.push({t,w,px,py,max:l>=3});SRF.hit(id,px-w/2-2,py-12,w+4,24,'pill')},
  drawPills(x){if(window.ZM&&ZM.z>1.02){SRF.Q=[];return}for(const q of SRF.Q){x.save();x.font='bold 9px Georgia';x.fillStyle='rgba(12,14,16,.78)';x.strokeStyle=q.max?'#e8b84a':'rgba(255,255,255,.4)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(q.px-q.w/2,q.py-8,q.w,16,8):x.rect(q.px-q.w/2,q.py-8,q.w,16);x.fill();x.stroke();x.fillStyle='#f4ecd8';x.textAlign='center';x.fillText(q.t,q.px,q.py+3.5);x.restore()}SRF.Q=[]},

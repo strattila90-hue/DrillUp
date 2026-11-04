@@ -36,7 +36,7 @@ const LAB={busy:0,t:0,
   return h+'</div>'},
  frame(dt){if(LAB.busy>0)LAB.busy=Math.max(0,LAB.busy-dt);if(typeof tab!=='undefined'&&tab===1){const c=$('#labc');if(!c||!c.getContext)return;const w=c.clientWidth|0,h=c.clientHeight|0;if(w<20)return;const d=W.Gov?Gov.dpr(W.devicePixelRatio||1):1;if(c.width!==(w*d|0)){c.width=w*d|0;c.height=h*d|0;LAB.drawn=0}
    if(LAB.busy>0||!LAB.drawn){const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);LAB.paintSample(x,w,h,GEO.ens().lab.last,LAB.busy);LAB.drawn=LAB.busy>0?0:1}}},
- hud(V){const L=GEO.ens().lab,s=L.last;if(!L.lv||!s||Date.now()-s.t>9e4)return;const x=V.x,w=150,h=40,px=V.w-w-32,py=46+(GEO.ens().sz.lv?52:0);x.save();x.fillStyle='rgba(10,12,18,.84)';GEO.rr(x,px,py,w,h,7);x.fill();x.strokeStyle=LY[s.li][4];x.lineWidth=1.2;x.stroke();
+ hud(V){const L=GEO.ens().lab,s=L.last;if(!L.lv||!s||Date.now()-s.t>9e4||(W.PN&&!PN.vis('lab')))return;const x=V.x,w=150,h=40,px=V.w-w-32,py=46+(GEO.ens().sz.lv&&(!W.PN||PN.vis('sz'))?52:0);if(W.PN)PN.reg('lab',px,py,w,h);x.save();x.fillStyle='rgba(10,12,18,.84)';GEO.rr(x,px,py,w,h,7);x.fill();x.strokeStyle=LY[s.li][4];x.lineWidth=1.2;x.stroke();
   x.font='bold 8px Georgia';x.fillStyle='#9fc4ff';x.fillText('MINTAMONITOR · '+nf(s.d)+' m',px+6,py+10);x.font='9px Georgia';x.fillStyle='#dfe6f2';
   x.fillText(LY[s.li][0].split(' (')[0].slice(0,26),px+6,py+22);const top=s.comp?s.comp.slice(0,2).map(c=>c.n).join(', '):'🌡 '+nf(s.T)+' °C';x.fillStyle='#9aa7b8';x.fillText(top.slice(0,30),px+6,py+33);x.restore()}};
 W.LAB=LAB;
