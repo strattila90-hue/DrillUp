@@ -9,7 +9,7 @@ const cellKey=(x,d)=>Math.floor(x/CELL)+','+Math.floor(d/CELL);
 const L={grid:new Map(),ref:null,n:-1,dist:0,px:null,pd:null,
  ensure(){if(L.ref===S.lamps&&L.n===S.lamps.length)return;L.grid.clear();for(const l of S.lamps){const k=cellKey(l[0],l[1]);(L.grid.get(k)||L.grid.set(k,[]).get(k)).push(l)}L.ref=S.lamps;L.n=S.lamps.length},
  near(x,d,r){L.ensure();const cx=Math.floor(x/CELL),cd=Math.floor(d/CELL);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=L.grid.get((cx+i)+','+(cd+j));if(a)for(const l of a)if(Math.hypot(l[0]-x,l[1]-d)<r)return true}return false},
- place(x,d,o){if(S.lamps.length>=CAP||L.near(x,d,GAP))return false;if(S.cash<COST)return false;S.cash-=COST;const l=[+x.toFixed(2),+d.toFixed(2),o];S.lamps.push(l);const k=cellKey(l[0],l[1]);(L.grid.get(k)||L.grid.set(k,[]).get(k)).push(l);L.n=S.lamps.length;return true},
+ place(x,d,o){if(S.lamps.length>=CAP||L.near(x,d,GAP))return false;const cc=Math.round(COST*(window.SRF?SRF.disc('tr'):1));if(S.cash<cc)return false;S.cash-=cc;const l=[+x.toFixed(2),+d.toFixed(2),o];S.lamps.push(l);const k=cellKey(l[0],l[1]);(L.grid.get(k)||L.grid.set(k,[]).get(k)).push(l);L.n=S.lamps.length;return true},
  view(x0,x1,d0,d1,fn){L.ensure();for(let i=Math.floor(x0/CELL);i<=Math.floor(x1/CELL);i++)for(let j=Math.floor(d0/CELL);j<=Math.floor(d1/CELL);j++){const a=L.grid.get(i+','+j);if(a)for(const l of a)fn(l)}}};
 W.LMP=L;
 // régi mentések: a meglévő járatok kapják meg a lámpákat (ingyen, 8 méterenként)

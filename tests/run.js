@@ -295,6 +295,15 @@ t('Fúrófej felirat a vezérlősoron',()=>{const g=lg();g.T.S.depth=0;ok(g.sb.d
 t('mélységjelző: a pozíció monoton nő, rétegenként a helyes réteget adja, a rajz minden mélységben hibátlan',()=>{const g=lg(),G=g.sb.GG,S=g.T.S;ok(!!G);let p=-1;for(const d of[0,1,2.9,3,100,399,400,3999,4e3,2e4,35e3,4.1e5,6.6e5,2.7e6,2.89e6,5.15e6,6.3e6]){const r=G.pos(d);ok(r.p>=p-1e-9,'monoton '+d);p=r.p;ok(r.i>=0&&r.i<11)}eq(G.pos(1000).i,2);eq(G.pos(6e6).i,10);eq(G.fd(1500),'1,5 km');eq(G.fd(250),'250 m');
  for(const d of[0,50,5000,3e6]){S.depth=d;S.tr=d?[['D',d]]:[];eq(g.frames(5,30),[])}});
 
+group('Y) Felszíni bázis: utcalámpák, trafó, vizsgálati központ, fejleszthető épületek, világítás-kapcsoló');
+t('felszíni épületek: kirajzolás hibátlan a bázison és máshol, találati területek léteznek',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;ok(!!R);for(const x of[-60,-20,0,25,60,400]){S.x=x;S.depth=0;eq(g.frames(3,30),[])}S.x=0;g.frames(2,30);ok(R.H.length>=3,'hit: '+R.H.length)});
+t('világítás-kapcsoló: ki-be, mentésben megmarad',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;ok(!R.on('lab'));R.toggle('lab');ok(R.on('lab'));R.toggle('lab');ok(!R.on('lab'));R.toggle('tr');g.T.save();const h=boot({store:g.store});ok(h.sb.SRF.on('tr'),'mentve')});
+t('fejlesztés: pénzt von, szintet emel, 3. szint a maximum, a javítás olcsóbb lesz',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;S.depth=0;S.x=0;eq(R.lv('ws'),1);const c0=R.disc('ws');S.cash=1e12;R.up('ws');eq(R.lv('ws'),2);ok(S.cash<1e12);ok(R.disc('ws')<c0);R.up('ws');eq(R.lv('ws'),3);const c=S.cash;R.up('ws');eq(R.lv('ws'),3);eq(S.cash,c);
+ S.hp=50;const f0=S.cash;g.sb.repair();near(f0-S.cash,50*2e3*Math.pow(8,S.u.h)*R.disc('ws'),1)});
+t('fejlesztés: kevés pénzből nem megy; a föld alatt nem fejleszthető',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;S.depth=0;S.x=0;S.cash=10;R.up('tr');eq(R.lv('tr'),1);S.cash=1e12;S.depth=500;R.up('tr');eq(R.lv('tr'),1)});
+t('sérült S.bl mentés (rossz típusok) nem dönti el a játékot',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;S.bl={tr:'x',ws:99,fu:-4,on:5};eq(g.frames(3,30),[]);ok(R.lv('tr')>=1&&R.lv('ws')<=3&&R.lv('fu')>=1);S.bl=null;eq(g.frames(3,30),[]);ok(R.st().on&&typeof R.st().on==='object')});
+t('jármű-lámpák: a testről világítanak, a rajz hibátlan föld alatt és fent',()=>{const g=lg(),S=g.T.S;ok(!!g.sb.VL);for(const d of[0,50,800]){S.depth=d;S.tr=d?[['D',d]]:[];eq(g.frames(4,30),[])}S.hp=10;eq(g.frames(6,30),[])});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

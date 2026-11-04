@@ -64,11 +64,12 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
-<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script><script src="js/chamber.js"></script><script src="js/heatglow.js"></script><script src="js/volcano.js"></script><script src="js/hill.js"></script><script src="js/damage.js"></script><script src="js/sensor.js"></script><script src="js/gauge.js"></script>
+<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script><script src="js/chamber.js"></script><script src="js/heatglow.js"></script><script src="js/volcano.js"></script><script src="js/hill.js"></script><script src="js/damage.js"></script><script src="js/sensor.js"></script><script src="js/vlight.js"></script>
+<script src="js/surface.js"></script><script src="js/gauge.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='3.5';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='3.6';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -207,11 +208,11 @@ function go(s){if(s!='idle'){if(S.fuel<=0&&!(s=='D'&&base()&&S.set.auto)&&!emerg
  if(s=='H'&&window.RT){try{RT.home()}catch(e){}}if(s=='H')S.hTot=S.tr.reduce((a,t)=>a+t[1],0);aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);if(s!='idle'&&window.ENG)ENG.start();S.st=s;acc=0;S.t=Date.now();if(tab==0)live();else view()}
 function vShop(){if(window.BP)return BP.html();const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
  for(const k in U){const[n,a,f]=U[k],i=S.u[k],nx=a[i+1];h+=`<div class="card"><b>${n}</b>: ${a[i][0]}<br><span class="mu">${f(a[i])}</span>${nx?`<br>Következő: ${nx[0]} <span class="mu">(${f(nx)})</span><br><button class="b" ${b?'':'disabled'} onclick="buy('${k}')">Fejlesztés – ${ft(nx.at(-1))}</button>`:'<br><i>Maximális szint</i>'}</div>`}
- const d=calc();h+=`<div class="card">⛽ Tankolás (${d.f.n}, ${ft(d.f.p)}/kg)<br>Tank: ${fk(S.fuel)} / ${fk(tank())}<div class="row"><button class="b g" ${b?'':'disabled'} onclick="fill(.25)">+25%</button><button class="b" ${b?'':'disabled'} onclick="fill(1)">Tele</button></div></div>
- <div class="card">🔧 Páncél: ${nf(S.hp,1)}%<br><button class="b" ${b&&S.hp<100?'':'disabled'} onclick="repair()">Javítás – ${ft((100-S.hp)*2e3*Math.pow(8,S.u.h))}</button></div>`;return h}
+ const d=calc();h+=`<div class="card">⛽ Tankolás (${d.f.n}, ${ft(d.f.p*(window.SRF?SRF.disc("fu"):1))}/kg)<br>Tank: ${fk(S.fuel)} / ${fk(tank())}<div class="row"><button class="b g" ${b?'':'disabled'} onclick="fill(.25)">+25%</button><button class="b" ${b?'':'disabled'} onclick="fill(1)">Tele</button></div></div>
+ <div class="card">🔧 Páncél: ${nf(S.hp,1)}%<br><button class="b" ${b&&S.hp<100?'':'disabled'} onclick="repair()">Javítás – ${ft((100-S.hp)*2e3*Math.pow(8,S.u.h)*(window.SRF?SRF.disc("ws"):1))}</button></div>`;return h}
 function buy(k){if(!base())return;const a=U[k][1],nx=a[S.u[k]+1],p=nx.at(-1);if(S.cash<p)return toast('Nincs elég pénzed.');S.cash-=p;const old=calc().d[3];S.u[k]++;if(k=='d'&&D[S.u.d][3]!=old){S.cash+=S.fuel*F[old].p*.8;S.fuel=0;msg('Új üzemanyag-típus: tankolj újra!')}if(k=='h')S.hp=100;if(S.fuel>tank())S.fuel=tank();window.GEN&&GEN.afterBuy(k);window.BIT&&BIT.afterBuy(k);view()}
-function fill(p){if(!base())return;const f=calc().f,add=Math.min(tank()-S.fuel,tank()*p),x=Math.min(add,S.cash/f.p);S.fuel+=x;S.cash-=x*f.p;view()}
-function repair(){const c=(100-S.hp)*2e3*Math.pow(8,S.u.h);if(S.cash<c)return toast('Nincs elég pénzed.');S.cash-=c;S.hp=100;view()}
+function fill(p){if(!base())return;const f0=calc().f,f={...f0,p:f0.p*(window.SRF?SRF.disc("fu"):1)},add=Math.min(tank()-S.fuel,tank()*p),x=Math.min(add,S.cash/f.p);S.fuel+=x;S.cash-=x*f.p;view()}
+function repair(){const c=(100-S.hp)*2e3*Math.pow(8,S.u.h)*(window.SRF?SRF.disc("ws"):1);if(S.cash<c)return toast('Nincs elég pénzed.');S.cash-=c;S.hp=100;view()}
 function vMarket(){if(!base())return'<div class="card bad">A piac csak a felszínen érhető el.</div>';let rows='',tot=0;
  for(const n in S.cg){const kg=S.cg[n];if(kg<=0)continue;const b=LY.flatMap(l=>l[5]).find(x=>x[0]==n),p=price(n,b[2]);tot+=kg*p;rows+=`<tr><td>${n}</td><td>${fk(kg)}</td><td>${ft(p)}/kg</td><td>${ft(kg*p)}</td></tr>`}
  for(const n in S.fin){const f=FD.find(x=>x[0]==n),c=S.fin[n];tot+=c*f[5];rows+=`<tr><td>${n} ×${c}</td><td>${fk(c*f[4])}</td><td>${ft(f[5])}/db</td><td>${ft(c*f[5])}</td></tr>`}
@@ -373,7 +374,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
   const[a,b]=lw(-10.55,-1.55);GL.push({x:a,y:b,r:70,c:'90,200,255',i:.3+.15*Math.sin(ts/400)});lamp(a,b,55,.5)}
  x.save();x.translate(-11.4,.8);x.rotate(sp*.3);x.fillStyle='#b9bec4';for(let i=0;i<10;i++){x.rotate(Math.PI/5);x.fillRect(-.07,-.62,.14,.22)}x.beginPath();x.arc(0,0,.48,0,7);x.fill();x.fillStyle='#333';x.beginPath();x.arc(0,0,.16,0,7);x.fill();x.restore();
  x.fillStyle=act&&Math.sin(ts/120)>0?'#ff9a1a':'#6a3b0c';x.beginPath();x.arc(-6.8,-1.6,.22,0,7);x.fill();
- if(window.DMG)DMG.mach(x,{ts});if(window.SP)SP.mach(x,{ts});
+ if(window.VL)VL.mach(x,{lit:lit2,ts});if(window.DMG)DMG.mach(x,{ts});if(window.SP)SP.mach(x,{ts});
 }
 function headBasic(x,o){const{sp,heat,ht}=o,hdc=HDC[ht];let g;
  x.beginPath();x.ellipse(-1.6,0,1.6,1.85,0,-Math.PI/2,Math.PI/2);x.closePath();g=x.createLinearGradient(0,-1.85,0,1.85);g.addColorStop(0,hdc[0]);g.addColorStop(.45,hdc[1]);g.addColorStop(1,hdc[2]);x.fillStyle=g;x.fill();x.strokeStyle=mix('#1d1f22','#ff7a1a',clamp(heat,0,1));x.lineWidth=.06+heat*.08;x.stroke();
@@ -461,7 +462,7 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  x.restore();
  const V={x,w,h,cx,cy,Ys,rx,ry,ts,dt,day,hr,SX,SY,lamp,GL,CN,K,dr,act,hh};EV('world.back',V);
  // felszín: műhely (22×9 m), tartály, lámpaoszlop, ember (1,8 m), fák
- if(Ys>-170&&Ys<h+170){const Y0=Ys,lit=day<.55,x0=SX(-46);
+ if(Ys>-170&&Ys<h+170){const Y0=Ys,lit=day<.55&&(!window.SRF||SRF.on('ws')),x0=SX(-46);
   x.fillStyle='#7b6a58';x.fillRect(x0,Y0-90,220,90);x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=1;for(let i=0;i<22;i++){x.beginPath();x.moveTo(x0+i*10,Y0-90);x.lineTo(x0+i*10,Y0);x.stroke()}
   x.fillStyle='#4a4d52';x.beginPath();x.moveTo(x0-8,Y0-90);for(let i=0;i<3;i++){x.lineTo(x0+30+i*80,Y0-110);x.lineTo(x0+70+i*80,Y0-90)}x.lineTo(x0+228,Y0-90);x.closePath();x.fill();
   x.fillStyle='#55504a';x.fillRect(x0+12,Y0-150,14,60);x.fillStyle='#3a3630';x.fillRect(x0+9,Y0-153,20,5);
@@ -469,9 +470,9 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   x.fillStyle='#b8302c';x.fillRect(x0+40,Y0-86,100,16);x.fillStyle='#fff';x.font='bold 10px Georgia';x.fillText('DRILL UP MŰHELY',x0+46,Y0-74);
   x.fillStyle=lit?'#c99a50':'#1a1511';x.fillRect(x0+160,Y0-45,52,45);x.fillStyle='#333';x.fillRect(x0+158,Y0-47,56,3);if(lit)lamp(x0+186,Y0-22,70,.85);
   const tx=SX(-21);x.fillStyle='#8c9aa5';x.fillRect(tx,Y0-32,56,26);x.beginPath();x.ellipse(tx,Y0-19,5,13,0,0,7);x.ellipse(tx+56,Y0-19,5,13,0,0,7);x.fill();x.fillStyle='#444';x.fillRect(tx+8,Y0-6,4,6);x.fillRect(tx+44,Y0-6,4,6);x.fillStyle='#fff';x.font='7px Georgia';x.fillText('ÜZEMANYAG',tx+7,Y0-17);
-  const lp=SX(-13);x.fillStyle='#333';x.fillRect(lp-1.5,Y0-75,3,75);x.fillRect(lp-1.5,Y0-76,16,3);x.fillStyle=lit?'#fff3b0':'#888';x.fillRect(lp+9,Y0-73,9,4);if(lit){lamp(lp+13,Y0-70,170,.95);GL.push({x:lp+13,y:Y0-70,r:120,c:'255,220,140',i:.3})}
+  const lp=SX(-13);x.fillStyle='#333';x.fillRect(lp-1.5,Y0-75,3,75);x.fillRect(lp-1.5,Y0-76,16,3);const lit0=day<.55&&(!window.SRF||SRF.on('lp0'));x.fillStyle=lit0?'#fff3b0':'#888';x.fillRect(lp+9,Y0-73,9,4);if(lit0){lamp(lp+13,Y0-70,170,.95);GL.push({x:lp+13,y:Y0-70,r:120,c:'255,220,140',i:.3})}
   const hm=SX(-24.2);x.fillStyle='#2b3a5c';x.fillRect(hm-3,Y0-9,2.5,9);x.fillRect(hm+.5,Y0-9,2.5,9);x.fillStyle='#e8742a';x.fillRect(hm-4,Y0-15,8,7);x.fillStyle='#f0c8a0';x.beginPath();x.arc(hm,Y0-18,3.2,0,7);x.fill();x.fillStyle='#f0b020';x.fillRect(hm-3.5,Y0-21.5,7,2);
-  for(let k=Math.floor((rx-w/K)/11)-1;k<=(rx+w/K)/11+1;k++){const m=k*11+rnd(k)*6;if(m>-54&&m<-10)continue;const Em=window.HILL?HILL.E(m):0;if(window.VOL&&Math.abs(Math.abs(m)-1000)<205)continue;if(Em>70&&Math.abs(m)>600)continue;const tx2=SX(m),hh=60+rnd(k+5)*60,Yt=Y0-(Em-(window.HILL?HILL.e0:0))*K;x.fillStyle=mix('#12100a','#5a3b1e',day);x.fillRect(tx2-4,Yt-hh*.5,8,hh*.5);x.fillStyle=mix('#0a1a0c','#2f6b2a',day);x.beginPath();x.arc(tx2,Yt-hh*.62,hh*.32,0,7);x.arc(tx2-hh*.16,Yt-hh*.48,hh*.24,0,7);x.arc(tx2+hh*.16,Yt-hh*.48,hh*.24,0,7);x.fill()}}
+  for(let k=Math.floor((rx-w/K)/11)-1;k<=(rx+w/K)/11+1;k++){const m=k*11+rnd(k)*6;if(m>-54&&m<52)continue;const Em=window.HILL?HILL.E(m):0;if(window.VOL&&Math.abs(Math.abs(m)-1000)<205)continue;if(Em>70&&Math.abs(m)>600)continue;const tx2=SX(m),hh=60+rnd(k+5)*60,Yt=Y0-(Em-(window.HILL?HILL.e0:0))*K;x.fillStyle=mix('#12100a','#5a3b1e',day);x.fillRect(tx2-4,Yt-hh*.5,8,hh*.5);x.fillStyle=mix('#0a1a0c','#2f6b2a',day);x.beginPath();x.arc(tx2,Yt-hh*.62,hh*.32,0,7);x.arc(tx2-hh*.16,Yt-hh*.48,hh*.24,0,7);x.arc(tx2+hh*.16,Yt-hh*.48,hh*.24,0,7);x.fill()}}
  if(Math.random()<dt*7)pr.push({x:-44.5,y:-12.5,vx:.7,vy:-1.2,l:3.5,t:'s'});
  // gép: tájolás (3D fordulás: yaw = jobb↔bal, fel↔le)
  const ld=(window.NET&&NET.falling)?(lastD='D'):dir!='idle'?(lastD=dir):lastD;if(ld=='L'||ld=='R')hf=ld=='L'?-1:1;
@@ -506,9 +507,9 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  x.restore();
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
  // fények
- {const eL=window.ENG?Math.min(1,ENG.rpm*1.25):1;if(eL>.03){const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5*eL);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:(dr?55:200)*eL,s:.5});lamp(nx,ny,dr?75:90,.9*eL);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25*eL})}}
- if(dk&&dk.width!=cv.width)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=cv.width;dk.height=cv.height}
- const d2=dk.getContext('2d');d2.setTransform(dp,0,0,dp,0,0);d2.globalCompositeOperation='source-over';d2.clearRect(0,0,w,h);const ys=clamp(Ys,0,h);
+ {const eL=window.ENG?Math.min(1,ENG.rpm*1.25):1;if(eL>.03){if(window.VL)VL.light({lw,lamp,CN,GL,fc,cA,sA,dr,eL,ts});else{const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5*eL);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:(dr?55:200)*eL,s:.5});lamp(nx,ny,dr?75:90,.9*eL);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25*eL})}}}
+ const dsk=(window.Gov&&Gov.q===0)?.5:1,dkw=Math.max(1,cv.width*dsk|0);if(dk&&dk.width!=dkw)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=dkw;dk.height=Math.max(1,cv.height*dsk|0)}
+ const d2=dk.getContext('2d');d2.setTransform(dp*dsk,0,0,dp*dsk,0,0);d2.globalCompositeOperation='source-over';d2.clearRect(0,0,w,h);const ys=clamp(Ys,0,h);
  d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.5+.35*Math.min(1,ry/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
  LT.forEach(l=>{const q=d2.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(0,0,0,${l.i})`);q.addColorStop(1,'rgba(0,0,0,0)');d2.fillStyle=q;d2.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});
  const cone=(c,ctx,fill)=>{const e1=[c.dx*Math.cos(c.s)-c.dy*Math.sin(c.s),c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],e2=[c.dx*Math.cos(c.s)+c.dy*Math.sin(c.s),-c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],q=ctx.createLinearGradient(c.x,c.y,c.x+c.dx*c.len,c.y+c.dy*c.len);q.addColorStop(0,fill);q.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=q;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x+e1[0]*c.len,c.y+e1[1]*c.len);ctx.lineTo(c.x+e2[0]*c.len,c.y+e2[1]*c.len);ctx.fill()};
