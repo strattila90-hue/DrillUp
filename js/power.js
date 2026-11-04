@@ -113,7 +113,7 @@ function drawHud(V){const starting=S.en&&!(ENG.phase==='run'&&ENG.ready());if(!s
  x.restore()}
 if(W.on){
  on('world.back',V=>{try{drawGen(V)}catch(e){}});
- on('hud',V=>{drawHud(V)});
+ // indítási ellenőrző sáv eltávolítva (felesleges animáció)
  on('world.front',V=>{if(ENG.burst){ENG.burst=0;if(S.u.d<4&&V.lw){const[a,b]=S.u.d<2?V.lw(-11.15,-2.1-V.sk):V.lw(-10,-2.9);for(let i=0;i<16;i++)pr.push({x:V.rx+(a-V.cx)/V.K,y:V.ry+(b-V.cy)/V.K,vx:(Math.random()-.5)*1.6,vy:-1.2-Math.random()*2.2,l:1.6+Math.random()*1.4,t:S.u.d<2?'s':'k'})}}});
  on('step',dg=>{GEN.stepped=true;GEN.step(dg)});
  on('sim',real=>{if(S.st==='idle'&&!GEN.stepped)GEN.step(Math.min(real,900));GEN.stepped=false;

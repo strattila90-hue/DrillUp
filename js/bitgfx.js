@@ -122,21 +122,24 @@ BG.crew=function(x,o){const t=o.ts||0,vib=Math.sin(t/21)*.004*(o.hyd||0)+(o.act?
   const gl=x.createLinearGradient(wx,wy,wx+ww,wy+wh);gl.addColorStop(0,'rgba(255,255,255,.2)');gl.addColorStop(.35,'rgba(255,255,255,0)');gl.addColorStop(.7,'rgba(255,255,255,.07)');gl.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gl;x.fillRect(wx,wy,ww,wh);x.restore();
   x.strokeStyle='#202328';x.lineWidth=.045;_rr(x,wx,wy,ww,wh,.12);x.stroke()}};
 // ---------- páncélburkolat: fúráskor körbezárja a gépet (felső kupola lefelé, alsó szoknya felfelé csúszik); s: 0 nyitva … 1 zárva ----------
-BG.shell=function(x,o){const s=Math.max(0,Math.min(1,o.shell||0));if(s<=.002)return;const e=s*s*(3-2*s),hl=o.hl|0,[c1,c2]=HC[hl]||HC[0],X0=-12.55,X1=-5.35,YT=-2.0,YM=-.15,YB=1.28,oT=-(1-e)*2.7,oB=(1-e)*2.3,t=o.ts||0;
+BG.shell=function(x,o){const s=Math.max(0,Math.min(1,o.shell||0));if(s<=.002)return;const sm=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)},e=sm(s),eT=sm(s*1.45),eB=sm(s*1.45-.45),hl=o.hl|0,[c1,c2]=HC[hl]||HC[0],X0=-12.55,X1=-5.35,YT=-2.0,YM=-.15,YB=1.28,t=o.ts||0,thT=(1-eT)*1.42,thB=(1-eB)*1.42,cT=Math.max(.07,Math.cos(thT)),cB=Math.max(.07,Math.cos(thB)),sT=Math.sin(thT),sB=Math.sin(thB);
  const plate=(y0,y1,top)=>{const g=x.createLinearGradient(0,y0,0,y1);g.addColorStop(0,c1);g.addColorStop(.45,c2);g.addColorStop(1,'#15181c');x.fillStyle=g;x.beginPath();if(top){x.moveTo(X0,y1);x.lineTo(X0,y0+.38);x.quadraticCurveTo(X0,y0,X0+.38,y0);x.lineTo(X1-.38,y0);x.quadraticCurveTo(X1,y0,X1,y0+.38);x.lineTo(X1,y1)}else{x.moveTo(X0,y0);x.lineTo(X0,y1-.3);x.quadraticCurveTo(X0,y1,X0+.3,y1);x.lineTo(X1-.3,y1);x.quadraticCurveTo(X1,y1,X1,y1-.3);x.lineTo(X1,y0)}x.closePath();x.fill();x.strokeStyle='#14171b';x.lineWidth=.06;x.stroke()};
- // hidraulikus dugattyúk a kupola és a váz között
- if(e<.98){x.strokeStyle='#8c9199';x.lineWidth=.1;x.lineCap='butt';for(const px of[-11.6,-9.2,-6.4]){x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,YM+oT+.1);x.stroke()}x.strokeStyle='#dfe4ea';x.lineWidth=.05;for(const px of[-11.6,-9.2,-6.4]){x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,-1.5+(YM+oT+.1+1.5)*.55);x.stroke()}}
- x.save();x.translate(0,oT);plate(YT,YM,true);
- x.fillStyle='rgba(255,255,255,.13)';x.fillRect(X0+.4,YT+.08,X1-X0-.8,.09);x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YT+.1);x.lineTo(px,YM);x.stroke()}x.fillStyle='rgba(255,255,255,.15)';for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1])x.fillRect(px+.03,YT+.1,.02,YM-YT-.1);
+ // zsanérok + hidraulikus munkahengerek: a felső lemez a felső élén, az alsó az alsó élén billen ki (sirályszárny-ajtó)
+ x.fillStyle='#2c3138';x.fillRect(X0-.05,YT-.07,X1-X0+.1,.14);x.fillRect(X0-.05,YB-.07,X1-X0+.1,.14);x.fillStyle='#8c9199';for(const bx of[X0+.25,-9.0,-7.4,X1-.25]){x.fillRect(bx-.09,YT-.1,.18,.2);x.fillRect(bx-.09,YB-.1,.18,.2)}
+ x.strokeStyle='#3a4049';x.lineWidth=.12;for(const bx of[X0+.05,X1-.05]){x.beginPath();x.moveTo(bx,YT);x.lineTo(bx,-1.2);x.moveTo(bx,YB);x.lineTo(bx,1.1);x.stroke()}
+ if(e<.99){const cyl=(px,ay,by)=>{const dx=0,L=Math.hypot(dx,by-ay);x.lineCap='butt';x.strokeStyle='#59606a';x.lineWidth=.13;x.beginPath();x.moveTo(px,ay);x.lineTo(px,ay+(by-ay)*.5);x.stroke();x.strokeStyle='#dfe4ea';x.lineWidth=.06;x.beginPath();x.moveTo(px,ay+(by-ay)*.45);x.lineTo(px,by);x.stroke();x.fillStyle='#222';x.beginPath();x.arc(px,ay,.08,0,7);x.arc(px,by,.07,0,7);x.fill()};
+  for(const px of[X0+.55,X1-.55]){cyl(px,-1.1,YT+(YM-YT)*cT);cyl(px,.85,YB-(YB-YM)*cB)}}
+ x.save();x.translate(0,YT);x.scale(1+.05*sT,cT);x.translate(0,-YT);plate(YT,YM,true);
+ x.fillStyle='rgba(8,10,14,'+(.55*sT)+')';x.fillRect(X0,YT,X1-X0,YM-YT);x.fillStyle='rgba(255,255,255,.13)';x.fillRect(X0+.4,YT+.08,X1-X0-.8,.09);x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YT+.1);x.lineTo(px,YM);x.stroke()}x.fillStyle='rgba(255,255,255,.15)';for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1])x.fillRect(px+.03,YT+.1,.02,YM-YT-.1);
  x.fillStyle='#d8dde4';for(let q=X0+.3;q<X1-.2;q+=.42){x.beginPath();x.arc(q,YT+.2,.035,0,7);x.arc(q,YM-.1,.035,0,7);x.fill()}
  x.fillStyle='#0b1014';for(const[sx,sw]of[[-9.0,.8],[-7.95,.8],[-6.9,.8]]){x.fillRect(sx,-.98,sw,.12)}x.fillStyle=(o.lit?'rgba(255,214,140,.7)':'rgba(120,190,230,.45)');for(const[sx,sw]of[[-9.0,.8],[-7.95,.8],[-6.9,.8]])x.fillRect(sx+.04,-.95,sw-.08,.05);
  x.save();x.font='bold .3px Georgia';x.fillStyle='rgba(255,255,255,.55)';x.fillText('DU-01',-12.2,-1.62);x.restore();
  // sárga-fekete figyelmeztető csík a kupola alsó élén
  x.save();x.beginPath();x.rect(X0,YM-.17,X1-X0,.17);x.clip();x.fillStyle='#e8b020';x.fillRect(X0,YM-.17,X1-X0,.17);x.fillStyle='#1a1a1c';for(let q=X0-.2;q<X1;q+=.36){x.beginPath();x.moveTo(q,YM);x.lineTo(q+.18,YM);x.lineTo(q+.36,YM-.17);x.lineTo(q+.18,YM-.17);x.fill()}x.restore();x.restore();
- x.save();x.translate(0,oB);plate(YM,YB,false);x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YM);x.lineTo(px,YB);x.stroke()}
+ x.save();x.translate(0,YB);x.scale(1+.05*sB,cB);x.translate(0,-YB);plate(YM,YB,false);x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YM);x.lineTo(px,YB);x.stroke()}
  x.fillStyle='rgba(0,0,0,.45)';for(let i=0;i<5;i++)x.fillRect(-11.2+i*.1,.2,.06,.5);for(let i=0;i<5;i++)x.fillRect(-7.6+i*.1,.2,.06,.5);x.fillStyle='#d8dde4';for(let q=X0+.3;q<X1-.2;q+=.42){x.beginPath();x.arc(q,YB-.12,.035,0,7);x.fill()}
- x.fillStyle='rgba(255,255,255,.1)';x.fillRect(X0+.3,YM+.05,X1-X0-.6,.07);x.restore();
+ x.fillStyle='rgba(255,255,255,.1)';x.fillRect(X0+.3,YM+.05,X1-X0-.6,.07);x.fillStyle='rgba(8,10,14,'+(.55*sB)+')';x.fillRect(X0,YM,X1-X0,YB-YM);x.restore();
  // záró varratfény a kupola és a szoknya találkozásánál
- if(e>.95){x.fillStyle='rgba(255,255,255,'+(.2*(1-Math.abs(Math.sin(t/300))*.4))+')';x.fillRect(X0+.2,YM-.02,X1-X0-.4,.03)}};
+ if(e>.9){const pl=Math.min(1,(e-.9)*14)*.22;x.fillStyle='#c9ced5';for(const bx of[X0+.35,-9.3,-7.6,X1-.35]){x.fillRect(bx-.05,YM-.1,.1,.2);}x.fillStyle='#e8b020';x.fillRect(X0-pl,YM-.07,pl,.14);x.fillRect(X1,YM-.07,pl,.14);x.fillStyle='rgba(255,255,255,'+(.2*(1-Math.abs(Math.sin(t/300))*.4))+')';x.fillRect(X0+.2,YM-.02,X1-X0-.4,.03)}};
 W.BG=BG;
 })(typeof window!=='undefined'?window:globalThis);
