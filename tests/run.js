@@ -304,6 +304,9 @@ t('fejlesztés: kevés pénzből nem megy; a föld alatt nem fejleszthető',()=>
 t('sérült S.bl mentés (rossz típusok) nem dönti el a játékot',()=>{const g=lg(),S=g.T.S,R=g.sb.SRF;S.bl={tr:'x',ws:99,fu:-4,on:5};eq(g.frames(3,30),[]);ok(R.lv('tr')>=1&&R.lv('ws')<=3&&R.lv('fu')>=1);S.bl=null;eq(g.frames(3,30),[]);ok(R.st().on&&typeof R.st().on==='object')});
 t('jármű-lámpák: a testről világítanak, a rajz hibátlan föld alatt és fent',()=>{const g=lg(),S=g.T.S;ok(!!g.sb.VL);for(const d of[0,50,800]){S.depth=d;S.tr=d?[['D',d]]:[];eq(g.frames(4,30),[])}S.hp=10;eq(g.frames(6,30),[])});
 
+t('ránagyítás: a gép koppintására nő a nagyítás, újabb koppintásra visszaáll, a rajz hibátlan',()=>{const g=lg(),Z=g.sb.ZM;ok(!!Z);eq(Z.z,1);Z.toggle();ok(Z.t>1);g.frames(40,30);ok(Z.z>1.5,'z='+Z.z);eq(g.frames(3,30),[]);Z.toggle();g.frames(60,30);near(Z.z,1,.01)});
+t('szeizmográf-kijelző téglalapja létezik szinttől függően (a réteg-kártya kikerüli)',()=>{const g=lg(),S=g.T.S,Q=g.sb.SZ;S.geo=S.geo||{};g.sb.GEO.ens().sz.lv=0;eq(Q.rect({w:400}),null);g.sb.GEO.ens().sz.lv=2;const r=Q.rect({w:400});ok(r&&r.w>0&&r.y>0);S.depth=0;eq(g.frames(4,30),[])});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
