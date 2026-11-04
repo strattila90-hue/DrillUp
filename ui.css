@@ -114,3 +114,5 @@ img{-webkit-user-drag:none;user-drag:none}
 @media (prefers-reduced-motion:reduce){#stoCard,#srfCard,#natDlg{animation:none}}
 #lgBtn{position:absolute;left:96px;bottom:34px;z-index:6;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(10,12,14,.55);color:#fff;font-size:17px;padding:0;cursor:pointer;backdrop-filter:blur(3px)}
 body.cin #lgBtn{display:none!important}
+#lecBtn{position:absolute;left:140px;bottom:34px;z-index:6;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(10,12,14,.55);color:#fff;font-size:17px;padding:0;cursor:pointer;backdrop-filter:blur(3px)}
+body.cin #lecBtn{display:none!important}

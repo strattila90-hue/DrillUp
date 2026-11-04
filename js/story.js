@@ -43,7 +43,7 @@ const STO={DB:BYID,cur:null,Q:[],gap:0,show:true,
   if(top){STO.Q.push(top);if(STO.Q.length>1)STO.Q.splice(0,STO.Q.length-1)}
   if(STO.Q.length&&STO.gap<=0&&!STO.cur&&!(W.NET&&NET.falling)&&!(W.DMG&&DMG.busy&&DMG.busy())){STO.open(STO.Q.shift())}},
  open(e){if(W.PN&&!PN.vis('sto'))return;STO.cur=e;STO.gap=25;try{beep(520,.1,.04,'sine');setTimeout(()=>beep(780,.16,.04,'sine'),110)}catch(x){}
-  if(W.CIN&&CIN.on){CIN.caption(e);return}
+  if(W.CIN&&CIN.on){if(!CIN.lec)CIN.caption(e);return}
   if(typeof document==='undefined'||!document.body||!document.createElement||!document.getElementById){return}
   let c=document.getElementById('stoCard');if(!c){c=document.createElement('div');c.id='stoCard';document.body.appendChild(c)}
   c.innerHTML=`<div class="sth"><span class="stk">${e.k}</span><div><div class="stm">📜 Beszámoló · ${e.y} · ${STO.fd(e.d)}</div><b>${e.t}</b></div><button class="srx" aria-label="Bezár" onclick="STO.close()">✕</button></div><div class="stb">${e.s}</div>`;

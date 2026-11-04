@@ -328,6 +328,11 @@ t('mérföldkövek: gyűjtemény-jutalom a beszámolók száma szerint',()=>{con
 t('diagnosztika: képességek lekérdezése hibátlan, a szöveg a mért adatból áll',()=>{const g=lg(),D=g.sb.DIAG;ok(!!D);const c=D.caps();ok(c.dpr>0);const r=Object.assign(c,{fps:60,avgMs:16.7,p95Ms:20,maxMs:30,frames:300,qStart:2,ver:'x',depth:0,save:1,verdict:'ok'});ok(D.text(r).includes('FPS: 60'))});
 t('fúróhang: a rajz/hang-lépés kemény és puha kőzetben is hibátlan',()=>{const g=lg(),S=g.T.S;for(const d of[10,5000,60000]){S.depth=d;S.tr=[['D',d]];g.T.go('D');eq(g.frames(8,30),[])}});
 
+group('T) Tanterem (előadás-mód)');
+t('tanterem: a diasor felépül a gép aktuális adataiból, minden dia teljes, csak álló gépnél indul, kilépés rendben',()=>{const g=lg(),S=g.T.S,L=g.sb.LEC;ok(!!L);S.sty=[1,2,3];g.sb.GEO.ens().sz.lv=1;const l=L.build();ok(l.length>=30,'diák '+l.length);for(const e of l){ok(e.t&&e.s&&e.k&&e.sub&&e.f&&e.dur>=8,'dia: '+e.t)}ok(l.some(e=>e.sub.includes('Meghajtás')));ok(l.some(e=>e.sub.includes('Lánctalp')));ok(l.some(e=>e.sub.includes('Szeizmográf')));
+ S.st='D';L.start();ok(!L.on,'mozgó gépnél nem indul');S.st='idle';const C=g.sb.CIN;L.start();ok(!L.on||C.on);if(L.on){eq(g.frames(6,100),[]);ok(C.cap&&C.cap.t);const i0=L.i;C.capT=999;g.frames(3,100);ok(L.i!==i0,'léptet')}C.exit();g.frames(2,30);ok(!L.on&&!C.on)});
+t('mászás-fizika: a lejtő a gépet visszacsúsztatja, ha a tapadás kevés (a szimulációban a gyenge gép nem jut át)',()=>{const g=lg(),S=g.T.S,H=g.sb.HILL;S.u.d=0;const c=g.T.calc();let sl=0;for(let x=400;x<900;x+=2){const r=H.drive(c,x,1,5);sl=Math.max(sl,r.s)}ok(sl>0,'van csúszási szakasz')});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
