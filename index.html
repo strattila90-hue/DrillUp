@@ -264,7 +264,7 @@ let saveWarned=0;
 const save=()=>{EV('save',S);if(window.Save){if(!Save.save(S)&&Save.err&&!saveWarned){saveWarned=1;toast('⚠ '+Save.err)}else if(!Save.err)saveWarned=0}else localStorage.setItem('drillup1',JSON.stringify(S))};
 async function expSave(){save();const str=Save.exportStr(S);try{await navigator.clipboard.writeText(str)}catch(e){}try{const b=new Blob([str],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='drillup-mentes-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}catch(e){}toast('💾 Mentés exportálva (vágólapra és fájlba).')}
 function impSave(f){if(!f)return;const r=new FileReader();r.onload=()=>{const err=Save.importStr(String(r.result),sanitizeSave,init);if(err)return toast('⚠ '+err);toast('📥 Mentés betöltve – újraindítás…');setTimeout(()=>location.reload(),600)};r.readAsText(f)}
-setInterval(tick,250);setInterval(save,5e3);document.addEventListener('visibilitychange',()=>{save();if(!document.hidden)tick()});
+setInterval(tick,250);setInterval(save,5e3);document.addEventListener('visibilitychange',()=>{save();if(!document.hidden){tick();try{if(typeof AC!=='undefined'&&AC&&AC.state!=='running'&&AC.resume)AC.resume()}catch(e){}}});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 // ---- jelenet: 1 m = 10 px, a gép ~12 m hosszú (Ikarus-méret) ----
 const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*43758.5)%1+1)%1;

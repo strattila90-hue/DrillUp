@@ -1,4 +1,4 @@
-const V='drillup-v31',A=['./','index.html','js/base.js','js/power.js','js/blueprint.js','js/tunnels.js','js/lamps.js','js/bits.js','js/depot.js','js/bitgfx.js','js/face.js','js/route.js','js/aging.js','js/minerals.js','js/geo.js','js/seismo.js','js/hydro.js','js/lab.js','js/depotgfx.js','js/mechfx.js','js/rpm.js','manifest.webmanifest','icon.svg','icon-180.png','icon-192.png','icon-512.png'];
+const V='drillup-v32',A=['./','index.html','js/base.js','js/power.js','js/blueprint.js','js/tunnels.js','js/lamps.js','js/bits.js','js/depot.js','js/bitgfx.js','js/face.js','js/route.js','js/aging.js','js/minerals.js','js/geo.js','js/seismo.js','js/hydro.js','js/lab.js','js/depotgfx.js','js/mechfx.js','js/rpm.js','manifest.webmanifest','icon.svg','icon-180.png','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(V).then(c=>c.addAll(A))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!=V).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 self.addEventListener('message',e=>{if(e.data=='skip')self.skipWaiting()});
