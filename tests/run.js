@@ -292,6 +292,9 @@ t('hazaút: cikk-cakk járat helyett egyenes akna a felszínre (rövidebb), a j�
  const k=lg(),K=k.T.S;K.u.d=4;K.u.h=3;K.u.f=3;K.fuel=0.0001;K.tr=[['D',100],['R',200],['D',100],['L',200],['D',100],['R',200],['D',100]];K.x=200;K.depth=400;K.tn=[];const q=k.sb.RT.home();ok(!q||!q.dig,'üzemanyag nélkül nem fúr')});
 t('Fúrófej felirat a vezérlősoron',()=>{const g=lg();g.T.S.depth=0;ok(g.sb.document?true:true)});
 
+t('mélységjelző: a pozíció monoton nő, rétegenként a helyes réteget adja, a rajz minden mélységben hibátlan',()=>{const g=lg(),G=g.sb.GG,S=g.T.S;ok(!!G);let p=-1;for(const d of[0,1,2.9,3,100,399,400,3999,4e3,2e4,35e3,4.1e5,6.6e5,2.7e6,2.89e6,5.15e6,6.3e6]){const r=G.pos(d);ok(r.p>=p-1e-9,'monoton '+d);p=r.p;ok(r.i>=0&&r.i<11)}eq(G.pos(1000).i,2);eq(G.pos(6e6).i,10);eq(G.fd(1500),'1,5 km');eq(G.fd(250),'250 m');
+ for(const d of[0,50,5000,3e6]){S.depth=d;S.tr=d?[['D',d]]:[];eq(g.frames(5,30),[])}});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

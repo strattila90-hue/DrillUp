@@ -64,11 +64,11 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
-<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script><script src="js/chamber.js"></script><script src="js/heatglow.js"></script><script src="js/volcano.js"></script><script src="js/hill.js"></script><script src="js/damage.js"></script><script src="js/sensor.js"></script>
+<script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script><script src="js/chamber.js"></script><script src="js/heatglow.js"></script><script src="js/volcano.js"></script><script src="js/hill.js"></script><script src="js/damage.js"></script><script src="js/sensor.js"></script><script src="js/gauge.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='3.4';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='3.5';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -525,7 +525,7 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(w-236,6,230,22);x.fillStyle='#fff';x.font='bold 12px Georgia';x.textAlign='right';x.fillText(`↕ ${fd(ry)} · ↔ ${nf(rx,0)} m`,w-12,22);x.textAlign='left';
  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(6,6,74,22);x.fillStyle='#fff';x.font='12px Georgia';x.fillText((day>.5?'☀ ':'🌙 ')+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),12,22);
  x.fillStyle='#fff';x.fillRect(10,h-14,100,2);x.fillRect(10,h-18,2,10);x.fillRect(108,h-18,2,10);x.font='10px Georgia';x.fillText('10 m',44,h-20);
- {const mx=w-20,my0=40,mh=230;LY.forEach(l=>{const a=Math.sqrt(l[1]/R)*mh,b=Math.sqrt(l[2]/R)*mh;x.fillStyle=l[4];x.fillRect(mx,my0+a,12,b-a+.5)});const q=my0+Math.sqrt(ry/R)*mh;x.fillStyle='#fff';x.beginPath();x.moveTo(mx-2,q);x.lineTo(mx-9,q-5);x.lineTo(mx-9,q+5);x.fill();x.font='9px Georgia';x.textAlign='right';x.fillText('0',mx-3,my0+8);x.fillText('6371 km',mx+12,my0+mh+11);x.textAlign='left'}
+
  EV('hud',V);
  if(S.set.dbg){x.font='10px monospace';x.fillStyle='rgba(0,0,0,.65)';x.fillRect(4,34,236,124);x.fillStyle='#7cff6a';const L=[`FPS ${DBG.fps|0}  dt ${(dt*1e3)|0} ms`,`st ${S.st} mode ${S.mode||'-'} turn ${tl|0}`,`x ${S.x.toFixed(2)}  d ${S.depth.toFixed(2)}`,`lag ${(rx-S.x).toFixed(2)}/${(ry-S.depth).toFixed(2)} m  v ${vsp|0} px/s`,`spin ${rate.toFixed(1)} pv ${pv.toFixed(2)} ang ${ang.toFixed(2)} yaw ${yaw.toFixed(2)}`,`part ${pr.length} lights ${LT.length} fuel ${S.fuel.toFixed(1)}`,`gomb ${DBG.btn||'-'}`,`gfx Q${window.Gov?Gov.q:'-'} ${window.Gov?Gov.ema.toFixed(1):''} ms`];L.forEach((t,i)=>x.fillText(t,8,46+i*13));if(DBG.err){x.fillStyle='#ff6a5a';x.fillText(DBG.err.slice(0,42),8,46+L.length*13)}}
 }
