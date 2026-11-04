@@ -235,6 +235,13 @@ t('páncél/legénység/remegés: a MX állapotgép halad, a rajzok és hangok k
 
 t('3D fordulás: a modell minden szögben, minden fejszinten kivétel nélkül rajzol; a fordulás közben a játék hibátlanul fut',()=>{const g=lg(),S=g.T.S;ok(!!g.sb.T3);const x=g.sb.document?null:null;g.T.tab=0;for(const d of['L','R','D','U','L'])for(let h=0;h<3;h++){S.u.f=h*2;g.T.go(d);eq(g.frames(25,40),[])}});
 
+t('forgókamra: föld alatt a fordulás csak kifúrt kamrában történik (idő + mentés), a felszínen nem kell',()=>{const g=lg(),S=g.T.S,C=g.sb.CH;ok(!!C);S.depth=500;S.x=0;S.tr=[['D',500]];g.T.go('R');g.frames(40,30);const n0=C.list().length;g.T.go('L');eq(g.frames(10,30),[]);ok(C.act===1&&C.g<.5,'ásás indul g='+C.g);g.frames(200,30);ok(C.list().length===n0+1,'kamra kész');ok(C.at(S.x,S.depth),'van kamra');ok(g.T.S.ch.length>=1);g.T.save();
+ const g2=boot({store:g.store});ok(g2.sb.CH.list().length>=1,'a kamra mentésből visszajön');
+ const h=lg(),H=h.T.S;H.depth=0;H.x=0;h.T.go('R');h.frames(30,30);h.T.go('L');h.frames(80,30);eq(h.sb.CH.list().length,0)});
+
+t('páncél-izzás: a mélységgel nő, jobb páncélnál később kezdődik; a rajz hibátlan; a felszínen nincs izzás',()=>{const g=lg(),H=g.sb.HGL;ok(!!H);near(H.g(0,0),0,1e-9);let p=-1;for(const d of[0,1e4,5e4,3e5,1e6,3e6,6e6]){const v=H.g(d,2);ok(v>=p-1e-9,'nő '+d);p=v}ok(H.g(3e5,0)>H.g(3e5,5),'jobb páncél hűvösebb');ok(H.g(6371e3,5)>.5,'a mag közelében a legjobb is izzik');
+ const S=g.T.S;g.T.tab=0;for(const h of[0,3,5]){S.u.h=h;S.depth=2e6;S.tr=[['D',2e6]];g.T.go('D');eq(g.frames(30,40),[])}});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

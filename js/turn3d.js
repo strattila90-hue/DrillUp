@@ -41,7 +41,7 @@ function build(c1,c2,hdc,lit){const F=[],A=hx(c1),B=hx(c2),G=hx('#2a2c30'),DK=hx
  return F}
 const cache={};
 function model(hl,ht,lit){const k=hl+'|'+ht+'|'+(lit?1:0);if(cache[k])return cache[k];const hc=(typeof HC!=='undefined'&&HC[hl])||['#9fb6c0','#6f8794'],hdc=(typeof HDC!=='undefined'&&HDC[ht])||'#8c9199';return cache[k]=build(hc[0],hc[1],hdc,lit)}
-function draw(x,o){const yaw=o.yaw||0,cs=Math.cos(yaw),sn=Math.sin(yaw),F=model(o.hl|0,o.ht|0,o.lit),out=[];
+function draw(x,o){const gnd=!!o.gnd,glow=o.glow||0,yaw=o.yaw||0,cs=Math.cos(yaw),sn=Math.sin(yaw),F=model(o.hl|0,o.ht|0,o.lit),out=[];
  const rot=(X,Y,Z)=>[X*cs-Z*sn,Y,X*sn+Z*cs];
  const add=(f,extra)=>{const P=f.p.map(q=>rot(q[0],q[1],q[2])),N=rot(f.n[0],f.n[1],f.n[2]);let cx=0,cy=0,cz=0;P.forEach(q=>{cx+=q[0];cy+=q[1];cz+=q[2]});cx/=P.length;cy/=P.length;cz/=P.length;
   if(N[0]*(0-cx)+N[1]*(0-cy)+N[2]*(D-cz)<=0)return;out.push({P,N,col:f.col,z:cz+(f.b||0),glass:f.glass,line:f.line})};
@@ -55,11 +55,11 @@ function draw(x,o){const yaw=o.yaw||0,cs=Math.cos(yaw),sn=Math.sin(yaw),F=model(
  out.sort((a,b)=>a.z-b.z);
  x.save();x.lineJoin='round';
  for(const f of out){const lam=Math.max(0,f.N[0]*LIGHT[0]+f.N[1]*LIGHT[1]+f.N[2]*LIGHT[2]),k=f.glass?.9+.3*lam:.42+.68*lam;
-  x.beginPath();f.P.forEach((q,i)=>{const p=D/(D-q[2]);i?x.lineTo(q[0]*p,-q[1]*p):x.moveTo(q[0]*p,-q[1]*p)});x.closePath();
-  x.fillStyle=shade(f.col,k);x.fill();x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=.03;x.stroke()}
+  x.beginPath();f.P.forEach((q,i)=>{const p=D/(D-q[2]),yy=gnd?2.05-(q[1]+2.05)*p:-q[1]*p;i?x.lineTo(q[0]*p,yy):x.moveTo(q[0]*p,yy)});x.closePath();
+  let fc=shade(f.col,k);if(glow>.02){const m=Math.min(1,glow)*(f.glass?.5:.75),c=f.col.map(v=>v*k),tr=255,tg=60+150*m*m,tb=14+100*m*m*m;fc='rgb('+[c[0]*(1-m)+tr*m,c[1]*(1-m)+tg*m,c[2]*(1-m)+tb*m].map(v=>Math.max(0,Math.min(255,v|0))).join()+')'}x.fillStyle=fc;x.fill();x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=.03;x.stroke()}
  // fogak a kúp mentén (látható oldalon)
  for(let k=0;k<6;k++)for(const t of[.3,.55,.78]){const a=sp+k*1.0472+t*2.6,r=R*(1-t),X=X0+(XA-X0)*t,Y=r*Math.sin(a),Z=r*Math.cos(a),P=rot(X,Y,Z),N=rot(.66,.76*Math.sin(a),.76*Math.cos(a));
-  if(N[2]*(D-P[2])+N[0]*(-P[0])+N[1]*(-P[1])<=0)continue;const p=D/(D-P[2]);x.fillStyle=hz>.1?'#ff9a3a':'#e9edf2';x.beginPath();x.arc(P[0]*p,-P[1]*p,.12*p,0,7);x.fill()}
+  if(N[2]*(D-P[2])+N[0]*(-P[0])+N[1]*(-P[1])<=0)continue;const p=D/(D-P[2]);x.fillStyle=hz>.1?'#ff9a3a':'#e9edf2';x.beginPath();x.arc(P[0]*p,gnd?2.05-(P[1]+2.05)*p:-P[1]*p,.12*p,0,7);x.fill()}
  x.restore()}
 W.T3={draw,D};
 })(typeof window!=='undefined'?window:globalThis);
