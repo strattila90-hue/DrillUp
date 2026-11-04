@@ -30,7 +30,7 @@ const INTRO={off:false,on:false,last:0,
    x.font='10px Georgia';x.fillStyle='#888';x.textAlign='center';x.fillText('érintésre átugorható',cx,h-18);x.textAlign='left';
    x.fillStyle='rgba(0,0,0,'+Math.max(0,1-t/.35,(u-.93)/.07)+')';x.fillRect(0,0,w,h);
    if(t>=DUR)finish();else W.requestAnimationFrame(frame)};
-  W.requestAnimationFrame(frame)}};
+  if(W.setTimeout)W.setTimeout(finish,DUR*1e3+2500);W.requestAnimationFrame(frame)}};
 W.INTRO=INTRO;
-INTRO.gate=function(s){if(!INTRO.want(s))return false;if(S.fuel<=0&&!(S.set.auto&&base()))return false;INTRO.play(()=>{INTRO.skip=1;try{go(s)}finally{INTRO.skip=0}});return true};
+INTRO.gate=function(s){if(INTRO.on&&s==='D')return true;if(!INTRO.want(s))return false;if(S.fuel<=0&&!(S.set.auto&&base()))return false;INTRO.play(()=>{INTRO.skip=1;try{go(s)}finally{INTRO.skip=0}});return true};
 })(typeof window!=='undefined'?window:globalThis);
