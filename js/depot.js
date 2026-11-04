@@ -104,7 +104,7 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
   for(const n in S.dp){const kg=S.dp[n];if(kg<=0)continue;const bb=bp(n);if(bb==null)continue;const q=DEP.q(n),u=price(n,bb)*q;tot+=kg*u;rows+=`<tr><td>${n}</td><td>${fk(kg)}</td><td>${Math.round(q*100)}%</td><td>${ft(u)}/kg</td><td>${ft(kg*u)}</td></tr>`}
   for(const n in S.dpf){const f=FD.find(x=>x[0]==n),c=S.dpf[n];if(!f)continue;tot+=c*f[5];rows+=`<tr><td>${n} ×${c}</td><td>${fk(c*f[4])}</td><td>–</td><td>${ft(f[5])}/db</td><td>${ft(c*f[5])}</td></tr>`}
   const w=S.tw,left=away?Math.max(0,Math.ceil((w.t1-now())/1e3)):0;
-  let h=`<h3>Depó</h3><canvas id="dpc" style="width:100%;height:230px;display:block;border-radius:12px;background:#10161e"></canvas>`;
+  let h=`<h3>Depó</h3><div class="sellTop"><button class="b g" id="dpSell" ${b&&!away&&p.out.length?'':'disabled'} onclick="DEP.ship()">🚂 Eladás vonattal${p.out.length?' – '+ft(p.cash)+' ('+fk(p.kg)+')':away?' – úton…':' – nincs mit eladni'}</button></div><canvas id="dpc" style="width:100%;height:230px;display:block;border-radius:12px;background:#10161e"></canvas>`;
   h+=DEP.holdCard();
   h+=`<div class="card">🏗 <b>Raktártelep</b><div class="mu" id="dpj">${DEP.job?'Kirakodás folyamatban…':'Kirakodás: '+nf(val('b'))+' kg/s'}</div><div class="mu">Készlet: ${fk(sk)} / ${fk(cs)}</div><div class="bar"><i style="width:${Math.min(100,sk/cs*100)}%"></i></div>
   ${rows?`<table>${rows}</table>`:'<div class="mu">A depó üres. Ürítsd ki a gépet!</div>'}<div class="mu">A tárolt anyag minősége napi ${DECAY*100}%-ot romlik (legfeljebb ${Math.round((1-QMIN)*100)}%-ig). Az árak naponta ±15%-ot ingadoznak; a leleteket múzeum veszi meg.</div></div>`;
@@ -168,6 +168,7 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
  sync(dt){DEP.ph+=dt*(DEP.job?1:0);DEP.step(dt);
   if(DEP.job){DEP.tk-=dt;if(DEP.tk<=0){DEP.tk=.38;if(W.clank)clank(.1)}}
   DEP.uiT-=dt;if(DEP.uiT<=0){DEP.uiT=.25;const a=$('#dpj'),t=$('#dpt');
+   {const sb=$('#dpSell');if(sb){const aw=DEP.trainAway(),pl=DEP.plan(),ok2=base()&&!aw&&pl.out.length,tx='🚂 Eladás vonattal'+(pl.out.length?' – '+ft(pl.cash)+' ('+fk(pl.kg)+')':aw?' – úton…':' – nincs mit eladni');if(sb.disabled===!!ok2)sb.disabled=!ok2;if(sb.textContent!==tx)sb.textContent=tx}}
    if(a&&DEP.job)a.textContent='Kirakodás: '+fk(sum(S.cg))+' maradt · '+fk(DEP.stock())+' / '+fk(val('s'));
    if(t){const aw=DEP.trainAway();t.textContent=(aw?'Úton… visszaér: '+Math.max(0,Math.ceil((S.tw.t1-now())/1e3))+' mp':'Várakozik a depónál')+' · '+nf(val('v'))+' kg/út · '+val('m')+' mp/kör';
     if(!aw&&DEP.wasAway){DEP.wasAway=false;DEP.refresh()}if(aw)DEP.wasAway=true}}

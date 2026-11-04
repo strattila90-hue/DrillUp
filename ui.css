@@ -65,3 +65,7 @@ input[type=range]{min-height:32px}
 #srfCard .srv{margin:4px 0}
 #srfCard .row{display:flex;gap:8px}#srfCard .row .b{flex:1}
 @keyframes srfIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* depó: az eladás gomb legfelül, görgetéskor is látszik */
+.sellTop{position:sticky;top:0;z-index:5;padding:6px 0 8px;background:linear-gradient(#14100c 70%,rgba(20,16,12,0))}
+.sellTop .b{width:100%;font-size:15px;padding:12px}
