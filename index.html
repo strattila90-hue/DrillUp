@@ -63,8 +63,8 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/seismo.js"></script>
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
-<script src="js/intro.js"></script>
 <script src="js/depotgfx.js"></script>
+<script src="js/mechfx.js"></script><script src="js/rpm.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
@@ -200,9 +200,9 @@ function sheetHTML(){const c=calc(),L=c.L,li=LY.indexOf(L),hd=HR[li],cp=window.B
  if(sheetT=='store'){const cg=Object.entries(S.cg).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4);return`<div class="mu">⛽ ${F[c.d[3]].n}: ${fk(S.fuel)} / ${fk(tank())}</div><div class="lad">${lad(S.fuel/tank(),0)}</div><div class="mu" style="margin-top:6px">📦 ${fk(cargoKg())} / ${fk(cap())}</div><div class="lad">${lad(cargoKg()/cap(),1)}</div><div class="mu" style="margin-top:6px">${cg.map(([n,q])=>n+' '+fk(q)).join(' · ')||'üres'}</div><div class="mu">🔥 Vészüzemanyag a raktárban: ≈ ${fk(emStock())} ${F[c.d[3]].n} (üres tartálynál automatikusan elég)</div>`}
  const nx=HD[S.u.f+1],Ln=LY[li+1];return`<b>${HD[S.u.f][0]}</b>${window.BIT?BIT.line():''}<div class="mu">Határ: ${Math.round(cp)} MPa · jelenlegi kőzet: ${hd} MPa</div><div class="lad">${lad(Math.min(1,r),1)}</div><div class="mu">Terhelés ${nf(r*100,0)}% – ${r>1?'<b class="bad">⛔ TÚL KEMÉNY</b>':r>.8?'⚠ izzik a fej, lassú fúrás':'✔ rendben'}</div>${Ln?`<div class="mu" style="margin-top:6px">Alatta: ${Ln[0].split(' (')[0]} (${HR[li+1]} MPa) ${HR[li+1]>cp?'<b class="bad">⛔ ezt még nem bírja</b>':'✔'}</div>`:''}${nx?`<div class="mu" style="margin-top:6px">Következő fúrófej: ${nx[0]} (${nx[1]} MPa) – ${ft(nx[2])}, a műhelyben</div>`:''}`}
 const vDrill=()=>`<div id="stage"><canvas id="cv" onclick="sheetT&&shT(sheetT)"></canvas><div id="sh" class="sheet" style="display:${sheetT?'block':'none'}"></div></div>
-<div class="con dock" oncontextmenu="return false"><div class="lcd" id="lcd">■ KÉSZENLÉT</div><div class="tbs" style="grid-template-columns:repeat(${window.PW?5:3},1fr)">${[['info',window.PW?'📊 Adat':'📊 Adatok'],['store','📦 Raktár'],['head',window.PW?'⛏ Fej':'⛏ Fúrófej']].map(([k,n])=>`<button class="tb${sheetT==k?' on':''}" onclick="shT('${k}')" style="font-size:11px;padding:8px 0">${n}${window.PW?'':' '+(sheetT==k?'▾':'▴')}</button>`).join('')}${window.PW?PW.dock():''}</div>
+<div class="con dock" oncontextmenu="return false"><div class="lcd" id="lcd">■ KÉSZENLÉT</div>${window.RPM?RPM.ui():''}<div class="tbs" style="grid-template-columns:repeat(${window.PW?5:3},1fr)">${[['info',window.PW?'📊 Adat':'📊 Adatok'],['store','📦 Raktár'],['head',window.PW?'⛏ Fej':'⛏ Fúrófej']].map(([k,n])=>`<button class="tb${sheetT==k?' on':''}" onclick="shT('${k}')" style="font-size:11px;padding:8px 0">${n}${window.PW?'':' '+(sheetT==k?'▾':'▴')}</button>`).join('')}${window.PW?PW.dock():''}</div>
 <div class="pr" style="grid-template-columns:repeat(${window.BK?7:6},1fr)">${pb('L','◀','Bal','#7cff6a','sm')}${pb('U','▲','Fel','#4fd0ff','sm')}${pb('D','▼','Le','#ff9a1a','sm')}${pb('R','▶','Jobb','#7cff6a','sm')}${pb('H','⌂','Haza','#5aa0ff','sm')}<button class="pb stop sm" style="--lc:#ff3b2f" onpointerdown="event.preventDefault();stp()"><b>■</b></button>${window.BK?BK.btn():''}</div></div>`;
-function go(s){if(window.INTRO&&INTRO.gate(s))return;if(s!='idle'){if(S.fuel<=0&&!(s=='D'&&base()&&S.set.auto)&&!emerg())return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.');
+function go(s){if(s!='idle'){if(S.fuel<=0&&!(s=='D'&&base()&&S.set.auto)&&!emerg())return toast('Nincs üzemanyag – tankolj a műhelyben!');if(s=='D'&&S.depth>=R)return;if(s=='U'&&S.depth<=0)return toast('Már a felszínen vagy.');if(s=='H'&&!S.tr.length)return toast('Már a bázison vagy.');
   if(s=='D'&&S.depth<2&&S.set.auto){const c=calc(),mn=c.fr*60*1.3+c.need*1.1;if(S.fuel<mn){if(base()){const tgt=Math.min(tank(),Math.max(mn*40,mn+1)),add=Math.max(0,Math.min(tgt-S.fuel,S.cash/c.f.p));if(S.fuel+add<mn)return toast('⛽ Kevés az üzemanyag ('+fk(S.fuel)+'), és nincs pénzed tankolni. Ürítsd ki a rakományt a Depóban és adj el!');S.fuel+=add;S.cash-=add*c.f.p;msg('⛽ Automatikus tankolás: '+fk(add)+' ('+ft(add*c.f.p)+')')}else return toast('⛽ Kevés az üzemanyag az induláshoz – menj vissza a bázisra tankolni (⌂).')}}}
  if(s=='H'&&window.RT){try{RT.home()}catch(e){}}if(s=='H')S.hTot=S.tr.reduce((a,t)=>a+t[1],0);aInit();if(AC.state=='suspended')AC.resume();if(s=='idle'&&S.st!='idle')scr(.25,220,70,.45);else if(s!='idle'&&S.st=='idle')scr(.34,300,110,.5);if(s!='idle'&&window.ENG)ENG.start();S.st=s;acc=0;S.t=Date.now();if(tab==0)live();else view()}
 function vShop(){if(window.BP)return BP.html();const b=base();let h=b?'':'<div class="card bad">A műhely csak a felszínen, álló géppel érhető el.</div>';
@@ -300,14 +300,14 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  cyl(-12.2,-5.6,1.5,c1,c2);x.fillStyle='#26282c';[-12.2,-9.6,-5.7].forEach(px=>x.fillRect(px-.08,-1.58,.16,3.16));
  x.fillStyle='rgba(255,255,255,.3)';for(let i=0;i<14;i++){x.fillRect(-12+i*.46,-1.38,.07,.07);x.fillRect(-12+i*.46,1.31,.07,.07)}
  x.fillStyle='#111';x.fillRect(-12,-1.62,6.4,.1);x.strokeStyle='#d0d4d8';x.lineWidth=.05;x.beginPath();x.moveTo(-9.2,-1.95);x.lineTo(-6,-1.95);x.stroke();[-9.2,-8.1,-7,-6].forEach(px=>{x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,-1.95);x.stroke()});
- x.fillStyle=lit2?'#ffd98a':'#9fd0e8';for(let i=0;i<3;i++){rr(-9.1+i*1.05,-1.2,.95,.9,.12);x.fill()}x.fillStyle='#1c1c1e';[0,1].forEach(i=>{x.beginPath();x.arc(-8.65+i*1.05,-.72,.22,0,7);x.fill();x.fillRect(-8.98+i*1.05,-.5,.66,.2)});
+ x.fillStyle=lit2?'#ffd98a':'#9fd0e8';for(let i=0;i<3;i++){rr(-9.1+i*1.05,-1.2,.95,.9,.12);x.fill()}if(window.BG&&BG.crew)BG.crew(x,{ts,act,hyd,lit2});else{x.fillStyle='#1c1c1e';[0,1].forEach(i=>{x.beginPath();x.arc(-8.65+i*1.05,-.72,.22,0,7);x.fill();x.fillRect(-8.98+i*1.05,-.5,.66,.2)});}
  x.fillStyle='#17130d';x.fillRect(-9.1,.35,3.1,.6);x.strokeStyle='#c0a060';x.lineWidth=.08;for(let i=0;i<7;i++){const lx=-9.1+(((i*.5+ph*3)%3.1)+3.1)%3.1;x.beginPath();x.moveTo(lx,.95);x.lineTo(Math.min(lx+.25,-6),.35);x.stroke()}
  x.fillStyle='#222';for(let i=0;i<5;i++)x.fillRect(-11.7,.1+i*.17,1.1,.07);
  // tolólapok: hengerek + dugattyúrudak, csuklós lapok, tömlők (lánctalp ezután, hogy behúzáskor a test takarja)
  [-1,1].forEach(sg=>{const yi=1.55+ext;[-8.2,-6.5].forEach(px=>{x.fillStyle='#2a2c30';x.fillRect(px-.17,sg<0?-1.78:1.5,.34,.28);x.fillStyle='#5a5e65';x.fillRect(px-.17,sg<0?-1.7:1.58,.34,.05);const r0=1.78;if(yi>r0){x.fillStyle='#e6e9ed';x.fillRect(px-.08,sg<0?-yi:r0,.16,yi-r0);x.fillStyle='rgba(0,0,0,.25)';x.fillRect(px+.03,sg<0?-yi:r0,.05,yi-r0)}});
   x.save();x.translate(-7.4,sg*(yi+.14));x.rotate(.05*Math.sin(trk*.6+sg)*dep*gr);x.fillStyle=(o.brk>.05)?mix('#2f3136','#ff4a1a',clamp((o.bkT||0)*.8+o.brk*.25,0,1)):'#2f3136';rr(-1.4,-.14,2.8,.28,.06);x.fill();x.fillStyle='#55585e';for(let i=0;i<12;i++)x.fillRect(-1.3+i*.23,sg<0?-.14:.04,.1,.1);x.restore()});
  {const sag=(1-gr)*.25;x.lineCap='round';[[-9.9,-8.2],[-9.9,-6.5]].forEach(([a,b],i)=>{x.beginPath();x.moveTo(a,-1.62);x.bezierCurveTo(a+.3,-2.3+sag-i*.2,b-.3,-2.3+sag-i*.2,b,-1.8);x.strokeStyle='#161618';x.lineWidth=.12;x.stroke();x.strokeStyle='#3a3a3f';x.lineWidth=.04;x.stroke();x.setLineDash([.12,.3]);x.lineDashOffset=-ts/250;x.strokeStyle=`rgba(255,170,40,${.12+.55*hyd})`;x.lineWidth=.05;x.stroke();x.setLineDash([])});x.lineCap='butt'}
- if(window.BG)BG.body(x,{ts,act,hl});if(window.BG&&BG.rear)BG.rear(x,{ts,act,hl});
+ {const rt=window.MX?MX.rt():0;if(window.BG)BG.body(x,{ts,act,hl,rt});if(window.BG&&BG.rear)BG.rear(x,{ts,act,hl,rt})}
  trackDraw(x,{dep,trk,pv:o.pv||0});
  {const vib=Math.sin(ts/21)*.012*hyd;x.fillStyle='#34373c';rr(-10.0+vib,.1,.7,.8,.08);x.fill();x.fillStyle='#4a4d52';x.fillRect(-9.95+vib,.2,.6,.06);x.fillRect(-9.95+vib,.6,.6,.06);x.fillStyle=hyd>.1&&Math.sin(ts/90)>0?'#ffb020':'#2a5a2a';x.beginPath();x.arc(-9.65+vib,.4,.06,0,7);x.fill();
   const pr=clamp(.15+.5*hyd+.35*heat+.04*Math.sin(ts/90),0,1);x.fillStyle='#f2f2f2';x.beginPath();x.arc(-9.7,-.65,.24,0,7);x.fill();x.strokeStyle='#333';x.lineWidth=.03;for(let i=0;i<=8;i++){const a=-2.4+i*.375;x.beginPath();x.moveTo(-9.7+.19*Math.cos(a),-.65+.19*Math.sin(a));x.lineTo(-9.7+.23*Math.cos(a),-.65+.23*Math.sin(a));x.stroke()}x.strokeStyle='#c22';x.lineWidth=.04;const na=-2.4+3*pr;x.beginPath();x.moveTo(-9.7,-.65);x.lineTo(-9.7+.2*Math.cos(na),-.65+.2*Math.sin(na));x.stroke();
@@ -321,7 +321,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  x.save();x.translate(stroke,0);cyl(-4.7,-1.6,1.65,c1,c2);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);for(let k=0;k<=hl+1;k++){x.fillStyle=c1;x.fillRect(-1.9-k*.5,-1.65,.2,3.3)}
  for(let i=0;i<7;i++){x.fillStyle=i%2?'#f0b020':'#222';x.fillRect(-4.7,-1.65+i*.47,.3,.47)}for(let i=0;i<8;i++){const a=sp*.5+i*.785;if(Math.cos(a)>0){x.fillStyle='#c8ccd2';x.beginPath();x.arc(-4.4,1.35*Math.sin(a),.06,0,7);x.fill()}}
  x.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<6;i++){x.fillRect(-4.2+i*.45,-1.52,.07,.07);x.fillRect(-4.2+i*.45,1.45,.07,.07)}
- if(window.BG)BG.shieldFx(x,{ts,act,hl});
+ if(window.BG&&BG.shell&&window.MX)BG.shell(x,{ts,hl,shell:MX.sh(),lit:lit2});if(window.BG)BG.shieldFx(x,{ts,act,hl});
  if(S.hp<75){x.strokeStyle='#111';x.lineWidth=.05;for(let i=0;i<Math.ceil((100-S.hp)/10);i++){const b=-1.8-rnd(i+3)*2.6;x.beginPath();x.moveTo(b,-1.65);x.lineTo(b+.3,-.7);x.lineTo(b-.1,-.2);x.stroke()}}
  x.fillStyle='#0b0b0d';rr(-4.2,-1.2,1.2,2.4,.1);x.fill();const cf=clamp((window.DEP?DEP.used():cargoKg())/cap(),0,1),ff=clamp(S.fuel/tank(),0,1);
  x.fillStyle='#2a0d0d';x.fillRect(-4,-1.05,.3,2.1);x.fillStyle='#e5333a';x.fillRect(-4,1.05-2.1*cf,.3,2.1*cf);x.fillStyle='#2a1c08';x.fillRect(-3.5,-1.05,.3,2.1);x.fillStyle='#f0a030';x.fillRect(-3.5,1.05-2.1*ff,.3,2.1*ff);x.fillStyle='rgba(255,255,255,.25)';x.fillRect(-4,-1.05,.05,2.1);
@@ -394,7 +394,7 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   if(dep>.5&&depSt==0){depSt=1;if(AC){beep(900,.1,.12);setTimeout(()=>beep(1300,.12,.12),130);hiss(.4)}}else if(dep<.5&&depSt==1){depSt=0;if(AC){beep(1300,.1,.12);setTimeout(()=>beep(900,.12,.12),130);hiss(.4)}}
   const ci=clamp(.5/(Math.min(vsp/K,8)+1),.05,.35)*1000;if(AC&&pv>.15&&dep<.9&&ts-clkT>ci){clkT=ts;clatter()}
   if(AC&&((tl&&S.st!='idle')||(S.st=='H'&&vsp>5))&&ts-beepT>520){beepT=ts;beep(1000,.16,.1)}}
- const mov=act&&S.mode!='',dv=DV[dir]||[0,0];pv+=((mov?1:0)-pv)*Math.min(1,dt*4);ph+=dt*pv;rate+=((dr?14:act?2:0)-rate)*Math.min(1,dt*2.5);sp+=dt*rate;sk+=((ry>2?.6:3.2)-sk)*Math.min(1,dt*2);
+ const mov=act&&S.mode!='',dv=DV[dir]||[0,0];pv+=((mov?1:0)-pv)*Math.min(1,dt*4);ph+=dt*pv;rate+=((dr?14*(window.RPM?RPM.k():1):act?2:0)-rate)*Math.min(1,dt*2.5);sp+=dt*rate;sk+=((ry>2?.6:3.2)-sk)*Math.min(1,dt*2);
  const cy=Math.round(h*.5),cx=w/2,Ys=cy-ry*K,SX=m=>(m-rx)*K+cx,SY=m=>cy+(m-ry)*K;
  const now=new Date(),hr=now.getHours()+now.getMinutes()/60,el=Math.sin((hr-6)/12*Math.PI),day=clamp(el*3+.35,0,1),LT=[],CN=[],GL=[];
  const lamp=(px,py,r,i)=>{if(px>-r&&px<w+r&&py>-r&&py<h+r)LT.push({x:px,y:py,r,i})};
@@ -458,7 +458,7 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
  const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);x.rotate(ang);const lit2=ry>2||day<.55,fo=Math.pow(clamp(Math.abs(sY)*1.5,0,1),1.3);
- x.save();x.globalAlpha=1-.6*fo;x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.fillStyle=`rgba(0,0,0,${.28*Math.abs(sY)})`;x.fillRect(-12,-2.1,12.6,4.2);x.restore();
+ x.save();x.globalAlpha=1-.6*fo;x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.fillStyle=`rgba(0,0,0,${.28*Math.abs(sY)})`;x.fillRect(-12,-2.1,12.6,4.2);x.restore();
  if(fo>.02){x.globalAlpha=fo;x.save();x.scale(K,K);front(x,sp,hl,dep*grip,hh,S.u.f);x.restore();x.globalAlpha=1}
  x.restore();
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
