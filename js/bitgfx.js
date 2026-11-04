@@ -64,6 +64,34 @@ const BG={sphere,
   // hűtőbordák a váz felső élén
   x.fillStyle='rgba(0,0,0,.25)';for(let i=0;i<6;i++)x.fillRect(-9.1+i*.4,-1.5,.05,.09);
   // kormos, poros alsó rész – a mélységgel egyre piszkosabb
-  if(q>=1){const g=x.createLinearGradient(0,.3,0,1.5);g.addColorStop(0,'rgba(60,42,26,0)');g.addColorStop(1,`rgba(60,42,26,${.18+.32*dirt})`);x.fillStyle=g;x.fillRect(-12.2,.3,6.6,1.2)}}};
+  if(q>=1){const g=x.createLinearGradient(0,.3,0,1.5);g.addColorStop(0,'rgba(60,42,26,0)');g.addColorStop(1,`rgba(60,42,26,${.18+.32*dirt})`);x.fillStyle=g;x.fillRect(-12.2,.3,6.6,1.2)}},
+ // a gép hátulja: szerszámkészlet (csörlő, hidraulikus kalapács-kar, fúrószár-állvány, tartalék vágótárcsák, gázpalackok, szerszámláda, ásó/csákány, poroltó)
+ rear(x,o){const ts=o.ts||0,act=o.act,q=W.Gov?Gov.q:2,sw=Math.sin(ts/900)*.04+(act?Math.sin(ts/130)*.03:0),m=(a,b,c,d)=>{x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke()},rc=(a,b,w,h,f,r)=>{x.fillStyle=f;x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r||.04);else x.rect(a,b,w,h);x.fill()};
+  x.save();x.lineCap='round';
+  // vonószerkezet + vonóhorog
+  rc(-12.62,-.95,.4,1.95,'#4a4d54',.05);x.fillStyle='rgba(255,255,255,.12)';x.fillRect(-12.6,-.93,.05,1.9);x.strokeStyle='#b8bcc2';x.lineWidth=.07;x.beginPath();x.arc(-12.78,.05,.16,-1.2,1.2);x.stroke();rc(-12.7,-.1,.12,.3,'#b8bcc2',.03);
+  // csörlődob kábellel
+  const wy=-.62;rc(-13.18,wy-.22,.62,.44,'#3a3d44',.05);x.strokeStyle='#8c9199';x.lineWidth=.025;for(let i=0;i<7;i++)m(-13.12+i*.085,wy-.2,-13.12+i*.085,wy+.2);rc(-13.24,wy-.27,.07,.54,'#2a2d33',.02);rc(-12.62,wy-.27,.07,.54,'#2a2d33',.02);
+  x.strokeStyle='#d0b050';x.lineWidth=.03;x.beginPath();x.moveTo(-12.9,wy+.22);x.quadraticCurveTo(-12.95,.0+sw,-12.84,.1);x.stroke();x.fillStyle='#e0a030';x.beginPath();x.arc(-12.84,.12,.05,0,7);x.fill();
+  // hidraulikus kalapács-kar a váz tetején (lengés)
+  x.save();x.translate(-11.9,-1.5);x.strokeStyle='#e0a030';x.lineWidth=.13;x.beginPath();x.moveTo(0,0);x.lineTo(-.55,-.62+sw);x.lineTo(-1.35,-.18+sw*1.4);x.stroke();x.strokeStyle='#8c6a1c';x.lineWidth=.04;m(-.1,-.04,-.5,-.55+sw);m(-.55,-.62+sw,-1.2,-.25+sw*1.4);
+  x.strokeStyle='#cfd3d8';x.lineWidth=.07;m(-.5,-.55+sw,-.15,-.12);m(-.95,-.42+sw,-1.1,-.12+sw);
+  rc(-1.45,-.22+sw*1.4,.2,.34,'#555a63',.03);x.fillStyle='#14151a';x.beginPath();x.moveTo(-1.4,.12+sw*1.4);x.lineTo(-1.3,.12+sw*1.4);x.lineTo(-1.35,.4+sw*1.4);x.fill();x.fillStyle='#ffb020';x.beginPath();x.arc(0,0,.07,0,7);x.fill();x.restore();
+  // fúrószár-állvány (a váz tetején: rudak + konzolok)
+  for(let i=0;i<4;i++){rc(-11.75,-1.66-i*.045,2.3,.035,i%2?'#8c9199':'#b0b5bd',.015)}for(const bx of[-11.7,-10.7,-9.7])rc(bx,-1.64,.06,.2,'#2a2d33',.01);
+  // tartalék vágótárcsák a hátsó lemezen
+  for(let i=0;i<3;i++){const cx=-13.0-i*.0,cy=.45+i*.28;x.fillStyle='#6c7178';x.beginPath();x.arc(cx+.1,cy+.2,.16,0,7);x.fill();x.strokeStyle='#c9ced6';x.lineWidth=.03;x.beginPath();x.arc(cx+.1,cy+.2,.12,0,7);x.stroke();x.fillStyle='#2a2d33';x.beginPath();x.arc(cx+.1,cy+.2,.04,0,7);x.fill()}
+  // gázpalackok (lánccal)
+  rc(-12.5,.28,.14,.72,'#c43a2f',.06);rc(-12.33,.28,.14,.72,'#3a74c4',.06);x.fillStyle='#cfd3d8';x.fillRect(-12.49,.25,.1,.05);x.fillRect(-12.32,.25,.1,.05);x.strokeStyle='#2a2d33';x.lineWidth=.03;m(-12.52,.56,-12.17,.56);
+  // szerszámláda a hátsó alsó élen
+  rc(-12.78,.82,.55,.34,'#6a4a1e',.04);x.fillStyle='#e0a030';x.fillRect(-12.54,.88,.07,.1);x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=.025;m(-12.78,.98,-12.23,.98);
+  // ásó + csákány a váz oldalán, poroltó, tömlődob
+  x.strokeStyle='#8a5a28';x.lineWidth=.05;m(-6.5,-.55,-6.5,.52);m(-6.35,-.5,-6.2,.5);x.fillStyle='#9aa0a8';x.beginPath();x.moveTo(-6.6,.52);x.lineTo(-6.4,.52);x.lineTo(-6.5,.78);x.fill();x.strokeStyle='#9aa0a8';x.lineWidth=.06;x.beginPath();x.arc(-6.28,-.5,.17,3.4,6);x.stroke();
+  rc(-6.0,.05,.14,.4,'#c43a2f',.05);x.fillStyle='#222';x.fillRect(-5.99,.02,.1,.05);x.strokeStyle='#222';x.lineWidth=.025;x.beginPath();x.arc(-5.86,.04,.06,0,3);x.stroke();
+  x.strokeStyle='#d8a020';x.lineWidth=.045;x.beginPath();x.arc(-9.7,.78,.13,0,7);x.stroke();x.beginPath();x.arc(-9.7,.78,.07,0,7);x.stroke();
+  // hátsó lámpák és prizma, forgó jelzőfény
+  x.fillStyle=act?'#ff3b2f':'#6a1c16';x.fillRect(-12.28,-1.35,.07,.14);x.fillRect(-12.28,.75,.07,.14);x.fillStyle='#ffb020';x.fillRect(-12.28,-1.12,.07,.07);
+  if(act&&q>=1){x.save();x.globalCompositeOperation='lighter';const g=x.createRadialGradient(-12.25,-1.28,0,-12.25,-1.28,.7);g.addColorStop(0,'rgba(255,60,40,.4)');g.addColorStop(1,'rgba(255,60,40,0)');x.fillStyle=g;x.fillRect(-13,-2,1.5,1.6);x.restore()}
+  x.restore()}};
 W.BG=BG;
 })(typeof window!=='undefined'?window:globalThis);
