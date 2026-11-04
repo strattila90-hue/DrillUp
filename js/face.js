@@ -24,12 +24,22 @@ function draw(x,C,p,tr,w,hi){ // fénycsík (a repedés pereme) + sötét mélys
 const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173,n=Math.floor(u);return{p:u-n,n,seed:i*37.7+n*11.3}},
  active(){return S.mode==='drill'&&S.st!=='idle'&&!(W.NET&&NET.falling)},
  hard(){const i=LY.indexOf(layer(S.depth));return clamp((HR[i]||1)/1200,0,1)},
- // a világban: a fej előtti kőzet repedései (a gép előtt, a törmelék-réteg fölött)
- world(V){if(!V.dr||!V.lw||!FACE.active())return;const x=V.x,K=V.K,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,N=[4,7,10][q]||7,[nx,ny]=V.lw(.62,0),[ax,ay]=V.lw(1.62,0);
-  let ux=ax-nx,uy=ay-ny;const l=Math.hypot(ux,uy)||1;ux/=l;uy/=l;x.save();x.lineCap='round';x.lineJoin='round';
-  for(let i=0;i<N;i++){const c=FACE.cyc(i,T,hard),sp=1.7-hard*.5,a0=(hash(c.seed)-.5)*sp,len=(1.7+hash(c.seed+2)*2.3)*(.7+hard*.9),C=crackOf(c.seed,a0,len),fade=c.p>.82?1-(c.p-.82)/.18:1;
-   const tr=(a,b)=>[nx+(ux*a-uy*b)*K,ny+(uy*a+ux*b)*K];x.globalAlpha=clamp(fade,0,1);draw(x,C,Math.min(1,c.p*1.35),tr,1.6+(1-hard)*1.2,'rgba(255,236,205,.28)');
-   if(c.p>.78&&c.p<.99){const t2=(c.p-.78)/.21,e=C.pts[C.pts.length-1],q2=tr(e[0],e[1]);x.globalAlpha=1-t2;x.fillStyle='#2a211a';x.beginPath();x.arc(q2[0]+ux*t2*14,q2[1]+uy*t2*14+t2*t2*18,1.8+hash(c.seed)*2,0,7);x.fill()}}
+ // a világban: a fúrófej előtti kőzet – a fej felületéről induló repedések, szilánkok, por, zúzott szemcsék, szikra (a gép előtt, a törmelék-réteg fölött)
+ world(V){if(!V.dr||!V.lw||!FACE.active())return;const x=V.x,K=V.K,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,N=[5,8,11][q]||8,[nx,ny]=V.lw(.3,0),[ax,ay]=V.lw(1.3,0);
+  let ux=ax-nx,uy=ay-ny;const l=Math.hypot(ux,uy)||1;ux/=l;uy/=l;const hc=layer(S.depth)[4],P=(a,b)=>[nx+(ux*a-uy*b)*K,ny+(uy*a+ux*b)*K];x.save();x.lineCap='round';x.lineJoin='round';
+  for(let i=0;i<N;i++){const c=FACE.cyc(i,T,hard),oy=(hash(c.seed+9)-.5)*2.5,oa=.25-.9*(oy/1.4)*(oy/1.4),sp=1.6-hard*.5,a0=(hash(c.seed)-.5)*sp+oy*.32,len=(.7+hash(c.seed+2)*1.4)*(.7+hard*.8),C=crackOf(c.seed,a0,len),fade=c.p>.82?1-(c.p-.82)/.18:1;
+   const tr=(a,b)=>P(a+oa,b+oy);x.globalAlpha=clamp(fade,0,1);draw(x,C,Math.min(1,c.p*1.4),tr,1.3+(1-hard)*1.1,'rgba(255,236,205,.3)');
+   if(c.p>.74&&c.p<.99){const t2=(c.p-.74)/.25,e=C.pts[C.pts.length-1],q2=tr(e[0],e[1]);x.globalAlpha=1-t2;
+    for(let k=0;k<2;k++){const sd=c.seed+k*5.1,ang=hash(sd)*6.28+t2*(2+hash(sd+1)*4),sz=1.6+hash(sd+2)*2.8,px=q2[0]+ux*t2*(10+hash(sd+3)*10)+(hash(sd+4)-.5)*t2*14,py=q2[1]+uy*t2*(10+hash(sd+3)*10)+(hash(sd+4)-.5)*t2*14+t2*t2*22;
+     x.fillStyle=k?mix(hc,'#000000',.5):mix(hc,'#ffffff',.18);x.beginPath();x.moveTo(px+Math.cos(ang)*sz,py+Math.sin(ang)*sz);x.lineTo(px+Math.cos(ang+2.3)*sz*.8,py+Math.sin(ang+2.3)*sz*.8);x.lineTo(px+Math.cos(ang+4.1)*sz*.6,py+Math.sin(ang+4.1)*sz*.6);x.closePath();x.fill()}}}
+  x.globalAlpha=1;
+  // zúzott szemcsék a fej felületén
+  const ng=[10,18,26][q]||18;for(let i=0;i<ng;i++){const ph=(T*(1.4+hash(i)*1.2)+hash(i+7))%1,oy=(hash(i+3)-.5)*2.6,oa=.12-.9*(oy/1.5)*(oy/1.5)+ph*.5,p=P(oa,oy+Math.sin(T*9+i)*.05);x.globalAlpha=(1-ph)*.75;x.fillStyle=i%3?'#1c120b':mix(hc,'#ffffff',.25);x.fillRect(p[0],p[1],1.2+hash(i+11)*1.8,1.2+hash(i+13)*1.4)}
+  x.globalAlpha=1;
+  if(q>=1){ // por: a fej oldalán gomolyog ki
+   for(let i=0;i<4;i++){const ph=(T*.8+i*.25)%1,sd=i%2?1:-1,p=P(.2+ph*.9,sd*(.5+ph*1.7)),r=5+ph*15,g=x.createRadialGradient(p[0],p[1],0,p[0],p[1],r);g.addColorStop(0,`rgba(${hc.length==7?[1,3,5].map(k=>parseInt(hc.substr(k,2),16)+30).join(','):'170,150,120'},${.2*(1-ph)})`);g.addColorStop(1,'rgba(150,130,100,0)');x.fillStyle=g;x.fillRect(p[0]-r,p[1]-r,r*2,r*2)}
+   if(hard>.3){ // kemény kőzet: szikra a vágóéleken
+    x.globalCompositeOperation='lighter';x.lineWidth=1.1;for(let i=0;i<7;i++){const ph=(T*2.6+hash(i)*3)%1;if(ph>.55)continue;const oy=(hash(i+21)-.5)*2.2,p=P(.1+ph*.2,oy),d=[ux*.8+(hash(i+5)-.5)*1.2,uy*.8+(hash(i+9)-.5)*1.2];x.strokeStyle=`rgba(255,${190-ph*140|0},80,${(1-ph*1.8)*.9})`;x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+d[0]*(5+ph*20),p[1]+d[1]*(5+ph*20)+ph*ph*6);x.stroke()}x.globalCompositeOperation='source-over'}}
   x.restore()},
  // kisablak: nagyított fej és kőzet (mindig jobbra néz, a kőzet balra „csúszik”)
  inset(V){if(S.set.fcl===0||!FACE.active()||(W.$&&$('#mm'))||(W.PN&&!PN.vis('face')))return;if(W.ENG&&V.w<460&&(ENG.flash>0||(S.en&&!(ENG.phase==='run'&&ENG.ready()))))return;const x=V.x,sz=clamp(V.w*.36,104,152),px=8,py=46,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,L=layer(S.depth),tier=S.u.f,heat=typeof HEAT!=='undefined'?clamp(HEAT,0,1.2):0,rt=clamp((typeof rate!=='undefined'?rate:8)/14,0,1);
