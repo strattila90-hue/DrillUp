@@ -23,5 +23,6 @@ function boot(o={}){
   setMenu(v){menu=v},engineOn(){const E=sb.ENG;g.T.S.en=1;if(E){E.inited=true;E.rpm=1;E.hyd=1;E.phase='run';E.wasReady=1}},now:()=>sb.__now,advance(ms){sb.__now+=ms},
   frames(n,ms=16.7){const errs=[];for(let i=0;i<n;i++){sb.__now+=ms;ts+=ms;g.T.draw(ts);if(g.T.DBG.err){errs.push(g.T.DBG.err);g.T.DBG.err=''}}return errs},
   runTimers(){const t=sb.__timers.splice(0);t.forEach(f=>f())},ev:{preventDefault(){},stopPropagation(){}},ts:()=>ts};
+ if(sb.INTRO)sb.INTRO.off=true;
  return g}
 module.exports={boot,P,ROOT};
