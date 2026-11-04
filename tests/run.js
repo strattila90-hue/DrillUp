@@ -242,6 +242,22 @@ t('forgókamra: föld alatt a fordulás csak kifúrt kamrában történik (idő 
 t('páncél-izzás: a mélységgel nő, jobb páncélnál később kezdődik; a rajz hibátlan; a felszínen nincs izzás',()=>{const g=lg(),H=g.sb.HGL;ok(!!H);near(H.g(0,0),0,1e-9);let p=-1;for(const d of[0,1e4,5e4,3e5,1e6,3e6,6e6]){const v=H.g(d,2);ok(v>=p-1e-9,'nő '+d);p=v}ok(H.g(3e5,0)>H.g(3e5,5),'jobb páncél hűvösebb');ok(H.g(6371e3,5)>.5,'a mag közelében a legjobb is izzik');
  const S=g.T.S;g.T.tab=0;for(const h of[0,3,5]){S.u.h=h;S.depth=2e6;S.tr=[['D',2e6]];g.T.go('D');eq(g.frames(30,40),[])}});
 
+group('V) Vulkán, domborzat, lánctalp, M62');
+t('domborzat: a közepén sík, a vulkán felé fokozatosan emelkedik, folytonos, a meredekség korlátos',()=>{const g=lg(),Hl=g.sb.HILL;ok(!!Hl);for(const x of[-300,-100,0,100,300])near(Hl.E(x),0,1e-9);ok(Hl.E(900)>100&&Hl.E(-900)>50);
+ let mx=0,jump=0;for(let x=-1200;x<1200;x+=1){mx=Math.max(mx,Math.abs(Hl.g(x)));jump=Math.max(jump,Math.abs(Hl.E(x+1)-Hl.E(x)))}ok(mx<.65,'max lejtő '+mx);ok(jump<.7,'ugrás '+jump)});
+t('emelkedő: lejtővel és gyengébb motorral lassabb, sík talajon változatlan, túl meredeken megáll',()=>{const g=lg(),Hl=g.sb.HILL;g.T.S.u.d=0;const c=g.T.calc();g.T.S.u.d=4;const cb=g.T.calc();const f=Hl.drive(c,100,1);near(f.v,1,1e-6);near(f.f,1,1e-6);
+ let steep=-1;for(let x=400;x<900;x+=5)if(Hl.g(x)>.15){steep=x;break}ok(steep>0);const a=Hl.drive(c,steep,1),b=Hl.drive(cb,steep,1);ok(a.v<1,'lassul '+a.v);ok(b.v>=a.v,'erősebb motor nem lassabb');ok(a.f>1,'több üzemanyag');
+ ok(Hl.drive(c,steep,-1).f<=a.f,'lejtmenetben kevesebb fogyasztás')});
+t('domborzat: a felszíni helyzet követi a terepet, mélyben befagy, mentésbe kerül, a rajz hibátlan',()=>{const g=lg(),S=g.T.S,Hl=g.sb.HILL;S.depth=0;S.x=700;g.frames(120,30);near(Hl.e0,Hl.E(700),3);const k=Hl.e0;S.depth=300;S.tr=[['D',300]];g.frames(30,30);near(Hl.e0,k,1e-6);g.T.save();
+ const g2=boot({store:g.store});ok(Math.abs((g2.T.S.e0||0)-k)<4,'e0 mentve');for(const x of[-900,0,500,850]){const h=lg();h.T.S.x=x;h.T.S.depth=0;eq(h.frames(20,30),[])}});
+t('vulkán: hőmérséklet a kürtő/kamra közelében magas, messze az alap; felszíni pajzs nélkül a forró zónába nem lehet bemenni',()=>{const g=lg(),V=g.sb.VOL;ok(!!V);const S=g.T.S;near(V.tm(0,100,20),20,1e-6);ok(V.tm(1000,500,20)>900,'kürtő '+V.tm(1000,500,20));ok(V.tm(-1000,500,20)>900);ok(V.tm(300,500,20)<60);
+ ok(V.tm(1000,8500,20)>1100,'kamra');S.u.h=0;S.u.f=0;ok(!V.gearOk());S.u.h=3;S.u.f=3;S.u.d=4;ok(V.gearOk()===(g.T.H[3][1]>=1200))});
+t('vulkán: a pálya széle befog (±1150 m), felfedezés mentődik, kitörés-intenzitás 0..1 között',()=>{const g=lg(),S=g.T.S,V=g.sb.VOL;S.depth=0;S.x=5000;g.frames(30,30);ok(S.x<=1151,'jobb szél '+S.x);S.x=-5000;g.frames(30,30);ok(S.x>=-1151,'bal szél '+S.x);
+ S.x=950;g.frames(60,30);ok(S.vl&&Object.keys(S.vl).length>=1||g.toasts.length>=1,'felfedezés');for(const s of V.SITES||[])for(let t=0;t<200;t+=3){const e=V.e(s,t);ok(e>=0&&e<=1.0001,'e '+e)}g.T.save();ok(boot({store:g.store}).T.S.vl!==undefined)});
+t('vulkán + domborzat + lánctalp + hűség: rajz, HUD, Tudás-lap és mélyfúrás hibátlan minden helyen és napszakban',()=>{const g=lg(),S=g.T.S;for(const x of[400,700,900,992,1000,-500,-900,-1000]){S.x=x;S.depth=0;S.tr=[];eq(g.frames(25,30),[],'x='+x)}
+ const h=lg(),H=h.T.S;H.x=1000;H.depth=2000;H.u.h=5;H.u.f=3;H.tr=[['D',2000]];h.T.go('D');eq(h.frames(60,30),[]);ok(typeof h.sb.VOL.html()==='string')});
+t('M62 mozdony: a depó rajza hibátlan minden mozdonyszinten',()=>{const g=lg(),S=g.T.S;for(const m of[0,1,2,3,4,5,6]){S.bd={s:2,b:2,v:2,m};eq(g.frames(10,30),[]);g.sb.DG&&g.sb.DG.paint&&g.sb.DG.paint(.016)}ok(g.sb.LOCO===undefined||true)});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

@@ -11,7 +11,7 @@ const grad=(x,y0,y1,c0,c1)=>{const g=x.createLinearGradient(0,y0,0,y1);g.addColo
 function wheel(x,cx,cy,r,ang,sp){x.fillStyle='#14151a';x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.strokeStyle='#9097a0';x.lineWidth=Math.max(.7,r*.16);x.beginPath();x.arc(cx,cy,r*.8,0,7);x.stroke();
  x.lineWidth=Math.max(.6,r*.13);x.beginPath();for(let i=0;i<(sp||6);i++){const a=ang+i*TAU/(sp||6);x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a)*r*.78,cy+Math.sin(a)*r*.78)}x.stroke();x.fillStyle='#c2c6cc';x.beginPath();x.arc(cx,cy,r*.2,0,7);x.fill()}
 // ---------- mozdonyok (az eleje x=0, jobbra néz, a sín felső éle y=0) ----------
-const LOCO=[{n:'gőz',len:66},{n:'dízel',len:52},{n:'dízel',len:52},{n:'villany',len:54},{n:'villany',len:54},{n:'modern',len:64},{n:'modern',len:64}];
+const LOCO=[{n:'gőz',len:66},{n:'dízel',len:62},{n:'dízel',len:62},{n:'villany',len:54},{n:'villany',len:54},{n:'modern',len:64},{n:'modern',len:64}];
 function loco(x,t,k,ph,mv,dk,rev){const ty=Math.min(6,k),dist=ph*.9*(rev?-1:1);
  if(ty===0){ // gőzmozdony + széntender
   x.fillStyle='#1c1e23';rrect(x,-66,-18,20,9,1);x.fill();x.fillStyle='#34363c';x.fillRect(-66,-20,20,3);x.fillStyle='#111';x.beginPath();x.moveTo(-64,-20);x.quadraticCurveTo(-56,-27,-48,-20);x.fill();x.fillStyle='#14151a';x.fillRect(-66,-9,22,4);
@@ -23,11 +23,29 @@ function loco(x,t,k,ph,mv,dk,rev){const ty=Math.min(6,k),dist=ph*.9*(rev?-1:1);
   x.fillStyle='#2a2d33';x.fillRect(-44,-10,44,3);x.fillStyle='#8c2a20';x.fillRect(-44,-8,44,1.2);
   const a=ph*.16*(rev?-1:1);for(const cx of[-38,-26,-14]){wheel(x,cx,-6.4,6.4,a,8)}x.strokeStyle='#a9aeb5';x.lineWidth=1.6;x.beginPath();const px=Math.cos(a)*2.6,py=Math.sin(a)*2.6;x.moveTo(-38+px,-6.4+py);x.lineTo(-14+px,-6.4+py);x.stroke();x.lineWidth=2;x.beginPath();x.moveTo(-14+px,-6.4+py);x.lineTo(-3,-10);x.stroke();
   wheel(x,-58,-3.6,3.6,a*1.6,6)}
- else if(ty<3){ // dízel
-  x.fillStyle=grad(x,-27,-7,'#b13a2e','#6e1f19');rrect(x,-52,-26,28,19,2);x.fill();rrect(x,-26,-18,26,11,3);x.fill();x.fillStyle='#e0b43a';x.fillRect(-52,-13,52,2.2);x.fillStyle='#1e2229';x.fillRect(-49,-23,10,8);x.fillStyle='rgba(180,220,255,.5)';x.fillRect(-48,-22,8,3);x.fillStyle='#16191f';x.fillRect(-23,-16,18,6);for(let i=0;i<5;i++){x.fillStyle='#2e333b';x.fillRect(-22+i*3.5,-16,1.4,6)}
-  x.fillStyle='#2a2d33';x.fillRect(-52,-28,28,2.5);x.fillStyle='#16171a';for(const fx of[-44,-34]){x.beginPath();x.arc(fx,-29,3.3,Math.PI,0);x.fill();x.strokeStyle='#555';x.lineWidth=.6;x.beginPath();x.moveTo(fx-3,-29);x.lineTo(fx+3,-29);x.stroke()}
-  x.fillStyle=dk>.2?'#fff4b8':'#e8dca0';x.beginPath();x.arc(-.5,-13,2.2,0,7);x.fill();x.fillStyle='#3a3d44';x.fillRect(-52,-8,52,3);
-  const a=ph*.2*(rev?-1:1);for(const bx of[-8,-17,-37,-46])wheel(x,bx,-4.2,4.2,a,6);x.fillStyle='#222';x.fillRect(-20,-6,14,1.5);x.fillRect(-49,-6,14,1.5)}
+ else if(ty<3){ // M62 "Szergej"-szerű Co'Co' dízelmozdony: sötétzöld test, világosszürke tető, sárga sáv
+  const gk=dk>.2;
+  x.fillStyle='#23262b';x.fillRect(-60,-9,60,3.4);                                   // főkeret
+  x.fillStyle='#1b1d21';x.fillRect(-40,-7,22,3.2);x.fillStyle='#4a4d54';x.fillRect(-40,-7,22,.6);   // üzemanyagtartály
+  x.fillStyle=grad(x,-23,-9,'#3d7a4c','#1f4a2c');x.fillRect(-60,-22,46,13);          // hosszú motorház
+  x.fillStyle=grad(x,-29,-9,'#3f7d50','#1f4a2c');rrect(x,-14,-29,14,20,1.5);x.fill();   // fülke (magasabb)
+  x.fillStyle='#d9dde2';x.fillRect(-61,-24.2,47,2.4);x.fillStyle='#c3c8ce';rrect(x,-15,-31,16,2.6,1);x.fill();   // világosszürke tető
+  x.fillStyle='#9aa0a8';x.fillRect(-61,-24.2,47,.6);
+  x.fillStyle='#e6b92e';x.fillRect(-60,-13.4,60,1.8);                                // sárga sáv
+  x.fillStyle='rgba(0,0,0,.28)';for(let i=0;i<10;i++)x.fillRect(-57+i*4.3,-21,1.1,6.6);   // hűtőrácsok / szellőzők
+  x.fillStyle='rgba(255,255,255,.12)';x.fillRect(-60,-22,46,1);
+  x.fillStyle='#1f2229';x.fillRect(-10,-27,9,8);x.fillStyle=gk?'rgba(255,230,150,.55)':'rgba(170,215,250,.55)';x.fillRect(-9.2,-26.4,7.4,2.6);   // fülkeablak
+  x.fillStyle='#1f2229';x.fillRect(-13.3,-26,2.6,6);                                  // oldalablak
+  x.fillStyle='#14161a';x.beginPath();x.arc(-52,-25.2,3,Math.PI,0);x.fill();x.beginPath();x.arc(-42,-25.2,3,Math.PI,0);x.fill();   // tetőventilátorok
+  x.strokeStyle='#555a63';x.lineWidth=.5;[-52,-42].forEach(fx=>{x.beginPath();x.moveTo(fx-2.6,-25.4);x.lineTo(fx+2.6,-25.4);x.moveTo(fx,-28);x.lineTo(fx,-25.4);x.stroke()});
+  x.fillStyle='#22252a';x.fillRect(-33,-27.5,4,3.4);x.fillStyle='#16171a';x.fillRect(-33.6,-28.6,5.2,1.3);   // kipufogó
+  x.fillStyle='#f1f2f4';rrect(x,-9,-17.8,8,3.4,.6);x.fill();x.fillStyle='#1b3d26';x.font='bold 3px sans-serif';x.textAlign='center';x.fillText('M62',-5,-15.2);x.textAlign='start';   // pályaszámtábla
+  x.fillStyle=gk?'#fff6c4':'#ece2a8';x.beginPath();x.arc(-1.2,-24,1.6,0,7);x.fill();x.beginPath();x.arc(-1.2,-11,1.4,0,7);x.fill();x.beginPath();x.arc(-1.2,-9.4,1.1,0,7);x.fill();   // lámpák
+  x.strokeStyle='#d8dce0';x.lineWidth=.55;x.beginPath();x.moveTo(-60,-9.5);x.lineTo(-60,-12.5);x.lineTo(-14,-12.5);x.moveTo(-3,-9.5);x.lineTo(-3,-12.5);x.stroke();   // korlát
+  x.fillStyle='#3a3d44';x.fillRect(-62,-8,2,2);x.fillRect(0,-8,2,2);                  // ütközők
+  const a=ph*.2*(rev?-1:1);
+  for(const bc of[-14.5,-45.5]){x.fillStyle='#16171a';rrect(x,bc-9.5,-6.4,19,3,1);x.fill();for(const dx of[-6.5,0,6.5])wheel(x,bc+dx,-3.5,3.5,a,6)}   // két 3 tengelyes forgóvázas
+  }
  else if(ty<5){ // villanymozdony
   x.fillStyle=grad(x,-28,-7,'#3b78b8','#1d3d68');x.beginPath();x.moveTo(-54,-26);x.lineTo(-6,-26);x.quadraticCurveTo(0,-26,0,-18);x.lineTo(0,-8);x.lineTo(-54,-8);x.closePath();x.fill();x.fillStyle='#f0f2f5';x.fillRect(-54,-17,54,2.4);x.fillStyle='#16202c';x.fillRect(-52,-24,10,8);x.fillRect(-9,-24,8,8);x.fillStyle='rgba(180,220,255,.45)';x.fillRect(-51,-23,8,3);
   for(let i=0;i<6;i++){x.fillStyle='rgba(0,0,0,.25)';x.fillRect(-38+i*5,-24,1.2,6)}

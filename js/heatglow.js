@@ -2,7 +2,7 @@
 (function(W){
 const TOL=[420,760,1250,2100,3100,5000],cl=(v,a,b)=>Math.min(b,Math.max(a,v));
 const HGL={
- T(ry){try{return typeof lerp==='function'&&typeof TT!=='undefined'?lerp(TT,ry):0}catch(e){return 0}},
+ T(ry){try{const b=typeof lerp==='function'&&typeof TT!=='undefined'?lerp(TT,ry):0;return W.VOL&&typeof S!=='undefined'?VOL.tm(S.x,ry,b):b}catch(e){return 0}},
  // 0..1.2: mennyire izzik a páncél (jobb páncél = később kezd izzani)
  g(ry,hl){const T=HGL.T(ry),tol=TOL[cl(hl|0,0,5)];return cl((T/tol-.38)/.62,0,1.2)},
  col(g,a){g=cl(g,0,1.2);const r=255,gg=Math.round(50+150*Math.min(1,g)*Math.min(1,g)+40*Math.max(0,g-1)),b=Math.round(10+130*Math.pow(Math.min(1,g),3));return `rgba(${r},${gg},${b},${a})`},
