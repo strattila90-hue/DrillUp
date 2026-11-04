@@ -391,9 +391,9 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  const rel=S.mode=='drill'&&dep>.8&&uu>.92;grip+=((rel?.45:1)-grip)*Math.min(1,dt*10);trkM+=Math.min(vsp/K,8)*dt;
  {const dSt=Math.abs(stroke-pStroke)/Math.max(dt,.001),dDp=Math.abs(dep-pDep)/Math.max(dt,.001),dGp=Math.abs(grip-pGrip)/Math.max(dt,.001);pStroke=stroke;pDep=dep;pGrip=grip;hydAct=clamp(dSt*.5+dDp*.9+dGp*.4,0,1)}
  {const eng=grip>.8;if(eng!=gState){gState=eng;gE=eng?1:-1;if(AC)eng?(clank(.6),hiss(.12)):hiss(.28)}
-  if(dep>.5&&depSt==0){depSt=1;if(AC){beep(900,.1,.12);setTimeout(()=>beep(1300,.12,.12),130);hiss(.4)}}else if(dep<.5&&depSt==1){depSt=0;if(AC){beep(1300,.1,.12);setTimeout(()=>beep(900,.12,.12),130);hiss(.4)}}
+  if(dep>.5&&depSt==0){depSt=1;if(AC){if(window.MX){MX.thud(.22,85);MX.hum(110,150,.5,.05,10,.05)}hiss(.4)}}else if(dep<.5&&depSt==1){depSt=0;if(AC){if(window.MX){MX.thud(.22,85);MX.hum(150,100,.5,.05,10,.05)}hiss(.4)}}
   const ci=clamp(.5/(Math.min(vsp/K,8)+1),.05,.35)*1000;if(AC&&pv>.15&&dep<.9&&ts-clkT>ci){clkT=ts;clatter()}
-  if(AC&&((tl&&S.st!='idle')||(S.st=='H'&&vsp>5))&&ts-beepT>520){beepT=ts;beep(1000,.16,.1)}}
+  if(AC&&((tl&&S.st!='idle')||(S.st=='H'&&vsp>5))&&ts-beepT>520){beepT=ts;if(window.MX&&MX.mech)MX.mech(S.st=='H')}}
  const mov=act&&S.mode!='',dv=DV[dir]||[0,0];pv+=((mov?1:0)-pv)*Math.min(1,dt*4);ph+=dt*pv;rate+=((dr?14*(window.RPM?RPM.k():1):act?2:0)-rate)*Math.min(1,dt*2.5);sp+=dt*rate;sk+=((ry>2?.6:3.2)-sk)*Math.min(1,dt*2);
  const cy=Math.round(h*.5),cx=w/2,Ys=cy-ry*K,SX=m=>(m-rx)*K+cx,SY=m=>cy+(m-ry)*K;
  const now=new Date(),hr=now.getHours()+now.getMinutes()/60,el=Math.sin((hr-6)/12*Math.PI),day=clamp(el*3+.35,0,1),LT=[],CN=[],GL=[];

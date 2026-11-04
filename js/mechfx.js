@@ -55,6 +55,8 @@ const MX={cl:0,pc:0,snd:{},
   else if(k==='stop'){MX.hum(110,28,.9,.1,9);MX.noise(7000,2500,.5,.07,1)}
  }catch(e){}}};
 W.MX=MX;
+// forgás / hazatérés közbeni gépi hang (sípolás helyett): hidraulikus búgás + lánctalp-csattogás
+MX.mech=function(fast){if(!MX.ok())return;const t=(S.u&&S.u.d)|0,lo=[62,66,72,80,92,105,120][Math.min(6,t)];MX.hum(lo,lo*.9,.5,.07,fast?9:5);MX.noise(fast?260:190,fast?150:110,.42,.06,1.1,0,true);MX.thud(.1,70);};
 if(W.on)on('frame',dt=>{try{MX.step(Math.min(dt,.1))}catch(e){}});
 // a meglévő motorhangokhoz hozzáfűzzük a hidraulikus réteget
 if(W.ENG&&ENG.snd){const o=ENG.snd;ENG.snd=function(k){o.apply(this,arguments);if(S.set.vol>0)MX.engine(k)}}
