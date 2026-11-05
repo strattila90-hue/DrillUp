@@ -20,7 +20,7 @@ const LEC={on:false,i:-1,list:[],bt:0,
   if(W.STO)for(const e of STO.DB)if(STO.has(e.id))story.push({k:e.k,sub:e.y+' · '+STO.fd(e.d),t:e.t,s:e.s,f:[0,0,1.25],id:0});
   // sorrend: bevezető, a gép, majd a rétegek, a vulkánok és a megtalált történetek váltakozva
   const intro={k:'🎓',sub:'Tanterem',t:'A Drill Up gép és a Föld',s:'Rövid előadás a gépedről, a lejtők fizikájáról, a Föld rétegeiről, a vulkánokról és a lejátszott valós eseményekről. Koppints bárhová a kilépéshez.',f:[-30,0,1.3],dur:8};
-  add(intro);for(const e of mach)add(e);const mx=Math.max(earth.length,story.length);for(let i=0;i<mx;i++){if(earth[i])add(earth[i]);if(story[i])add(story[i])}
+  add(intro);for(const e of mach)add(e);add(LEC.safe(()=>{if(!W.ST)return null;const o=ST.ss(),mx=Math.max(S.max||0,S.depth||0);if(mx<1&&!o.dm)return null;return{k:'📊',sub:'Pályafutásod',t:'Eddigi munkád számokban',s:`Rekordmélységed ${Math.round(mx).toLocaleString('hu-HU')} m, összesen ${Math.round(o.dm).toLocaleString('hu-HU')} métert fúrtál, ${o.tr} alkalommal tértél vissza a bázisra, és ${ST.dur(o.pt)} aktív játékidőt töltöttél a gép mellett.`,f:[-20,0,1.2]}}));const mx=Math.max(earth.length,story.length);for(let i=0;i<mx;i++){if(earth[i])add(earth[i]);if(story[i])add(story[i])}
   return L},
  start(){if(LEC.on||!W.CIN||typeof S==='undefined')return;if(S.st!=='idle'){try{toast('Az előadás csak álló gépnél indul.')}catch(e){}return}
   LEC.list=LEC.build();if(!LEC.list.length)return;LEC.i=-1;LEC.on=true;CIN.lec=true;CIN.enter();CIN.hint=1;LEC.next()},

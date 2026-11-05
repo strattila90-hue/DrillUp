@@ -333,6 +333,15 @@ t('tanterem: a diasor felépül a gép aktuális adataiból, minden dia teljes, 
  S.st='D';L.start();ok(!L.on,'mozgó gépnél nem indul');S.st='idle';const C=g.sb.CIN;L.start();ok(!L.on||C.on);if(L.on){eq(g.frames(6,100),[]);ok(C.cap&&C.cap.t);const i0=L.i;C.capT=999;g.frames(3,100);ok(L.i!==i0,'léptet')}C.exit();g.frames(2,30);ok(!L.on&&!C.on)});
 t('mászás-fizika: a lejtő a gépet visszacsúsztatja, ha a tapadás kevés (a szimulációban a gyenge gép nem jut át)',()=>{const g=lg(),S=g.T.S,H=g.sb.HILL;S.u.d=0;const c=g.T.calc();let sl=0;for(let x=400;x<900;x+=2){const r=H.drive(c,x,1,5);sl=Math.max(sl,r.s)}ok(sl>0,'van csúszási szakasz')});
 
+group('U) Statisztika, távollét-összegzés, mentési emlékeztető');
+t('statisztika: az S.ss mezői pótlódnak, a fúrt méter/bevétel/kiadás számlálódik, a rekord mentéssel megmarad',()=>{const g=lg(),S=g.T.S,ST=g.sb.ST;ok(!!ST);S.ss=undefined;ST.init();ok(S.ss&&S.ss.dm===0&&S.ss.t0>0);
+ S.st='D';S.depth+=40;S.cash+=5000;ST.onSim(1);ok(S.ss.dm===40&&S.ss.ce===5000&&S.ss.bs===5000);S.cash-=2000;ST.onSim(1);ok(S.ss.cs===2000);
+ ok(ST.html().includes('Pályafutás'));g.T.save();const g2=boot({store:g.store});ok(g2.T.S.ss&&g2.T.S.ss.dm===40,'mentés után is megvan')});
+t('távollét: hosszú szünet után összegzés készül a tényleges változásokból; rövid szünetnél nem',()=>{const g=lg(),S=g.T.S,ST=g.sb.ST;ST.init();S.st='idle';S.depth+=120;S.cash+=7e4;S.fuel-=50;ST.onSim(3600);const a=S.ss.aw;ok(a&&a.s===3600&&Math.round(a.dd)===120&&Math.round(a.dc)===7e4&&Math.round(a.df)===-50,JSON.stringify(a));
+ ok(ST.awayHtml(a).includes('120')); const old=S.ss.aw;S.depth+=5;ST.onSim(2);ok(S.ss.aw===old,'rövid szünet nem ír felül')});
+t('valódi szimuláció: fúrás közben eltelt idő (régi S.t) után van összegzés, és hiba nélkül fut',()=>{const g=lg(),S=g.T.S,ST=g.sb.ST;ST.init();S.cash=5e6;S.fuel=500;g.T.go('D');g.frames(5,50);S.t-=1800e3;eq(g.frames(10,50),[]);ok(S.ss.aw&&S.ss.aw.s>=1000,'aw='+JSON.stringify(S.ss.aw))});
+t('mentési emlékeztető: csak akkor kell, ha van mit veszíteni és régen volt export; az export frissíti',()=>{const g=lg(),S=g.T.S,ST=g.sb.ST;ST.init();S.max=0;ok(!ST.needsBackup());S.max=500;S.ss.t0-=9*864e5;ok(ST.needsBackup());ST.markExport();ok(!ST.needsBackup())});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
