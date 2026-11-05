@@ -265,3 +265,8 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
  body::after{content:"↻  Fordítsd álló helyzetbe a telefont\A Rotate your phone to portrait";white-space:pre-line;position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:#0b0806;color:#f0e6d2;font:700 20px/1.6 Georgia,serif}
 }
 #iosHint{bottom:auto!important;top:64px}#iosHint button{width:28px;height:28px;border-radius:50%;background:#d62f27!important;color:#fff!important;border:2px solid #fff!important;font-size:14px;padding:0;top:50%!important;transform:translateY(-50%)}
+/* v5.18 – az alsó fül-sor nem ugrál: egyenlő szélesség, a „bázison” pont nem tolja odébb a szomszédokat */
+#nv{display:flex}#nv button{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:clip;padding-left:1px;padding-right:1px}
+#nv button .ok{position:absolute;top:5px;right:3px;margin:0}
+@media (max-width:380px){#nv button{font-size:11px}}
+#nv button{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}#nv .ni{font-style:normal;font-size:17px}#nv .nl{font-size:11px;white-space:nowrap}@media (max-width:380px){#nv .nl{font-size:10px}}

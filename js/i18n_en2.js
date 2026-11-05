@@ -129,4 +129,5 @@ W.I18N_LONG=W.I18N_LONG.concat([
  [/A Föld rétegei · /,'Layers of the Earth · '],
  [/Rekordmélységed ([^ ]+) m, összesen ([^ ]+) métert fúrtál, (\d+) alkalommal tértél vissza a bázisra, és (.+?) aktív játékidőt töltöttél a gép mellett\./,'Your record depth is $1 m; you have drilled $2 metres in total, returned to base $3 times and spent $4 of active play time with the machine.']
 ]);
+W.I18N_LONG=W.I18N_LONG.concat([[/▶ JOBBRA/g,'▶ RIGHT'],[/◀ BALRA/g,'◀ LEFT'],[/▲ FEL(?![A-Za-zÀ-ž])/g,'▲ UP'],[/▼ LE(?![A-Za-zÀ-ž])/g,'▼ DOWN'],[/ · HAZA/g,' · TO SURFACE'],[/ · ⚡ GYORSVISSZATÉRÉS/g,' · ⚡ FAST RETURN']]);
 })(typeof window!=='undefined'?window:globalThis);

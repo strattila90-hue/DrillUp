@@ -264,7 +264,7 @@ function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id=
 <button class="lnk" onclick="NAT.ask('Biztosan törlöd a mentést? Ez nem vonható vissza.','Törlés',()=>{S=init();hideMM();view()})">🗑 Új játék kezdése</button>`)+'</div>'}
 function hideMM(){const m=$('#mm');if(m)m.remove()}
 const vs=[vDrill,vShop,vStore,()=>window.DEP?DEP.html():vMarket(),()=>(window.REL?REL.html():'')+vLog()+(window.VOL?VOL.html():''),vMenu],names=['⛏ Fúrás','🏭 Műhely','📦 Raktár','🏗 Depó','📖 Tudás','☰ Menü'];
-function nav(){$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on':''}" onclick="${i==5?'showMM()':`tab=${i};view()`}">${n}${(i==1||i==3)&&base()?' <span class="ok">●</span>':''}</button>`).join('')}
+function nav(){$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on':''}" onclick="${i==5?'showMM()':`tab=${i};view()`}">${(()=>{const q=n.split(' ');return q.length>1?`<i class="ni">${q[0]}</i><span class="nl">${q.slice(1).join(' ')}</span>`:n})()}${(i==1||i==3)&&base()?'<span class="ok">●</span>':''}</button>`).join('')}
 function view(){$('#v').className=tab==0?'dr':'';$('#v').innerHTML=vs[tab]();nav();live()}
 // ---- eseménykampók (a modulok a window.on()-nal iratkoznak fel) ----
 const EV=(e,a,b)=>{const h=window.HK&&HK[e];if(h)for(let i=0;i<h.length;i++){try{h[i](a,b)}catch(err){DBG.err=e+': '+(err.message||err)}}};
