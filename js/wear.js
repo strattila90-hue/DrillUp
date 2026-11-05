@@ -17,10 +17,10 @@ const WEAR={prevX:null,
  step(){if(typeof S==='undefined')return;const x=S.x;if(WEAR.prevX!=null&&isFinite(x)){const d=Math.abs(x-WEAR.prevX);if(d<50)WEAR.add(d)}WEAR.prevX=isFinite(x)?x:null},
  cost(){const t=WEAR.tk(),k=W.SRF?SRF.disc('ws'):1;return Math.round(t*1500*Math.pow(4,S.u.d||0)*k)},
  repair(){let b=false;try{b=!!base()}catch(e){}if(!b)return toast('🛞 A lánctalpat csak a bázison lehet felújítani.');
-  const c=WEAR.cost();if(WEAR.tk()<=0)return;if(S.cash<c)return toast('Nincs elég pénzed.');S.cash-=c;S.tk=0;try{msg('🛞 Lánctalp felújítva ('+c.toLocaleString('hu-HU')+' Ft).')}catch(e){}if(W.clank)clank(.5);try{view()}catch(e){}},
+  const c=WEAR.cost();if(WEAR.tk()<=0)return;if(S.cash<c)return toast('Nincs elég pénzed.');S.cash-=c;S.tk=0;try{msg('🛞 Lánctalp felújítva ('+c.toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')+' Ft).')}catch(e){}if(W.clank)clank(.5);try{view()}catch(e){}},
  html(){const t=WEAR.tk(),c=WEAR.cost(),b=(()=>{try{return!!base()}catch(e){return false}})();
   return`<div class="card">🛞 <b>Lánctalp</b><div class="mu">Kopás <b class="${t>=90?'bad':''}">${t.toFixed(1).replace('.',',')}%</b> · tapadás ${Math.round(WEAR.mf()*100)}%-a az újnak</div><div class="lad">${typeof lad==='function'?lad(1-t/100,0):''}</div>
-  <button class="b g" style="width:100%" ${b&&t>0&&S.cash>=c?'':'disabled'} onclick="WEAR.repair()">Felújítás – ${c.toLocaleString('hu-HU')} Ft</button>${b?'':'<div class="mu">Csak a bázison.</div>'}</div>`}};
+  <button class="b g" style="width:100%" ${b&&t>0&&S.cash>=c?'':'disabled'} onclick="WEAR.repair()">Felújítás – ${c.toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')} Ft</button>${b?'':'<div class="mu">Csak a bázison.</div>'}</div>`}};
 W.WEAR=WEAR;
 if(W.on)on('step',()=>{try{WEAR.step()}catch(e){DBG.err='wear: '+(e.message||e)}});
 // a tapadás a meglévő HILL.mu-n át hat; a HILL a modulok után tölthet be, ezért lazán kötünk

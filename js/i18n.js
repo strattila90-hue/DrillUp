@@ -5,14 +5,14 @@
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('i18n');
 const KEY='du_lang';let L='hu';
-try{L=localStorage.getItem(KEY)||((navigator.language||'hu').toLowerCase().startsWith('hu')?'hu':'en')}catch(e){L='hu'}
-if(L!=='hu'&&L!=='en')L='hu';
+try{L=localStorage.getItem(KEY)||'en'}catch(e){L='en'}
+if(L!=='hu'&&L!=='en')L='en';
 const I={lang:L,miss:new Set(),
  set(l){try{localStorage.setItem(KEY,l)}catch(e){}try{if(typeof save==='function')save()}catch(e){}location.reload()},
  toggle(){I.set(L==='hu'?'en':'hu')},
  tr:s=>s};
 // ---- fordító ----
-const UNITS=[[/(\d)\s*Ft\b/g,'$1 HUF'],[/\bmp\/kör\b/g,'s/lap'],[/\bkg\/út\b/g,'kg/trip'],[/\bt\/út\b/g,'t/trip'],[/(\d)\s*mp\b/g,'$1 s'],[/(\d)\s*db\b/g,'$1 pcs'],[/(\d)\s*perc\b/g,'$1 min'],[/(\d)\s*óra\b/g,'$1 h'],[/(\d)\s*nap\b/g,'$1 d'],[/(\d)\s*ó\b/g,'$1 h']];
+const UNITS=[[/(\d[\d.,\u00a0]*)\s*Mrd\s*Ft\b/g,'$$$1 B'],[/(\d[\d.,\u00a0]*)\s*Ft\b/g,'$$$1'],[/\bFt\b/g,'$$'],[/\bmp\/kör\b/g,'s/lap'],[/\bkg\/út\b/g,'kg/trip'],[/\bt\/út\b/g,'t/trip'],[/(\d)\s*mp\b/g,'$1 s'],[/(\d)\s*db\b/g,'$1 pcs'],[/(\d)\s*perc\b/g,'$1 min'],[/(\d)\s*óra\b/g,'$1 h'],[/(\d)\s*nap\b/g,'$1 d'],[/(\d)\s*ó\b/g,'$1 h']];
 const WORDS={'Depó':'Depot','Műhely':'Workshop','Raktár':'Hold','Szén':'Coal','Gép':'Machine','kopás':'wear','határ':'limit','tapadás':'traction','sűrűség':'density','vastagság':'thickness','váz és hajtás':'frame and drive','páncél':'armor','üzemanyag':'fuel','rakomány':'cargo','Fúrj':'Drill','kijelző':'display','az újnak':'of new','kezdődik':'starts','Gyűjts bevételt':'Earn income','Vezess':'Drive','Hatás':'Effect','Erősség':'Strength','Fűtőérték':'Heating value','Fúrás':'Drilling','mélyen':'deep','felszínen':'on the surface','fúrófej':'drill bit','műhelyben':'in the workshop','Következő':'Next','Hő':'Heat','nyomás':'pressure','Sebesség':'Speed','Vízszintes':'Horizontal','Visszaút ára':'Return trip cost','kitalált film':'fictional film','kitalált némafilm':'fictional silent film','forgatási rekvizitum':'film prop','valódi lelet':'real find','késő kréta':'Late Cretaceous','fúrás':'drilling','javítás':'repair','öngyógyító':'self-healing','haladás':'progress','tört össze':'collapsed','eltűnt':'vanished','feltételezett':'presumed','Kősó':'Rock salt','Ón':'Tin','kövült gyanta':'fossil resin','hematit':'hematite','uraninit':'uraninite','kassziterit':'cassiterite','pénzed':'your money','Arany':'Gold','Ezüst':'Silver','Vas':'Iron','Réz':'Copper'};
 let WRX;try{WRX=new RegExp('(?<![\\p{L}\\p{N}])(?:'+Object.keys(WORDS).sort((a,b)=>b.length-a.length).join('|')+')(?![\\p{L}\\p{N}])','gu')}catch(e){WRX=null};
 const PATS=[[/„([^”]+)”/g,'"$1"'],[/fúrás ([\d.,]+) · fel ([\d.,]+) m\/h/,'drilling $1 · up $2 m/h'],[/([\d.,]+ kg) · ([\d.,]+) kg\/ó/,'$1 · $2 kg/h'],[/\bbe · terhelés/,'on · load'],[/\bhatás: /g,'effect: '],[/(.+?) között keresd/,'look between $1'],[/(\d+)-nál:/,'at $1:'],[/(\d+\s*(?:min|h|d|perc|óra|nap)) után/,'after $1'],[/([\d.,]+) hráig elég/,'enough for $1 h'],[/(\d[\d.,]*\s*[a-z%]+)\s+tapadás/,'traction $1']];

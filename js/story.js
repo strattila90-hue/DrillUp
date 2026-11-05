@@ -36,7 +36,7 @@ const BYID=DB.map((e,i)=>(e.id=i+1,e));
 const STO={DB:BYID,cur:null,Q:[],gap:0,show:true,
  seen(){return Array.isArray(S.sty)?S.sty:(S.sty=[])},
  has(id){return STO.seen().indexOf(id)>=0},
- fd(d){return d>=1e3?(d/1e3).toLocaleString('hu-HU',{maximumFractionDigits:1})+' km':Math.round(d)+' m'},
+ fd(d){return d>=1e3?(d/1e3).toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU',{maximumFractionDigits:1})+' km':Math.round(d)+' m'},
  // a frame-enként hívott ellenőrzés
  check(dt){if(typeof S==='undefined'||!isFinite(S.depth))return;STO.gap=Math.max(0,STO.gap-dt);const sn=STO.seen();let top=null;
   for(const e of DB){if(S.depth>=e.d&&sn.indexOf(e.id)<0){sn.push(e.id);top=e}}

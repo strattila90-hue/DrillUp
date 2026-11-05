@@ -22,7 +22,7 @@ const ST={
  away(real,p,q){const o=ST.ss();o.aw={s:Math.round(real),dd:q.d-p.d,dc:q.c-p.c,df:q.f-p.f,dh:q.h-p.h,dk:q.k-p.k,mx:q.m-p.m,at:Date.now()};
   try{msg('🌙 Távollétedben '+ST.dur(real)+' telt el: '+(o.aw.dd>=0?'+':'')+ST.num(o.aw.dd)+' m mélység, '+(o.aw.dc>=0?'+':'')+ST.num(o.aw.dc)+' Ft',true)}catch(e){}
   ST.card()},
- num(n){return Math.round(n).toLocaleString('hu-HU')},
+ num(n){return Math.round(n).toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')},
  dur(s){s=Math.round(s);if(s<90)return s+' mp';if(s<5400)return Math.round(s/60)+' perc';if(s<172800)return (s/3600).toFixed(1).replace('.',',')+' óra';return Math.round(s/86400)+' nap'},
  awayHtml(a){if(!a)return'';
   const r=[['⏱ Eltelt',ST.dur(a.s)],['⬇ Mélység változása',(a.dd>=0?'+':'')+ST.num(a.dd)+' m'],['💰 Pénz',(a.dc>=0?'+':'')+ST.num(a.dc)+' Ft'],['⛽ Üzemanyag',(a.df>=0?'+':'')+ST.num(a.df)+' kg'],['📦 Rakomány',(a.dk>=0?'+':'')+ST.num(a.dk)+' kg']];
@@ -42,14 +42,14 @@ const ST={
  markExport(){ST.ss().exp=Date.now()},
  html(){const o=ST.ss(),mx=Math.max(S.max||0,S.depth||0),pt=o.pt,nb=ST.needsBackup();
   const row=(a,b)=>`<div class="stl"><span class="mu">${a}</span> <b>${b}</b></div>`;
-  const km=m=>m>=1e3?(m/1e3).toLocaleString('hu-HU',{maximumFractionDigits:1})+' km':Math.round(m)+' m';
+  const km=m=>m>=1e3?(m/1e3).toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU',{maximumFractionDigits:1})+' km':Math.round(m)+' m';
   return`<div class="card">📊 <b>Pályafutás</b><details style="margin-top:6px"><summary class="mu">Megnyitás</summary>`+
    row('Rekordmélység',km(mx))+row('Összes fúrt mélység',km(o.dm))+row('Összes bevétel',GLfm(o.ce))+row('Összes kiadás',GLfm(o.cs))+row('Legnagyobb egyszeri bevétel',GLfm(o.bs))+
    row('Bázisra visszatérések',ST.num(o.tr))+row('Játékidő (aktív)',ST.dur(pt))+row('Gyűjtött beszámolók',(Array.isArray(S.sty)?S.sty.length:0)+(W.STO?'/'+STO.DB.length:''))+row('Játék kezdete',ST.days(o.t0)+' napja')+
    row('Utolsó mentés-export',o.exp?ST.days(o.exp)+' napja':'még nem volt')+
    (nb?`<div class="mu" style="color:#e8b84a;margin-top:4px">⚠ Érdemes exportálni a mentést (Beállítások).</div>`:'')+
    (o.aw?`<div style="margin-top:8px"><b>Utolsó távollét</b>${ST.awayHtml(o.aw)}</div>`:'')+`</details></div>`}};
-function GLfm(n){return W.GL?GL.fm(n):Math.round(n).toLocaleString('hu-HU')+' Ft'}
+function GLfm(n){return W.GL?GL.fm(n):Math.round(n).toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')+' Ft'}
 W.ST=ST;
 if(W.on){
  on('sim',real=>{try{ST.onSim(real)}catch(e){DBG.err='stats: '+(e.message||e)}});

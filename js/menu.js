@@ -6,12 +6,12 @@
 W.MODS=W.MODS||[];W.MODS.push('menu');
 const GROUPS=[
  ['🌐','Language / Nyelv',['lang']],
- ['🔊','Hang és rezgés',['vol','amb','hap']],
+ ['🔊','Hang és rezgés',['vol','mus','amb','hap']],
  ['⚙','Játékmenet',['sc','auto','abk','alp','tnl']],
  ['🛠','Gép és irányítás',['snap','arc','erect']],
  ['🖥','Kijelző és grafika',['q','fcl','rl','fs','fpsb']],
  ['💾','Adatok és hibakeresés',['dbg','DIAG','save']]];
-const keyOf=h=>{if(/I18N\.set/.test(h))return'lang';if(/DIAG\.show/.test(h))return'DIAG';if(/expSave|impSave/.test(h))return'save';if(/FS\.set/.test(h))return'fs';const m=/S\.set\.(\w+)/.exec(h);return m?m[1]:'?'};
+const keyOf=h=>{if(/I18N\.set/.test(h))return'lang';if(/DIAG\.show|TUT\.|ERRLOG\./.test(h))return'DIAG';if(/expSave|impSave/.test(h))return'save';if(/FS\.set/.test(h))return'fs';const m=/S\.set\.(\w+)/.exec(h);return m?m[1]:'?'};
 const conv=h=>{h=h.trim();let m;
  if(m=/^<label>\s*<input type="checkbox"([^>]*)>\s*([\s\S]*?)<\/label>$/.exec(h)){const t=m[2].trim(),i=t.search(/\s/),ic=/^[^\wÁ-ű]/.test(t)&&i>0?t.slice(0,i):'',tx=ic?t.slice(i).trim():t,k=/^(.*?)(?:[:–(]|$)/.exec(tx),title=(k&&k[1]||tx).trim(),rest=tx.slice(title.length).replace(/^[:–\s]+/,'');
   return`<label class="mrw"><span class="mtx">${ic?'<em>'+ic+'</em>':''}<b>${title}</b>${rest?'<small>'+rest.replace(/^\(|\)$/g,'')+'</small>':''}</span><input type="checkbox"${m[1]}><i class="msw"></i></label>`}

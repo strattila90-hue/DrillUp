@@ -7,10 +7,10 @@ Fúrj le a Föld magjáig – 6 371 km – valós méterekben. Lánctalpas fúr�
 ## Jellemzők
 - **Valós léptékek**: talaj → kéreg → köpeny → külső mag → belső mag, a rétegek valósághű vastagságával (jobb oldali rétegtérkép).
 - **Fejleszthető gép**: motorok (gőz → dízel → gázturbina → atom), páncél, 6 fúrófej-szint, generátor, kazán, zuhanófék mechanikus karokkal, hidraulikus felállító toronydaruval.
-- **Depó és gazdaság**: kirakodás, tömörítés, tárolás, eladás tehervonattal. A raktártelep, a szalag, a vagonok és a mozdony **szintkorlát nélkül** fejleszthető (a hatás ~20. szintnél a számbiztonság miatt megáll). Teherkikötő portáldarukkal, vasúti jelzők.
+- **Depó és gazdaság**: kirakodás, tömörítés, tárolás, eladás tehervonattal. A raktártelep, a szalag, a vagonok és a mozdony **20. szintig** fejleszthető (legfeljebb a 20. szintig). Teherkikötő portáldarukkal, vasúti jelzők.
 - **Felfedezés**: szeizmográf és szondák, olaj- és gázmezők, vulkánok, mobil geológiai labor, valós fúrás-történeti beszámolók, rejtett leletek.
 - **Dicsőségfal**: 12 eredeti, kitalált filmes relikvia.
-- **Nyelvek**: magyar és angol (Menü → Beállítások → Language; első indításkor a rendszernyelv).
+- **Nyelvek**: magyar és angol (Menü → Beállítások → Language; első indításkor angol az alapértelmezés).
 - **PWA**: telepíthető, offline működik, a mentés az eszközödön marad.
 
 ## Futtatás / fejlesztés
@@ -36,3 +36,8 @@ A Play-változat a hosztolt PWA köré épített Trusted Web Activity – lásd 
 
 ## Licenc / közreműködők
 A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
+
+## v5.18 újdonságok
+- Kihagyható első indítási bemutató (a Beállításokból újraindítható); saját, eredeti háttérzene (hangerő a Beállításokban); helyi, önkéntes hibajelentés (másolható, sehová nem küldi el).
+- Angol nyelven a pénznem USD ($) – csak a felirat változik, az értékek nem.
+- A játék közbeni kisablakok kisebbek, kevésbé takarnak, jól látható piros ✕ gombbal zárhatók (a 👁 visszahozza).

@@ -42,7 +42,7 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
     x.globalCompositeOperation='lighter';x.lineWidth=1.1;for(let i=0;i<7;i++){const ph=(T*2.6+hash(i)*3)%1;if(ph>.55)continue;const oy=(hash(i+21)-.5)*2.2,p=P(.1+ph*.2,oy),d=[ux*.8+(hash(i+5)-.5)*1.2,uy*.8+(hash(i+9)-.5)*1.2];x.strokeStyle=`rgba(255,${190-ph*140|0},80,${(1-ph*1.8)*.9})`;x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+d[0]*(5+ph*20),p[1]+d[1]*(5+ph*20)+ph*ph*6);x.stroke()}x.globalCompositeOperation='source-over'}}
   x.restore()},
  // kisablak: nagyított fej és kőzet (mindig jobbra néz, a kőzet balra „csúszik”)
- inset(V){if(S.set.fcl===0||!FACE.active()||(W.$&&$('#mm'))||(W.PN&&!PN.vis('face')))return;if(W.ENG&&V.w<460&&(ENG.flash>0||(S.en&&!(ENG.phase==='run'&&ENG.ready()))))return;const x=V.x,sz=clamp(V.w*.36,104,152),px=8,py=46,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,L=layer(S.depth),tier=S.u.f,heat=typeof HEAT!=='undefined'?clamp(HEAT,0,1.2):0,rt=clamp((typeof rate!=='undefined'?rate:8)/14,0,1);
+ inset(V){if(S.set.fcl===0||!FACE.active()||(W.$&&$('#mm'))||(W.PN&&!PN.vis('face')))return;if(W.ENG&&V.w<460&&(ENG.flash>0||(S.en&&!(ENG.phase==='run'&&ENG.ready()))))return;const x=V.x,sz=clamp(V.w*.25,76,104),px=6,py=44,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,L=layer(S.depth),tier=S.u.f,heat=typeof HEAT!=='undefined'?clamp(HEAT,0,1.2):0,rt=clamp((typeof rate!=='undefined'?rate:8)/14,0,1);
   if(W.PN)PN.reg('face',px,py,sz,sz);
   x.save();x.translate(px,py);x.beginPath();if(x.roundRect)x.roundRect(0,0,sz,sz,12);else x.rect(0,0,sz,sz);x.clip();
   const bg=x.createLinearGradient(0,0,0,sz);bg.addColorStop(0,mix(L[4],'#000000',.25));bg.addColorStop(1,mix(L[4],'#000000',.55));x.fillStyle=bg;x.fillRect(0,0,sz,sz);

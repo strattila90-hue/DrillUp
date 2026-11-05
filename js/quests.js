@@ -32,7 +32,7 @@ const QS={KIND,
  prog(q){return cl(QS.met(q.k)-q.b,0,q.t)},
  check(){QS.roll();const o=QS.st();for(const q of o.d.concat(o.w)){if(!q.d&&QS.met(q.k)-q.b>=q.t){q.d=1;S.cash+=q.r;
    try{msg('🎯 Kihívás teljesítve: '+QS.txt(q)+' · +'+(W.GL?GL.fm(q.r):q.r+' Ft'))}catch(e){}try{if(W.NAT)NAT.hap([20,40,30]);beep(660,.1,.05,'triangle');setTimeout(()=>beep(990,.15,.05,'triangle'),110)}catch(e){}}}},
- num(n){return Math.round(n).toLocaleString('hu-HU')},
+ num(n){return Math.round(n).toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')},
  txt(q){const k=KIND[q.k];return k.ic+' '+k.n+' '+QS.num(q.t)+(k.u==='×'?'-szer':' '+k.u)},
  row(q){const p=QS.prog(q),f=q.t?p/q.t:0;return`<div class="stl${q.d?'':''}">${q.d?'✅':'🎯'} <b>${QS.txt(q)}</b><div style="height:6px;border-radius:3px;background:#3a2c20;margin:5px 0 3px"><div style="height:100%;width:${Math.round(f*100)}%;border-radius:3px;background:${q.d?'#59d65a':'#e8b84a'}"></div></div><span class="mu">${QS.num(p)} / ${QS.num(q.t)} · jutalom ${W.GL?GL.fm(q.r):q.r+' Ft'}</span></div>`},
  html(){QS.roll();const o=QS.st(),dn=o.d.filter(q=>q.d).length,wn=o.w.filter(q=>q.d).length;

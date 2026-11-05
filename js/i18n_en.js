@@ -721,7 +721,7 @@ window.I18N_DICT={
 "Gép fejlettsége:": "Machine level:",
 "Fejlesztettség:": "Upgrade level:",
 "Hatás: Fúrási és haladási teljesítmény, üzemanyagfajta.": "Effect: drilling and travel power, fuel type.",
-"(Szén, 40 Ft/kg)": "(Coal, 40 HUF/kg)",
+"(Szén, 40 Ft/kg)": "(Coal, $40/kg)",
 "Drill bit-katalógus": "Drill bit catalog",
 "Fúrófej-katalógus": "Drill bit catalog",
 "Erősség (keménységi limit) és képesség (melyik rétegeket bontja) szerint. A sáv színei a rétegek, a halvány négyzet: még nem fúrható.": "By strength (hardness limit) and ability (which layers it breaks). Bar colors are the layers, a faint square: not drillable yet.",
@@ -1022,5 +1022,7 @@ window.I18N_DICT={
 "Jules Verne: Utazás a Föld középpontja felé": "Jules Verne: Journey to the Center of the Earth",
 "A regény hősei egy izlandi vulkán kráterén át ereszkednek le a Föld mélyébe. Ez szépirodalom – a valóságban az ottani hőség és nyomás miatt ilyen utazás lehetetlen.": "The novel's heroes descend into the depths of the Earth through the crater of an Icelandic volcano. This is fiction – in reality the heat and pressure there make such a journey impossible.",
 "Beszámoló": "Report",
-"BESZÁMOLÓ": "REPORT"
+"BESZÁMOLÓ": "REPORT",
+"Zene:": "Music:",
+"Zene": "Music"
 };

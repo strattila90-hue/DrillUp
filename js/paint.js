@@ -24,7 +24,7 @@ const PNT={T,
   o[g]=e[0];try{view()}catch(x){}},
  html(){const o=PNT.st(),b=(()=>{try{return!!base()}catch(e){return false}})();
   const grp=(g,tt)=>`<div class="mu" style="margin-top:8px"><b>${tt}</b></div>`+T[g].map(e=>{const sel=o[g]===e[0],own=!e[2]||o.own.indexOf(g+':'+e[0])>=0,
-   lab=e[1]+(e[2]&&!own?' – '+e[2].toLocaleString('hu-HU')+' Ft':'');
+   lab=e[1]+(e[2]&&!own?' – '+e[2].toLocaleString(window.I18N&&I18N.lang==='en'?'en-US':'hu-HU')+' Ft':'');
    return`<button class="b" style="width:100%;margin-top:4px;${sel?'':'background:#2a211a;color:#e8dcc6;text-shadow:none;box-shadow:none;border:1px solid #4a3a2a'}" ${b?'':'disabled'} onclick="PNT.buy('${g}','${e[0]}')">${sel?'✔ ':''}${lab}</button>`}).join('');
   return`<div class="card">🎨 <b>Testreszabás</b><details style="margin-top:6px"><summary class="mu">Megnyitás</summary>${b?'':'<div class="mu bad">Csak a bázison.</div>'}${grp('c','Festés')}${grp('s','Díszcsík')}${grp('l','Fényszóró színe')}</details></div>`}};
 W.PNT=PNT;

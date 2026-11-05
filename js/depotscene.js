@@ -10,7 +10,7 @@ const lg=(x,y0,y1,c0,c1,c2)=>{const g=x.createLinearGradient(0,y0,0,y1);g.addCol
 const money=v=>{try{return ft(v)}catch(e){return String(Math.round(v))+' Ft'}};
 const num=v=>{try{return nf(v)}catch(e){return String(Math.round(v))}};
 const vt=(k,v)=>{try{return k==='s'?fk(v):k==='v'?fk(v)+'/út':k==='b'?nf(v)+' kg/s':nf(v)+' mp/kör'}catch(e){return String(v)}};
-const DX={hits:[],err:null,openK:null,t:0};
+const MAXLV=19;const DX={hits:[],err:null,openK:null,t:0};
 
 // ---------- realisztikus Co'Co' dízelmozdony (oldalnézet, orr jobbra; a talppont y=0) ----------
 function wheel(x,cx,cy,r,a){
@@ -181,16 +181,16 @@ document.addEventListener('click',e=>{const c=e.target;if(!c||c.id!=='dpc')retur
 
 // ---------- fejlesztő felület: látható csempesor + előugró ablak ----------
 function tile(k){const l=DEP.lvl(k),B=DEP.BLD[k],p=price(k),can=DEP.gain(k),ok=can&&S.cash>=p;
- return`<button class="upT${ok?' ok':''}" onclick="DX.open('${k}')"><span class="ic">${ICON[k]}</span><b>${NAMES[k]}</b><i>Lv ${l+1}</i><span class="vv">${vt(k,DEP.vAt(k,l))}</span><span class="pp">${can?(ok?'⬆ ':'')+money(p):'maximum'}</span></button>`}
+ return`<button class="upT${ok?' ok':''}" onclick="DX.open('${k}')"><span class="ic">${ICON[k]}</span><b>${NAMES[k]}</b><i>Lv ${l+1}${l>=MAXLV?' MAX':''}</i><span class="vv">${vt(k,DEP.vAt(k,l))}</span><span class="pp">${can?(ok?'⬆ ':'')+money(p):'maximum'}</span></button>`}
 DX.strip=function(){try{return`<div class="upS" id="upS">${['s','b','v','m'].map(tile).join('')}</div>`}catch(e){return''}};
 function modal(k){
  const l=DEP.lvl(k),B=DEP.BLD[k],can=DEP.gain(k),p=price(k),ok=can&&S.cash>=p,atBase=typeof base==='function'?base():true;
- let pre='';for(let i=1;i<=3;i++){const n=l+i;if(n>=999)break;pre+=`<div class="upR"><span>Lv ${n+1}</span><b>${vt(k,DEP.vAt(k,n))}</b><span>${money(DEP.pAt(k,n))}</span></div>`}
+ let pre='';for(let i=1;i<=3;i++){const n=l+i;if(n>MAXLV)break;pre+=`<div class="upR"><span>Lv ${n+1}</span><b>${vt(k,DEP.vAt(k,n))}</b><span>${money(DEP.pAt(k,n))}</span></div>`}
  return`<div class="upBox"><button class="upX" onclick="DX.close()">✕</button><div class="upH">${ICON[k]} <b>${NAMES[k]}</b> <u>Lv ${l+1}</u></div><div class="mu">${B.d}</div>
  <div class="upV"><div><small>Most</small><b>${vt(k,DEP.vAt(k,l))}</b></div><div class="arr">➜</div><div class="nx"><small>Lv ${l+2}</small><b>${can?vt(k,DEP.vAt(k,l+1)):'–'}</b></div></div>
  <div class="mu">Ár: <b>${can?money(p):'–'}</b> · pénzed: ${money(S.cash)}</div>
  <div class="row"><button class="b" ${ok&&atBase?'':'disabled'} onclick="DEP.upgrade('${k}')">⬆ +1 szint</button><button class="b g" ${ok&&atBase?'':'disabled'} onclick="DEP.upgradeMax('${k}',100)">⬆⬆ Amennyire telik</button></div>
- ${!atBase?'<div class="mu bad">Fejleszteni csak a bázison lehet (🏠).</div>':!can?'<div class="mu">Ennél magasabb szinten már nincs további hatás.</div>':ok?'':'<div class="mu bad">Nincs elég pénzed a következő szinthez.</div>'}
+ ${!atBase?'<div class="mu bad">Fejleszteni csak a bázison lehet (🏠).</div>':!can?'<div class="mu"><b>MAX</b> – elérted a legmagasabb szintet (Lv 20).</div>':ok?'':'<div class="mu bad">Nincs elég pénzed a következő szinthez.</div>'}
  ${pre?`<div class="upP"><small>Következő szintek</small>${pre}</div>`:''}</div>`}
 const byId=id=>{try{return document.getElementById?document.getElementById(id):document.querySelector('#'+id)}catch(e){return null}};
 DX.open=function(k){if(!DEP.BLD[k])return;DX.openK=k;try{let m=byId('upM');if(!m&&document.createElement){m=document.createElement('div');m.id='upM';m.className='upM';if(m.addEventListener)m.addEventListener('click',e=>{if(e.target===m)DX.close()});document.body.appendChild(m)}if(m){m.innerHTML=modal(k);m.style.display='flex'}}catch(e){DX.err='open: '+e.message}};

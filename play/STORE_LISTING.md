@@ -11,7 +11,7 @@ Egy lánctalpas fúrógéppel indulsz a felszínről, és a Föld valódi réteg
 
 • Valós méretek és rétegvastagságok, hőmérséklet, nyomás, kopás, páncél.
 • Fejleszthető gép: fúrófejek, motor, generátor, zuhanófék, hűtés.
-• Depó: kirakodás a gép raktárából, tárolás, tömörítés, tehervonat – a mozdony, a vagonok, a raktártelep és a szállítószalag korlátlan szintig fejleszthető.
+• Depó: kirakodás a gép raktárából, tárolás, tömörítés, tehervonat – a mozdony, a vagonok, a raktártelep és a szállítószalag a 20. szintig fejleszthető.
 • Teherkikötő, daruk, vasúti jelzők, élő nappal–éjszaka.
 • Titkos leletek és gyűjthető relikviák a Dicsőségfalon.
 • Offline is működik, nincs hirdetés, nincs regisztráció, a mentés az eszközödön marad.

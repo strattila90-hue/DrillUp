@@ -49,8 +49,8 @@ const SZ={buf:new Float32Array(N),t:0,acc:0,nq:60,ev:[],flash:0,
    g.sz.sens.forEach((s,i)=>{const d=GEO.dist(S.x,S.depth,s[0],s[1]);h+=`<div class="mu">#${i+1}: ${nf(s[1])} m mélyen · ${nf(d/1000,2)} km-re</div>`});
    h+=g.sz.log.length?`<div class="mu" style="margin-top:8px"><b>Utolsó rengések</b> (összesen ${g.sz.cnt})</div>`+g.sz.log.map(e=>`<div class="mu">M${e.M.toFixed(1)} · ${nf(e.r/1000,1)} km · ${e.n} · intenzitás ${e.I.toFixed(1)}</div>`).join(''):'<div class="mu">Még nem volt rengés.</div>'}
   return h+'</div>'},
- rect(V){const l=SZ.lv();return l&&(!W.PN||PN.vis('sz'))?{x:V.w-150-32,y:46,w:150,h:46}:null},
- hud(V){const l=SZ.lv();if(!l||(W.PN&&!PN.vis('sz')))return;const x=V.x,w=150,h=46,px=V.w-w-32,py=46;if(W.PN)PN.reg('sz',px,py,w,h);x.save();x.globalAlpha=.92;x.fillStyle='rgba(8,14,12,.82)';GEO.rr(x,px,py,w,h,7);x.fill();x.strokeStyle='#2f6b4a';x.lineWidth=1;x.stroke();
+ rect(V){const l=SZ.lv();return l&&(!W.PN||PN.vis('sz'))?{x:V.w-120-32,y:44,w:120,h:38}:null},
+ hud(V){const l=SZ.lv();if(!l||(W.PN&&!PN.vis('sz')))return;const x=V.x,w=120,h=38,px=V.w-w-32,py=44;if(W.PN)PN.reg('sz',px,py,w,h);x.save();x.globalAlpha=.92;x.fillStyle='rgba(8,14,12,.82)';GEO.rr(x,px,py,w,h,7);x.fill();x.strokeStyle='#2f6b4a';x.lineWidth=1;x.stroke();
   x.beginPath();x.rect(px+3,py+11,w-6,h-14);x.clip();x.strokeStyle='#3ee08a';x.lineWidth=1.3;x.beginPath();const sx=(w-6)/(N-1),cy=py+11+(h-14)/2,am=(h-14)/2-1;
   for(let i=0;i<N;i++){const X=px+3+i*sx,Y=cy-SZ.buf[i]*am;i?x.lineTo(X,Y):x.moveTo(X,Y)}x.stroke();x.restore();
   x.save();x.font='bold 8px Georgia';x.fillStyle='#7fe0a8';x.textAlign='left';x.fillText('SZEIZMOGRÁF · '+RNG[l]+' km',px+6,py+9);

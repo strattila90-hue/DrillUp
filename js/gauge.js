@@ -27,11 +27,11 @@ const GG={
   const my=y0+ps.p*H;x.fillStyle='#fff';x.beginPath();x.moveTo(bx-1,my);x.lineTo(bx-8,my-5);x.lineTo(bx-8,my+5);x.closePath();x.fill();
   // felirat: melyik rétegben vagyunk
   const L=LY[ps.i],T=window.VOL?VOL.tm(S.x,d,lerp(TT,d)):lerp(TT,d),Pg=lerp(PT,d),name=SHORT[ps.i]||L[0];
-  const lines=[[name,'bold 11px Georgia','#ffffff'],[d<1?'Felszín':GG.fd(d)+' mélyen','11px Georgia','#f2eadb'],['🌡 '+Math.round(T)+' °C · '+(Pg<1?Math.round(Pg*1000)+' MPa':Pg.toFixed(Pg<10?1:0).replace('.',',')+' GPa'),'9px Georgia','#ffcf9a'],['réteg alja: '+GG.fd(L[2])+(L[2]-d>0?' (még '+GG.fd(L[2]-d)+')':''),'8px Georgia','#b8ab96']];
+  const lines=[[name,'bold 11px Georgia','#ffffff'],[d<1?'Felszín':GG.fd(d)+' mélyen','11px Georgia','#f2eadb'],['🌡 '+Math.round(T)+' °C · '+(Pg<1?Math.round(Pg*1000)+' MPa':Pg.toFixed(Pg<10?1:0).replace('.',',')+' GPa'),'9px Georgia','#ffcf9a']];
   x.font='bold 11px Georgia';let bw2=0;for(const t of lines){x.font=t[1];bw2=Math.max(bw2,x.measureText(t[0]).width)}bw2+=14;const bh=lines.length*13+8;
   let by=Math.min(Math.max(my-bh/2,y0-10),y1+14-bh),bxx=bx-40-bw2;for(const id of['sz','lab']){const q=window.PN?PN.rc(id):(id==='sz'&&window.SZ&&SZ.rect?SZ.rect(V):null);if(q&&bxx<q.x+q.w+4&&bxx+bw2>q.x-4&&by<q.y+q.h+4&&by+bh>q.y-4){const dn=q.y+q.h+6;by=dn+bh<=y1+14?dn:Math.max(y0-10,q.y-bh-6)}}
   if(window.PN&&!PN.vis('gg')){x.restore();return}if(window.PN)PN.reg('gg',bxx,by,bw2,bh);
-  x.fillStyle='rgba(10,12,14,.82)';x.strokeStyle=L[4];x.lineWidth=1.2;x.beginPath();x.roundRect?x.roundRect(bxx,by,bw2,bh,6):x.rect(bxx,by,bw2,bh);x.fill();x.stroke();
+  x.fillStyle='rgba(10,12,14,.66)';x.strokeStyle=L[4];x.lineWidth=1.2;x.beginPath();x.roundRect?x.roundRect(bxx,by,bw2,bh,6):x.rect(bxx,by,bw2,bh);x.fill();x.stroke();
   x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1;x.beginPath();x.moveTo(bxx+bw2,Math.min(Math.max(my,by+6),by+bh-6));x.lineTo(bxx+bw2+6,Math.min(Math.max(my,by+6),by+bh-6));x.lineTo(bx-10,my);x.stroke();
   x.textAlign='left';lines.forEach((t,i)=>{x.font=t[1];x.fillStyle=t[2];x.fillText(t[0],bxx+7,by+14+i*13)});
   x.restore()}

@@ -246,3 +246,11 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
 .upH{font-size:18px;margin-bottom:2px}.upH u{text-decoration:none;color:#ffd66b;font-size:14px;margin-left:6px}
 .upV{display:flex;align-items:center;justify-content:space-around;margin:10px 0;gap:6px}.upV>div{text-align:center}.upV small{display:block;color:#b9a581;font-size:11px}.upV b{font-size:19px;color:#fff3d0}.upV em{display:block;font-style:normal;font-size:11px;color:#b9a581}.upV .nx b{color:#8ff0a8}.upV .arr{font-size:20px;color:#d8982f}
 .upP{margin-top:10px;border-top:1px solid #3a2c18;padding-top:6px}.upP small{color:#b9a581}.upR{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#cdb98e}.upR b{color:#e8d9b8}
+/* v5.18 – játék közbeni kártyák: kisebb, áttetsző, jól látható piros ✕ */
+#stoCard,#srfCard,#awCard{max-height:min(26vh,190px)!important;width:min(86vw,360px)!important;opacity:.93;padding:7px 10px 8px!important;font-size:12px!important;line-height:1.35!important;pointer-events:auto}
+#stoCard .stb,#srfCard .stb{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+#stoCard .srx,#srfCard .srx,#awCard .srx{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#d62f27!important;color:#fff!important;border:2px solid #fff!important;font-size:15px!important;line-height:1;padding:0!important;font-weight:700;box-shadow:0 1px 5px rgba(0,0,0,.6)}
+#pnBtn{opacity:.85}
+#tutBox{display:none;position:fixed;left:50%;transform:translateX(-50%);top:70px;width:min(90vw,360px);z-index:80;box-sizing:border-box;padding:10px 12px;border-radius:12px;background:#1b1610f2;border:1px solid #d9b36a;box-shadow:0 8px 26px rgba(0,0,0,.65);color:#f0e6d2;font:13px/1.4 Georgia,serif}
+#tutBox .tth{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;font-size:15px}#tutBox .tth small{opacity:.6}
+#tutBox .ttr{display:flex;justify-content:space-between;margin-top:8px}#tutBox button{min-height:38px;padding:0 16px;border-radius:9px;border:1px solid #8a6a3a;background:#2a2218;color:#f0e6d2;font:inherit;cursor:pointer}#tutBox .ttn{background:#c7862b;color:#1a1208;font-weight:700}

@@ -10,7 +10,7 @@ You start on the surface with a tracked drilling machine and drill through the E
 
 • Real scale and layer thicknesses, temperature, pressure, wear and armor.
 • Upgradeable machine: drill bits, engines, generator, emergency brake, hydraulic erector with a tower crane.
-• Depot: unload the machine's hold, store, compress and sell by freight train – the storage yard, conveyor, wagons and locomotive can be upgraded without a level limit.
+• Depot: unload the machine's hold, store, compress and sell by freight train – the storage yard, conveyor, wagons and locomotive can be upgraded up to level 20.
 • Freight port with cranes, railway signals, live day and night.
 • Secret finds and collectible film relics in the Hall of Fame.
 • Works offline. No ads, no accounts, and your save stays on your device.
