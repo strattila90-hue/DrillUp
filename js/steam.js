@@ -81,10 +81,10 @@ const STM={held:0,rh:0,rp:0,vl:0,rl:0,sl:0,ch:0,pf:0,bt:0,sc:0,al:0,A:null,burst
   if(run&&STM.ch<=0){const L=STM.load(),pw=.4+.6*cl(o.p/.8,0,1);STM.ch=(.62-.4*L)*(S.u.d>=2?.8:1);
    A.ch.fl.frequency.setValueAtTime((S.u.d>=2?150:230)+130*L*pw,t);A.ch.g.gain.cancelScheduledValues(t);A.ch.g.gain.setValueAtTime(0,t);A.ch.g.gain.linearRampToValueAtTime((.1+.2*L)*pw*v,t+.025);A.ch.g.gain.exponentialRampToValueAtTime(.001,t+.16)}
   else if(!run&&STM.ch<=0)STM.ch=.3},
- // ---- kezelőfelület: kerek gombok a játéktér bal alsó részén ----
+ // ---- kezelőfelület: kerek gombok a játéktér bal alsó részén (a 🎬 👁 📖 🎓 gombok után, 184 px-től) ----
  btns(){if(typeof document==='undefined'||!document.getElementById)return;const st=document.getElementById('stage');if(!st)return;
   if(!document.getElementById('stmF')){const mk=(id,ic,lab,l)=>{const b=document.createElement('button');b.id=id;b.className='stmb';b.setAttribute('aria-label',lab);b.textContent=ic;b.style.left=l+'px';st.appendChild(b);return b};
-   const f=mk('stmF','🔥','Tüzelés',96),v=mk('stmV','♨','Szelep (nyomva tartva)',140),r=mk('stmR','🔧','Javítás (nyomva tartva)',184);
+   const f=mk('stmF','🔥','Tüzelés',184),v=mk('stmV','♨','Szelep (nyomva tartva)',228),r=mk('stmR','🔧','Javítás (nyomva tartva)',272);
    const ev=(b,dn,up)=>{b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();try{b.setPointerCapture(e.pointerId)}catch(x){}dn()});['pointerup','pointercancel','lostpointercapture'].forEach(n=>b.addEventListener(n,e=>{e.stopPropagation();up()}))};
    ev(f,()=>STM.stoke(),()=>{});ev(v,()=>STM.ventDown(),()=>STM.ventUp());ev(r,()=>STM.repDown(),()=>STM.repUp())}
   const on=STM.active()&&!(W.CIN&&CIN.on),o=STM.st(),B=STM.B(),f=document.getElementById('stmF'),v=document.getElementById('stmV'),r=document.getElementById('stmR');
@@ -93,7 +93,7 @@ const STM={held:0,rh:0,rp:0,vl:0,rl:0,sl:0,ch:0,pf:0,bt:0,sc:0,al:0,A:null,burst
  // ---- kijelző: kártya a páncél-kártya alatt ----
  hud(V){if(!STM.active()||(W.PN&&!PN.vis('kz'))||(W.CIN&&CIN.on))return;const o=STM.st();if(!o)return;const x=V.x,B=STM.B(),hr=W.PN?PN.rc('hull'):null,X=6,Y=hr?hr.y+hr.h+6:104,w=122,h=46;
   if(W.PN)PN.reg('kz',X,Y,w,h);
-  const hot=o.p>1.05&&B[1]<1,bl=(hot||o.lk)&&Math.floor(V.ts/280)%2===0;x.save();x.fillStyle='rgba(8,10,12,.62)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
+  const hot=o.p>1.05&&B[1]<1,bl=(hot||o.lk)&&Math.floor(V.ts/280)%2===0;x.save();x.fillStyle='rgba(8,10,12,.97)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
   x.textBaseline='alphabetic';x.textAlign='left';x.font='bold 9px Georgia';x.fillStyle='#cdbfa8';x.fillText('♨ KAZÁN',X+8,Y+12);x.textAlign='right';x.font='bold 11px Georgia';x.fillStyle=o.p>1.2?'#ff5a45':o.p>1?'#f0b83a':'#58e07c';x.fillText((o.p*BAR).toFixed(1).replace('.',',')+' bar',X+w-20,Y+12);
   const bx=X+8,bw=w-16;x.fillStyle='#2a2118';x.fillRect(bx,Y+19,bw,6);const pw=bw*cl(o.p/1.5,0,1);x.fillStyle=o.p>1.2?'#ff5a45':o.p>1?'#f0b83a':o.p<.4?'#5ab0e8':'#58e07c';x.fillRect(bx,Y+19,pw,6);
   x.fillStyle='rgba(255,255,255,.85)';x.fillRect(bx+bw/1.5-.5,Y+17,1,10); // névleges határ
