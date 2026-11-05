@@ -70,6 +70,13 @@ RZ.mach=function(V){
  const a=V.lw(-12.1,-1.5),b=V.lw(-5.7,-1.2),c=V.lw(-5.7,-1.2);if(!a||!b)return;
  const ph=(t%1.6)/1.6,gx=a[0]+(b[0]-a[0])*ph,gy=a[1]+(b[1]-a[1])*ph,r=(Math.abs(b[0]-a[0])+4)*.1+6;
  x.save();x.globalCompositeOperation='lighter';const g=x.createRadialGradient(gx,gy,0,gx,gy,r);g.addColorStop(0,`rgba(255,250,235,${(.2+.1*day).toFixed(3)})`);g.addColorStop(1,'rgba(255,250,235,0)');x.fillStyle=g;x.fillRect(gx-r,gy-r,r*2,r*2);x.restore()};
+// Védőháló: bármilyen hiba esetén a vászon állapota (save/clip/transzform/keverés/átlátszóság) pontosan visszaáll,
+// így egy effekt-hiba soha nem rejtheti el a gépet vagy a világot.
+W.SAFE=function(x,fn,tag){let d=0;const hs=Object.prototype.hasOwnProperty.call(x,'save'),hr=Object.prototype.hasOwnProperty.call(x,'restore'),os=x.save,or=x.restore,ga=x.globalAlpha,gc=x.globalCompositeOperation;
+ try{x.save=function(){d++;return os.call(x)};x.restore=function(){if(d>0)d--;return or.call(x)};
+  x.save();d=0;fn()}catch(e){if(typeof DBG!=='undefined')DBG.err=(tag||'fx')+': '+(e&&e.message||e)}
+ finally{try{if(hs)x.save=os;else delete x.save;if(hr)x.restore=or;else delete x.restore}catch(_){}
+  try{while(d-->0)or.call(x);or.call(x);x.globalAlpha=ga;x.globalCompositeOperation=gc}catch(_){}}};
 W.RZ=RZ;
-if(W.on){on('world.back',V=>{try{RZ.world(V);RZ.bld(V)}catch(e){if(W.DBG)DBG.err='realism: '+(e.message||e)}});on('world.front',V=>{try{RZ.mach(V);RZ.post(V)}catch(e){if(W.DBG)DBG.err='realism2: '+(e.message||e)}})}
+if(W.on){on('world.back',V=>{SAFE(V.x,()=>{RZ.world(V);RZ.bld(V)},'realism')});on('world.front',V=>{SAFE(V.x,()=>{RZ.mach(V);RZ.post(V)},'realism2')})}
 })(typeof window!=='undefined'?window:globalThis);

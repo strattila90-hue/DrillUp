@@ -398,7 +398,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  x.save();x.translate(-11.4,.8);x.rotate(sp*.3);x.fillStyle='#b9bec4';for(let i=0;i<10;i++){x.rotate(Math.PI/5);x.fillRect(-.07,-.62,.14,.22)}x.beginPath();x.arc(0,0,.48,0,7);x.fill();x.fillStyle='#333';x.beginPath();x.arc(0,0,.16,0,7);x.fill();x.restore();
  x.fillStyle=act&&Math.sin(ts/120)>0?'#ff9a1a':'#6a3b0c';x.beginPath();x.arc(-6.8,-1.6,.22,0,7);x.fill();
  if(window.PNT)PNT.mach(x);if(window.VL)VL.mach(x,{lit:lit2,ts});if(window.DMG)DMG.mach(x,{ts});if(window.SP)SP.mach(x,{ts});
- try{if(window.IND)IND.finish(x,o)}catch(e){DBG.err='industrial: '+(e.message||e)}
+ if(window.IND)(window.SAFE?SAFE(x,()=>IND.finish(x,o),'industrial'):IND.finish(x,o))
 }
 function headBasic(x,o){const{sp,heat,ht}=o,hdc=HDC[ht];let g;
  x.beginPath();x.ellipse(-1.6,0,1.6,1.85,0,-Math.PI/2,Math.PI/2);x.closePath();g=x.createLinearGradient(0,-1.85,0,1.85);g.addColorStop(0,hdc[0]);g.addColorStop(.45,hdc[1]);g.addColorStop(1,hdc[2]);x.fillStyle=g;x.fill();x.strokeStyle=mix('#1d1f22','#ff7a1a',clamp(heat,0,1));x.lineWidth=.06+heat*.08;x.stroke();
