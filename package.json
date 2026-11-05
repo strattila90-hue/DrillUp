@@ -2,7 +2,7 @@
   "name": "project",
   "version": "2.0.0",
   "private": true,
-  "description": "Drill Up - böngészős játék",
+  "description": "DrillUp Core Quest - browser game (PWA)",
   "scripts": {
     "build": "node check.js",
     "test": "node tests/run.js",

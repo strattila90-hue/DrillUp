@@ -82,13 +82,13 @@ const HYD={pose:null,seq:null,told:0,A:null,
   x.fillStyle='#e2b228';x.beginPath();x.arc(t[0],t[1],m*.3,0,7);x.fill();x.strokeStyle='#14161a';x.lineWidth=1.2;x.stroke();x.fillStyle='#14161a';x.beginPath();x.arc(t[0],t[1],m*.12,0,7);x.fill();
   x.beginPath();x.arc(ax,Ys-m*.9,m*.32,0,7);x.fillStyle='#e2b228';x.fill();x.stroke();
   // ---------- ipari daru: torony, forgó fej, gém, ellensúly, trolly, kötél ----------
-  {const th=m*19*e,tw=m*1.5,cxs=o[0]+dirx*m*13.2,top=Ys-th;
+  {const th=m*16*e,tw=m*1.5,cxs=o[0]+dirx*m*13.8,top=Ys-th;
    // betonalap + kitámasztók
-   x.fillStyle='#8c8f94';x.fillRect(cxs-m*2.4,Ys-m*.8,m*4.8,m*.8);x.fillStyle='#6b6e73';x.fillRect(cxs-m*2.4,Ys-m*.8,m*4.8,m*.18);
+   x.fillStyle='#8c8f94';x.fillRect(cxs-m*1.9,Ys-m*.8,m*3.8,m*.8);x.fillStyle='#6b6e73';x.fillRect(cxs-m*1.9,Ys-m*.8,m*3.8,m*.18);
    // rácsos torony: két övrúd + X rácsozás
    x.strokeStyle='#e2b228';x.lineWidth=m*.16;x.beginPath();x.moveTo(cxs-tw/2,Ys-m*.8);x.lineTo(cxs-tw/2,top);x.moveTo(cxs+tw/2,Ys-m*.8);x.lineTo(cxs+tw/2,top);x.stroke();
    x.strokeStyle='#c99a1a';x.lineWidth=m*.07;const seg=Math.max(2,Math.round(th/(m*1.5)));for(let i=0;i<seg;i++){const y0=Ys-m*.8-(th-m*.8)*i/seg,y1=Ys-m*.8-(th-m*.8)*(i+1)/seg;x.beginPath();x.moveTo(cxs-tw/2,y0);x.lineTo(cxs+tw/2,y1);x.moveTo(cxs+tw/2,y0);x.lineTo(cxs-tw/2,y1);x.moveTo(cxs-tw/2,y1);x.lineTo(cxs+tw/2,y1);x.stroke()}
-   if(e>.55){const jl=m*13.2,cj=m*5.2,jy=top;
+   if(e>.55){const jl=m*14.2,cj=m*5.2,jy=top;
     // forgó fej + vezetőfülke
     x.fillStyle=ST(jy-m*.6,jy+m*.6);x.fillRect(cxs-m*1.1,jy-m*.5,m*2.2,m*1.1);x.fillStyle='#e2b228';x.fillRect(cxs-m*1.1,jy-m*.5,m*2.2,m*.15);
     x.fillStyle='#2b3a46';x.fillRect(cxs+dirx*m*.2-(dirx>0?0:m*1.3),jy-m*1.55,m*1.3,m*1.05);x.fillStyle='rgba(190,235,255,.75)';x.fillRect(cxs+dirx*m*.2-(dirx>0?0:m*1.3)+m*.15,jy-m*1.4,m*1.0,m*.6);x.strokeStyle='#14161a';x.lineWidth=1;x.strokeRect(cxs+dirx*m*.2-(dirx>0?0:m*1.3),jy-m*1.55,m*1.3,m*1.05);
@@ -101,8 +101,9 @@ const HYD={pose:null,seq:null,told:0,A:null,
     const ay2=jy-m*3.2;x.strokeStyle='#e2b228';x.lineWidth=m*.14;x.beginPath();x.moveTo(cxs-m*.5,jy-m*.5);x.lineTo(cxs,ay2);x.lineTo(cxs+m*.5,jy-m*.5);x.stroke();x.strokeStyle='#111';x.lineWidth=1.2;x.beginPath();x.moveTo(cxs,ay2);x.lineTo(jx,jy+m*.1);x.moveTo(cxs,ay2);x.lineTo(cx2,jy-m*.2);x.stroke();
     x.fillStyle=(Math.floor(T*2)%2)?'#ff3b2f':'#6a1410';x.beginPath();x.arc(cxs,ay2-m*.22,m*.2,0,7);x.fill();
     // trolly és emelőkötél a farki fülhöz
-    const tr=lw(-11.2,0),ty=jy+m*.45;x.fillStyle='#2b2d31';x.fillRect(jx-m*.6,jy+m*.1,m*1.2,m*.5);
-    x.strokeStyle='#15171a';x.lineWidth=m*.1;x.beginPath();x.moveTo(jx-m*.18,ty);x.lineTo(tr[0],tr[1]-m*1.1);x.moveTo(jx+m*.18,ty);x.lineTo(tr[0],tr[1]-m*1.1);x.stroke();
+    const tr=lw(-11.2,0),ty=jy+m*.45,uj=-dirx,dj=Math.max(m*2.6,Math.min(jl-m*.7,(tr[0]-cxs)*uj)),tx=cxs+uj*dj;   // a futómacska a fül fölé áll: a kötél függőleges
+    x.fillStyle='#2b2d31';x.fillRect(tx-m*.6,jy+m*.1,m*1.2,m*.5);x.fillStyle='#c99a1a';x.fillRect(tx-m*.6,jy+m*.52,m*1.2,m*.08);
+    x.strokeStyle='#15171a';x.lineWidth=m*.1;x.beginPath();x.moveTo(tx-m*.18,ty);x.lineTo(tr[0]-m*.18,tr[1]-m*1.45);x.moveTo(tx+m*.18,ty);x.lineTo(tr[0]+m*.18,tr[1]-m*1.45);x.stroke();
     // csigatest + horog + hevederek
     x.fillStyle='#e2b228';x.fillRect(tr[0]-m*.45,tr[1]-m*1.45,m*.9,m*.38);x.strokeStyle='#14161a';x.lineWidth=1;x.strokeRect(tr[0]-m*.45,tr[1]-m*1.45,m*.9,m*.38);
     x.strokeStyle='#bfc3c9';x.lineWidth=m*.08;x.beginPath();x.moveTo(tr[0],tr[1]-m*1.07);x.lineTo(tr[0],tr[1]-m*.3);x.stroke();x.beginPath();x.arc(tr[0],tr[1]-m*.2,m*.2,0,7);x.stroke()}}

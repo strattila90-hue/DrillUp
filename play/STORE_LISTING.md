@@ -23,4 +23,4 @@ Egy lánctalpas fúrógéppel indulsz a felszínről, és a Föld valódi réteg
 
 ## Grafikai anyagok
 - Ikon 512×512: `icon-512.png` · Feature graphic 1024×500: `play/feature-graphic-1024x500.png`
-- Telefon-képernyőképek 1080×1920: `play/screens/s1–s4.png` (a Play legalább 2-t kér; a mostaniak teszt-állapotból készültek, cserélhetők)
+- Telefon-képernyőképek 1080×1920: `play/screens/s1–s5.png` (a Play legalább 2-t kér; angolul: `play/screens-en/`)
