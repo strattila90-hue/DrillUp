@@ -26,7 +26,7 @@ function tr(s){
  if(!dict)build();
  const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(s),core=m[2];let out=core;
  if(core){const ex=dict[core];if(ex!==undefined)out=ex;
-  else if(core.length<=140){if(rx)out=out.replace(rx,k=>dict[k]);for(const[r,t]of UNITS)out=out.replace(r,t);for(const[r,t]of PATS)out=out.replace(r,t);if(WRX)out=out.replace(WRX,w=>WORDS[w])}}
+  else{for(const[r,t]of(W.I18N_LONG||[]))out=out.replace(r,t);if(core.length<=140){if(rx)out=out.replace(rx,k=>dict[k]);for(const[r,t]of UNITS)out=out.replace(r,t);for(const[r,t]of PATS)out=out.replace(r,t);if(WRX)out=out.replace(WRX,w=>WORDS[w])}}}
  out=m[1]+out+m[3];
  if(cache.size>6000)cache.clear();cache.set(s,out);return out}
 if(L==='en'){I.tr=tr;

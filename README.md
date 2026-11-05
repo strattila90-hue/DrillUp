@@ -41,3 +41,4 @@ All game content and the film relics are original and fictional. Developer: stra
 - Skippable first-run tutorial (replay from Settings); original background music (volume slider in Settings); local, opt-in error report (copy from Settings – nothing is sent anywhere).
 - In English the in-game currency is shown as USD ($); only the label changes, values are unchanged.
 - In-game windows are smaller/less intrusive and have a clear red ✕ close button (👁 brings them back).
+- Main menu now shows the drilling machine with a compact button row; the "Home" button became a "Surface" button (arrow up to the ground); Mineral library, Classroom and volcano texts are available in English.
