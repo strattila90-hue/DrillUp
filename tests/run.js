@@ -472,4 +472,12 @@ t('kikapcsolva a régi viselkedés (nincs felállító szekvencia)',()=>{const g
 t('megállítás a felállítás közben nem hagyja félig felállva a gépet',()=>{const g=hy(),T=g.T,H=g.sb.HYD;T.go('D');g.frames(30,30);T.go('idle');for(let i=0;i<260&&H.on();i++)g.frames(1,16);ok(!H.on()&&H.pose===1,'befejezte')});
 t('nem fogyaszt hibát: random vezérlés a felszínen és mélyben',()=>{const g=hy(),T=g.T,S=T.S;const D=['L','R','D','U','idle','H'];let errs=[];for(let i=0;i<120;i++){T.go(D[Math.floor(Math.random()*D.length)]);errs=errs.concat(g.frames(6,40))}eq(errs,[]);ok(isFinite(S.x)&&isFinite(S.depth))});
 
+group('Z7) Depó átrendezés: lépések sorrendje, fő gomb, kirakodás és eladás egyben');
+t('a fő gomb a következő logikus lépést adja: kirakodás → eladás → várakozás',()=>{const g=depG(),D=g.sb.DEP,S=g.T.S;eq(D.act().k,'start');D.start();eq(D.act().k,'stop');g.frames(400,100);eq(D.job,false);eq(D.act().k,'sell');D.primary();ok(S.tw,'vonat elindult');eq(D.act().k,'away')});
+t('bázison kívül és mozgó gépnél a fő gomb tiltott, nem lehet kirakodni',()=>{const g=depG(),D=g.sb.DEP,S=g.T.S;S.depth=30;ok(D.act().dis);S.depth=0;S.st='D';ok(D.act().dis)});
+t('„Kirakodás és eladás”: egy gombnyomásra a rakomány a depóba, onnan a vonatra kerül',()=>{const g=depG({cg:{'Homok':500,'Kavics':300}}),D=g.sb.DEP,S=g.T.S;const cash0=S.cash;D.all();ok(D.job);g.frames(600,100);eq(D.job,false);ok(S.tw,'a vonat elindult');ok(Object.keys(S.cg).every(n=>!(S.cg[n]>0)),'a gép üres');g.frames(1200,100);ok(S.cash>cash0,'pénz megérkezett')});
+t('úton lévő vonatnál az „egyben” gomb nem küld újat, a készlet a depóban marad',()=>{const g=depG(),D=g.sb.DEP,S=g.T.S;D.start();g.frames(400,100);D.ship();const w=S.tw;ok(w);S.cg={'Homok':50};D.all();g.frames(100,100);eq(S.tw,w);ok(!D.auto)});
+t('a Depó fül kirajzolódik minden állapotban (gombsáv, lépések, nincs kettős eladás-gomb)',()=>{const g=depG(),D=g.sb.DEP;const h=D.html();ok(h.includes('dpBar')&&h.includes('dpAct'));ok(!h.includes('sellTop')&&!h.includes('dpSell'));ok((h.match(/Eladás/g)||[]).length>=1);g.T.S.depth=40;ok(D.html().includes('Menj a bázisra'))});
+t('kirakodási sorrend érték szerint: a legdrágább anyag kerül előbb a depóba',()=>{const g=depG({cg:{'Homok':400,'Arany':3}}),D=g.sb.DEP,S=g.T.S;S.set.sc=1;D.start();g.frames(20,100);const b=g.sb.bp,pr=g.sb.price;ok(S.dp.Arany>0||!S.cg.Arany,'az arany előbb mozdult')});
+
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);

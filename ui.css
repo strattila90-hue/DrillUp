@@ -152,3 +152,11 @@ body[data-mm="1"] #toast{top:auto!important;bottom:calc(env(safe-area-inset-bott
 .stmb.on{box-shadow:0 0 12px #9fd8ff;border-color:#9fd8ff}.stmb.hot{border-color:#f0b83a;box-shadow:0 0 10px #f0b83a}.stmb.low{border-color:#ff5a45}
 #stmR{background:conic-gradient(#58e07c var(--p,0%),rgba(10,12,14,.55) 0)}
 body.cin .stmb{display:none!important}
+
+/* Depó: a fő gomb a képernyő aljához rögzítve (hüvelykujj-közelben), lépések sorrendben */
+.dpBar{position:sticky;bottom:6px;z-index:6;display:flex;gap:8px;padding:8px;margin-top:10px;border-radius:14px;background:rgba(18,14,10,.94);border:1px solid #6b5636;box-shadow:0 -6px 18px rgba(0,0,0,.45)}
+.dpBar .b{flex:1;font-size:15px;padding:13px 8px;margin:0}.dpBar #dpAll{flex:.9;font-size:13px}
+.stp{margin:14px 2px 2px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#bfa87a}
+.dpFlow{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:7px 10px;margin:2px 0 8px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+.dpFlow b{color:#ffd66b}.dpUp>summary{cursor:pointer;list-style:none;padding:4px 0}.dpUp>summary::-webkit-details-marker{display:none}
+.dpUp[open]>summary{margin-bottom:6px}

@@ -1,6 +1,6 @@
 /* Drill Up – hidraulikus felállító a felszínen.
    A gép vízszintesen halad a felszínen, a fúráshoz viszont függőlegesen kell állnia. Ezt egy beépített hidraulikus berendezés oldja meg:
-   kitámasztó lábak ereszkednek le, a farok alatt teleszkópos emelőoszlop tolja fel a gépet az orr (fúrófej) körül – lassan, látható hidraulikával,
+   szállító-felállító (mint a rakétáknál és fúrótornyoknál): az orr (fúrófej) a talajon csuklik, két hidraulikus munkahenger a gép közepét tolja fel – lassan, látható hidraulikával,
    gőz- és olajfüsttel, hanggal –, majd a fúrás indul. Felszínre érve, ha a gép vízszintesen indulna tovább, ugyanez visszafelé: lefekteti magát.
    • Föld alatt (vagy ha már függőleges) nincs várakozás. A mozgás a felállítás alatt áll; a ⬛ (állj) gombbal sem szakad meg: a gép nem marad félig felállva.
    • Beállítások → „Hidraulikus felállító" (S.set.erect === 0 → a régi viselkedés: a gép azonnal, lassan billen).
@@ -41,17 +41,25 @@ const HYD={pose:null,seq:null,told:0,A:null,
    o.frequency.setValueAtTime(58,t);o.frequency.linearRampToValueAtTime(96,t+d*.6);o.frequency.linearRampToValueAtTime(64,t+d);
    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.07*v,t+.3);g.gain.setValueAtTime(.07*v,t+d-.4);g.gain.linearRampToValueAtTime(0,t+d);
    o.connect(f);f.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.1);HYD.A=o}}catch(e){}},
- // kirajzolás: kitámasztók + teleszkópos emelőoszlop a gép alatt (a 'world.front' hívja)
- draw(V){const q=HYD.seq;if(!q||!V||!V.lw)return;const x=V.x,K=V.K,Ys=V.Ys,lw=V.lw,legs=HYD.legs(),fc=V.fc||1;
-  x.save();x.lineCap='butt';
-  const pad=(px,py,w)=>{x.fillStyle='#2b2d31';x.fillRect(px-w/2,py-3,w,3);x.fillStyle='#8a8d92';x.fillRect(px-w/2,py-3,w,1)};
-  // két kitámasztó láb: egyenes hidraulikus szár a hasról a földig
-  for(const a of[-2.2,-6.2]){const[sx,sy]=lw(a,1.7),ext=Math.max(0,Ys-sy)*legs;if(ext<2)continue;
-   x.fillStyle='#4a4d52';x.fillRect(sx-3,sy,6,ext*.55);x.fillStyle='#b9bcc2';x.fillRect(sx-2,sy+ext*.5,4,ext*.5);pad(sx,sy+ext+3,K*.9)}
-  // emelőoszlop a farok alatt: a talpa a talajon csúszik, a teteje a farokhoz kapcsolódik
-  const[ax,ay]=lw(-9,1.4),top=ay,h=Math.max(0,Ys-top);
-  if(h>6&&q.p>.18){const sec=3,w0=K*.75;for(let i=0;i<sec;i++){const y0=Ys-h*i/sec,y1=Ys-h*(i+1)/sec,w=w0*(1-.2*i);x.fillStyle=i%2?'#d0d4d8':'#6b6f75';x.fillRect(ax-w/2,y1,w,y0-y1);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(ax-w/2+2,y1,2,y0-y1)}
-   x.fillStyle='#e2b228';x.fillRect(ax-w0/2-2,top-3,w0+4,6);pad(ax,Ys,K*1.4)}
+ // kirajzolás: szállító-felállító (mint a rakéták / fúrótornyok felállítása): a gép a farok felőli talpkeretre fekszik, az orra (fúrófej) a talajon
+ // csuklópontban forog, két nagy hidraulikus munkahenger a gép közepét tolja fel – a hengerek hossza a szögből adódik, a mozgás súlyos és egyenletes
+ draw(V){const q=HYD.seq;if(!q||!V||!V.lw)return;const x=V.x,Ys=V.Ys,lw=V.lw;
+  const o=lw(0,1.4),o1=lw(-1,1.4),m=Math.hypot(o1[0]-o[0],o1[1]-o[1])||10,fadeIn=cl(q.p/.12,0,1),fadeOut=1-cl((q.p-.9)/.1,0,1),al=Math.min(fadeIn,fadeOut);
+  if(al<=0.01)return;const dirx=(V.fc||1)>0?-1:1;                                    // a farok felé mutató vízszintes irány
+  x.save();x.globalAlpha=al;x.lineCap='butt';
+  const ax=o[0]+dirx*m*7.5,ay=Ys,                                                    // a hengerek talajhoz rögzített talpa
+        t=lw(-4.5,1.2);                                                                // a hengerek felső csatlakozása a gép testén (a szöggel együtt mozog)
+  // talpkeret: hosszú gerenda a csuklótól a hengerek talpáig
+  x.fillStyle='#34373c';x.fillRect(Math.min(o[0],ax)-4,Ys-5,Math.abs(ax-o[0])+8,5);x.fillStyle='#e2b228';x.fillRect(Math.min(o[0],ax)-4,Ys-5,Math.abs(ax-o[0])+8,1.5);
+  // csuklópont az orrnál (két fül + csap)
+  x.fillStyle='#8a8d92';x.beginPath();x.moveTo(o[0]-7,Ys);x.lineTo(o[0]+7,Ys);x.lineTo(o[0]+3,o[1]-3);x.lineTo(o[0]-3,o[1]-3);x.closePath();x.fill();x.fillStyle='#e2b228';x.beginPath();x.arc(o[0],o[1],3.2,0,7);x.fill();
+  // hidraulikus munkahenger: henger (sötét) + dugattyúrúd (fényes), a hossz a geometriából adódik
+  const dx=t[0]-ax,dy=t[1]-ay,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,nx=-uy,ny=ux,bar=Math.min(L*.58,m*5.2);
+  x.save();x.translate(ax,ay-3);x.fillStyle='#2f3236';x.beginPath();x.arc(0,0,5,0,7);x.fill();x.restore();
+  x.strokeStyle='#4a4d52';x.lineWidth=7;x.beginPath();x.moveTo(ax,ay-3);x.lineTo(ax+ux*bar,ay-3+uy*bar);x.stroke();
+  x.strokeStyle='#e2b228';x.lineWidth=2;x.beginPath();x.moveTo(ax+ux*bar*.12,ay-3+uy*bar*.12);x.lineTo(ax+ux*bar*.9,ay-3+uy*bar*.9);x.stroke();
+  x.strokeStyle='#c9ccd1';x.lineWidth=3.4;x.beginPath();x.moveTo(ax+ux*bar,ay-3+uy*bar);x.lineTo(t[0],t[1]);x.stroke();
+  x.fillStyle='#e2b228';x.beginPath();x.arc(t[0],t[1],3.4,0,7);x.fill();x.fillStyle='#2b2d31';x.beginPath();x.arc(t[0],t[1],1.4,0,7);x.fill();
   x.restore()}};
 W.HYD=HYD;
 if(W.on)on('sim',()=>{if(HYD.seq)HYD.step(0)});
