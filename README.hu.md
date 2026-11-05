@@ -42,3 +42,4 @@ A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejles
 - Angol nyelven a pénznem USD ($) – csak a felirat változik, az értékek nem.
 - A játék közbeni kisablakok kisebbek, kevésbé takarnak, jól látható piros ✕ gombbal zárhatók (a 👁 visszahozza).
 - A főmenüben látszik a fúrógép, a gombok tömören alul vannak; a „Haza” gomb „Felszín” gomb lett (felfelé nyíl a talajhoz); az Ásványtár, a Tanterem és a vulkán-szövegek angolul is elérhetők.
+- Napelemes tartalék-hajtás: a felszínen a gép mindig tud vízszintesen mozogni. Ha elfogy az üzemanyag, a tetején lévő napelemek által táplált elektromotorok viszik (lassan, csak nappal – éjjel reggelig várni kell).

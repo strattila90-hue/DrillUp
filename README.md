@@ -42,3 +42,4 @@ All game content and the film relics are original and fictional. Developer: stra
 - In English the in-game currency is shown as USD ($); only the label changes, values are unchanged.
 - In-game windows are smaller/less intrusive and have a clear red ✕ close button (👁 brings them back).
 - Main menu now shows the drilling machine with a compact button row; the "Home" button became a "Surface" button (arrow up to the ground); Mineral library, Classroom and volcano texts are available in English.
+- Solar backup drive: on the surface the machine can always move horizontally. If the fuel runs out, solar panels on the roof power electric motors (slow, daytime only – at night wait for morning).

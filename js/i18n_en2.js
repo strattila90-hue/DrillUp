@@ -130,4 +130,5 @@ W.I18N_LONG=W.I18N_LONG.concat([
  [/Rekordmélységed ([^ ]+) m, összesen ([^ ]+) métert fúrtál, (\d+) alkalommal tértél vissza a bázisra, és (.+?) aktív játékidőt töltöttél a gép mellett\./,'Your record depth is $1 m; you have drilled $2 metres in total, returned to base $3 times and spent $4 of active play time with the machine.']
 ]);
 W.I18N_LONG=W.I18N_LONG.concat([[/▶ JOBBRA/g,'▶ RIGHT'],[/◀ BALRA/g,'◀ LEFT'],[/▲ FEL(?![A-Za-zÀ-ž])/g,'▲ UP'],[/▼ LE(?![A-Za-zÀ-ž])/g,'▼ DOWN'],[/ · HAZA/g,' · TO SURFACE'],[/ · ⚡ GYORSVISSZATÉRÉS/g,' · ⚡ FAST RETURN']]);
+W.I18N_LONG=W.I18N_LONG.concat([[/🌙 Éjszaka a napelemek nem termelnek – várj reggelig \(kb\. (\d+:\d+)\)\./,'🌙 The solar panels produce nothing at night – wait until morning (about $1).'],[/☀ Napelemes tartalék-hajtás: üzemanyag nélkül is mozoghatsz a felszínen \(lassan, csak nappal\)\./,'☀ Solar backup drive: you can move on the surface even without fuel (slowly, daytime only).']]);
 })(typeof window!=='undefined'?window:globalThis);
