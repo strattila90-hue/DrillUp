@@ -11,7 +11,7 @@ const WEAR={prevX:null,
  // tapadási szorzó: 1 új lánctalpnál, 1-MAXLOSS teljesen kopottnál
  mf(){return 1-MAXLOSS*Math.pow(WEAR.tk()/100,1.2)},
  slopeF(){let g=0;try{if(W.HILL&&S.depth<2)g=Math.abs(HILL.g(S.x))}catch(e){}return 1+6*g},
- add(dx){if(!(dx>0)||typeof S==='undefined')return;const b=WEAR.tk();S.tk=Math.min(100,b+dx*WEAR.slopeF()*100/LIFE);
+ add(dx){if(!(dx>0)||typeof S==='undefined')return;try{if(W.ST){const o=ST.ss();o.hm=(o.hm||0)+dx}}catch(e){}const b=WEAR.tk();S.tk=Math.min(100,b+dx*WEAR.slopeF()*100/LIFE);
   const a=S.tk;if(b<75&&a>=75){try{msg('🛞 A lánctalp 75%-ban kopott – a bázison felújíthatod (Műhely).')}catch(e){}}
   if(b<90&&a>=90){try{msg('⚠ A lánctalp 90%-ban kopott: a tapadás érezhetően romlik.')}catch(e){}}},
  step(){if(typeof S==='undefined')return;const x=S.x;if(WEAR.prevX!=null&&isFinite(x)){const d=Math.abs(x-WEAR.prevX);if(d<50)WEAR.add(d)}WEAR.prevX=isFinite(x)?x:null},

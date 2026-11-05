@@ -350,6 +350,28 @@ t('lánctalp: a step eseménytől kopik, menti a mentés, a bázison felújítha
  S.x=0;S.st="idle";S.tk=40;S.cash=1e9;const c=Wr.cost();ok(c>0);const c0=S.cash;Wr.repair();ok(S.tk===0&&Math.abs(c0-S.cash-c)<1,'felújítva');S.tk=30;S.depth=500;Wr.repair();ok(S.tk===30,'a mélyben nem')});
 t('lánctalp: a kopott gép a domb-szimulációban rosszabbul teljesít, az új változatlan; a panel megjelenik',()=>{const g=lg(),S=g.T.S,H=g.sb.HILL,Wr=g.sb.WEAR;S.u.d=2;const c=g.T.calc();let a=0,b=0;S.tk=0;for(let x=400;x<900;x+=2)a=Math.max(a,H.drive(c,x,1,5).s);S.tk=100;for(let x=400;x<900;x+=2)b=Math.max(b,H.drive(c,x,1,5).s);ok(b>=a,'kopottan legalább akkora csúszás '+a+' → '+b);ok(Wr.html().includes('Lánctalp'))});
 
+group('W) Kihívások és testreszabás');
+t('kihívások: napi 3 + heti 2 készül, ugyanarra a napra ugyanaz; a haladás a számlálókból jön, teljesítéskor jutalom jár egyszer',()=>{const g=lg(),S=g.T.S,Q=g.sb.QS,ST=g.sb.ST;ok(!!Q);ST.init();S.qs=undefined;Q.roll();ok(S.qs.d.length===3&&S.qs.w.length===2);ok(new Set(S.qs.d.map(q=>q.k)).size===3,'különböző típusok');
+ const k=Q.keys(),a=JSON.stringify(Q.make(k.dk,false,3).map(q=>q.k)),b=JSON.stringify(Q.make(k.dk,false,3).map(q=>q.k));eq(a,b);
+ for(const q of S.qs.d.concat(S.qs.w)){ok(q.t>0&&q.r>0&&isFinite(q.b))}
+ const q=S.qs.d[0],c0=S.cash;const o=ST.ss();o[q.k==='dm'?'dm':q.k==='ce'?'ce':q.k==='tr'?'tr':'hm']=(o[q.k]||0)+q.t+1;Q.check();ok(q.d===1&&S.cash>=c0+q.r,'jutalom');const c1=S.cash;Q.check();ok(S.cash===c1,'nem fizet kétszer');ok(Q.html().includes('Kihívások'))});
+t('kihívások: új napnál/hétnél újrasorsolódik, a régi mentésből hiba nélkül indul, mentéssel megmarad',()=>{const g=lg(),S=g.T.S,Q=g.sb.QS;Q.roll();S.qs.dk='1999-1-1';S.qs.d.forEach(q=>q.d=1);Q.roll();ok(S.qs.d.every(q=>!q.d),'új nap');S.qs.wk='w1';Q.roll();ok(S.qs.w.every(q=>!q.d));g.T.save();const g2=boot({store:g.store});ok(g2.T.S.qs&&g2.T.S.qs.d.length===3)});
+t('testreszabás: alapból minden ingyenes változat, vásárlás levon és megjegyez, a bázison kívül nem, a rajz hibátlan minden festésben',()=>{const g=lg(),S=g.T.S,P=g.sb.PNT;ok(!!P);S.pt=undefined;ok(P.st().c==='alap'&&P.hc(['a','b'])[0]==='a');S.x=0;S.depth=0;S.st='idle';S.cash=1e6;P.buy('c','piros');ok(S.pt.c==='piros'&&S.cash===1e6-40e3&&P.hc(['a','b'])[0]==='#e0503f');P.buy('c','alap');ok(S.pt.c==='alap'&&S.cash===1e6-40e3);P.buy('c','piros');ok(S.cash===1e6-40e3,'másodszor ingyen');
+ S.cash=1;P.buy('s','figy');ok(S.pt.s==='nincs','pénz nélkül nem');S.cash=1e6;S.depth=500;P.buy('l','hideg');ok(S.pt.l==='alap','mélyben nem');S.depth=0;
+ for(const c of P.T.c)for(const s of P.T.s){S.pt.own=['c:'+c[0],'s:'+s[0],'l:hideg','l:boros'];S.pt.c=c[0];S.pt.s=s[0];S.pt.l=['alap','hideg','boros'][(c[0].length+s[0].length)%3];eq(g.frames(2,30),[])}
+ ok(P.html().includes('Testreszabás'))});
+
+group('X) Ambiens hang és teljesítmény-figyelő');
+t('ambiens hang: a rétegek a mélységgel értelmesen változnak (felszín: szél; mély: zúgás, hőség; mag: lüktetés), AC nélkül hibátlan',()=>{const g=lg(),A=g.sb.AMB;ok(!!A);const s=A.mix(0),m=A.mix(5e3),h=A.mix(300e3),c=A.mix(4e6);ok(s.wind>0&&s.hum===0&&s.hiss<.2);ok(m.wind===0&&m.hum>0);ok(h.hiss>m.hiss&&h.f<m.f);ok(c.thump>0&&A.mix(1e6).thump===0);
+ for(const d of[0,1,1e3,1e6,6.3e6,-5,NaN]){const r=A.mix(d);for(const k in r)ok(isFinite(r[k])&&r[k]>=0,k+' @'+d)}eq(g.frames(20,100),[])});
+t('ambiens hang: hangkörnyezettel a csomópontok létrejönnek, a kikapcsolás/némítás lenullázza, a hiba nélkül fut',()=>{const g=lg(),S=g.T.S,A=g.sb.AMB;
+ const mkP=()=>({value:0,setTargetAtTime(v){this.value=v}}),node=()=>({gain:mkP(),frequency:mkP(),Q:mkP(),connect(){},start(){},type:''});
+ g.sb.__fa={state:'running',currentTime:0,destination:{},createBufferSource:()=>Object.assign(node(),{buffer:null,loop:false}),createBiquadFilter:node,createGain:node,createOscillator:node};require('vm').runInContext('AC=__fa;NB={}',g.sb);
+ S.set.vol=60;S.set.amb=1;S.depth=5000;A.update();ok(A.n,'létrejött');ok(A.n.og.gain.value>0,'zúgás hallható '+A.n.og.gain.value);S.set.amb=0;A.update();ok(A.n.og.gain.value===0&&A.n.hiss.g.gain.value===0,'kikapcsolva némít');S.set.amb=1;S.set.vol=0;A.update();ok(A.n.og.gain.value===0,'hangerő 0');
+ S.set.vol=60;S.depth=4e6;A.update();ok(A.n.tg.gain.value>0&&A.n.lg.gain.value>0,'mag-lüktetés')});
+t('teljesítmény-figyelő: az fps az átlagolt képidőből jön; ha a minőségváltó visszavesz, számol és értesít (legfeljebb percenként)',()=>{const g=lg(),S=g.T.S,P=g.sb.PF,G=g.sb.Gov;ok(!!P);P.ema=16.7;ok(P.fps()===60);P.ema=33.3;ok(P.fps()===30);S.set.fps=1;G.setMode(2);P.q=null;P.frame(.016);ok(P.q===2);G.q=1;const p0=(S.ss&&S.ss.pd)||0;P.lastWarn=0;P.frame(.016);ok(S.ss.pd===p0+1&&P.lastWarn>0,'visszavétel számolva');G.q=0;P.frame(.016);ok(S.ss.pd===p0+2);
+ for(const v of[0,.0001,.7,NaN])P.frame(v);ok(isFinite(P.ema))});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;

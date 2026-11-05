@@ -11,8 +11,8 @@ const VL={
  mach(x,o){const on=!!o.lit,k=on?1:.35,P=VL.P;x.save();
   const lens=(p,w,h,col,glow)=>{x.fillStyle='#1b1c1f';x.fillRect(p[0]-w/2-.05,p[1]-h/2-.05,w+.1,h+.1);x.fillStyle=on?col:'#8d949a';x.fillRect(p[0]-w/2,p[1]-h/2,w,h);
    if(on&&glow){x.globalCompositeOperation='lighter';const g=x.createRadialGradient(p[0],p[1],0,p[0],p[1],glow);g.addColorStop(0,col==='#ff5a4a'?'rgba(255,60,40,.4)':'rgba(255,240,190,.3)');g.addColorStop(1,'rgba(255,220,150,0)');x.fillStyle=g;x.beginPath();x.arc(p[0],p[1],glow,0,7);x.fill();x.globalCompositeOperation='source-over'}};
-  lens(P.front,.34,.26,'#fff6cc',.6);lens(P.frontLow,.3,.2,'#fff0b8',.4);lens(P.rear,.2,.34,'#ff5a4a',.6);
-  lens(P.sideTop,.5,.14,'#ffe9a8',.45);lens(P.sideBot,.5,.14,'#ffe9a8',.4);lens(P.sideF,.3,.12,'#ffe9a8',.3);lens(P.sideR,.3,.12,'#ffe9a8',.3);
+  const pl=window.PNT?PNT.lens:(c=>c);lens(P.front,.34,.26,pl('#fff6cc'),.6);lens(P.frontLow,.3,.2,pl('#fff0b8'),.4);lens(P.rear,.2,.34,'#ff5a4a',.6);
+  lens(P.sideTop,.5,.14,pl('#ffe9a8'),.45);lens(P.sideBot,.5,.14,pl('#ffe9a8'),.4);lens(P.sideF,.3,.12,pl('#ffe9a8'),.3);lens(P.sideR,.3,.12,pl('#ffe9a8'),.3);
   x.restore()},
  // a megvilágítás: kúpok + izzás (a gép képernyőn lévő pontjaival)
  light(c){const{lw,lamp,CN,GL,fc,cA,sA,dr,eL,ts}=c,P=VL.P,fl=(window.DMG&&S.hp<30)?(.55+.45*Math.abs(Math.sin(ts/170))):1,e=eL*fl;
