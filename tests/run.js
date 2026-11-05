@@ -319,7 +319,7 @@ t('élethű effektek és cinematic: a rajz hibátlan minden minőségen, be- és
 t('kijelzők: elrejtés/előhívás, mentésben megmarad, rejtve nem rajzolódik, a rajz hibátlan',()=>{const g=lg(),S=g.T.S,P=g.sb.PN;ok(!!P);for(const k of Object.keys(P.NAMES))ok(P.vis(k));S.depth=300;S.tr=[['D',300]];g.frames(4,30);P.set('sz',0);P.set('face',0);P.set('hull',0);ok(!P.vis('sz')&&!P.vis('face')&&!P.vis('hull'));eq(P.nHidden(),3);eq(g.frames(5,30),[]);g.T.save();const h=boot({store:g.store});ok(!h.sb.PN.vis('sz'));P.all();eq(P.nHidden(),0);eq(g.frames(3,30),[]);const O=g.sb.STO;O.cur=null;O.gap=0;P.set('sto',0);S.depth=900;g.frames(3,30);ok(O.has(7)&&!O.cur)});
 
 group('N) Natív-app érzet');
-t('manifest: érvényes, maskable ikon létezik, offline fájllista tartalmazza az új fájlokat',()=>{const fs=require('fs'),m=JSON.parse(fs.readFileSync(__dirname+'/../manifest.webmanifest','utf8'));ok(m.display==='standalone'&&m.orientation==='portrait');const mk=m.icons.find(i=>i.purpose==='maskable');ok(mk&&fs.existsSync(__dirname+'/../'+mk.src));const sw=fs.readFileSync(__dirname+'/../sw.js','utf8');for(const f of['js/appshell.js','js/panels.js','js/cine.js','js/story.js','js/zoom.js','js/surface.js','icon-maskable-512.png'])ok(sw.includes(f),f)});
+t('manifest: érvényes, maskable ikon létezik, offline fájllista tartalmazza az új fájlokat',()=>{const fs=require('fs'),m=JSON.parse(fs.readFileSync(__dirname+'/../manifest.webmanifest','utf8'));ok((m.display==='fullscreen'||m.display==='standalone')&&m.display_override.includes('standalone')&&m.orientation==='portrait');const mk=m.icons.find(i=>i.purpose==='maskable');ok(mk&&fs.existsSync(__dirname+'/../'+mk.src));const sw=fs.readFileSync(__dirname+'/../sw.js','utf8');for(const f of['js/appshell.js','js/panels.js','js/cine.js','js/story.js','js/zoom.js','js/surface.js','icon-maskable-512.png'])ok(sw.includes(f),f)});
 t('natív segédek: rezgés és párbeszéd hibátlan, a vissza-gomb nem dob hibát, nincs böngésző-felugró a kódban',()=>{const g=lg(),N=g.sb.NAT;ok(N&&typeof N.hap==='function'&&typeof N.ask==='function'&&typeof N.back==='function');N.hap(10);g.T.S.set.hap=0;N.hap(10);let hit=0;N.ask('x','ok',()=>hit++);ok(hit>=0);ok(N.back()===false||N.back()===true);const html=require('fs').readFileSync(__dirname+'/../index.html','utf8');ok(!/onclick="[^"]*confirm\(/.test(html),'confirm() maradt')});
 
 group('M) Mérföldkövek, diagnosztika, hang');
@@ -377,6 +377,11 @@ t('szabadesés közben a mozgásgombok nem állítanak át állapotot (jelzés),
  T.go('L');ok(S.st==='D','a ◀ nem írja át az állapotot esés közben: '+S.st);T.go('U');ok(S.st==='D');N.bkIn=1;T.go('idle');ok(S.st==='idle','stop mehet');N.bkIn=0;
  const r=until(g,()=>!N.falling,4000);ok(!N.falling,'leérkezett');T.go('U');ok(S.st==='U','leérkezés után újra irányítható')});
 t('szabadesés: a forgókamra-kapu nem tartja félúton a gépet (esés közben nincs kamra-fúrás)',()=>{const g=shaft([[0,0,0,300]],{abk:1}),T=g.T,S=T.S,N=g.sb.NET,C=g.sb.CH;S.st='D';const n0=(S.ch||[]).length;until(g,()=>!N.falling&&S.depth>250,4000);ok((S.ch||[]).length===n0,'nem fúrt kamrát esés közben')});
+
+group('Y3) Teljes képernyő');
+t('teljes képernyő: alapból kéri (érintésre), kikapcsolva nem, ha már teljes képernyőn van nem kér újra; a manifest teljes képernyős',()=>{const g=lg(),S=g.T.S,F=g.sb.FS;ok(!!F);let n=0;const de={requestFullscreen(o){n++;ok(o&&o.navigationUI==='hide');return Promise.resolve()}};g.sb.document=Object.assign(g.sb.document||{},{documentElement:de,fullscreenElement:null});
+ S.set.fs=undefined;ok(F.want()&&F.can());ok(F.req()&&n===1);S.set.fs=0;ok(!F.req()&&n===1,'kikapcsolva nem kér');S.set.fs=1;g.sb.document.fullscreenElement={};ok(!F.req()&&n===1,'már teljes képernyő');
+ const m=JSON.parse(require('fs').readFileSync(require('path').join(__dirname,'..','manifest.webmanifest'),'utf8'));ok(m.display==='fullscreen'&&m.display_override[0]==='fullscreen'&&m.display_override.includes('standalone'))});
 
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};

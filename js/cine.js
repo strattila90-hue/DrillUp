@@ -10,7 +10,7 @@ const CIN={on:false,k:0,cap:null,capT:0,hint:0,vg:null,vgW:0,vgH:0,vgS:0,gr:null
  enter(){if(CIN.on)return;CIN.on=true;CIN.t0=Date.now();CIN.hint=1;if(document.body&&document.body.classList)document.body.classList.add('cin');try{STO.close();SRF.close()}catch(e){}
   try{if(document.documentElement&&document.documentElement.requestFullscreen&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}},
  exit(){if(!CIN.on)return;CIN.on=false;CIN.lec=false;CIN.cap=null;if(document.body&&document.body.classList)document.body.classList.remove('cin');if(W.ZM){ZM.t=1;ZM.ox=ZM.oy=0}
-  try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{})}catch(e){}},
+  try{if(document.fullscreenElement&&document.exitFullscreen&&!(W.FS&&FS.want()))document.exitFullscreen().catch(()=>{})}catch(e){}},
  dur(e){return e.dur||Math.min(22,9+e.s.length*.045)},
  caption(e){CIN.cap=e;CIN.capT=0;if(W.STO&&e.id)STO.cur=e},
  btn(){if(typeof document==='undefined'||!document.getElementById)return;const st=document.getElementById('stage');if(!st||document.getElementById('cinBtn'))return;
