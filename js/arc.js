@@ -6,13 +6,13 @@
      ezért a mentések, a visszaút (S.tr), a járathálózat és az esés-fizika változatlanul működnek; a 4,4 m széles járatban a lépcső simának látszik.
    • Megfordulás (balra↔jobbra, fel↔le) továbbra is forgókamrát kíván (chamber.js), a meglévő kamrák és járatok érvényesek.
    • Ha a gép előtt már kész járat van (szabad haladás), vagy kamrában áll, vagy a felszín közelében van, a régi viselkedés marad.
-   • Kikapcsolható: Beállítások → „Íves forduló" (S.set.arc === 0 → régi forgókamrás viselkedés). */
+   • Alapból KI (a játék a régi, függőleges fúrást használja); Beállítások → „Íves forduló és merülés" (S.set.arc === 1) kapcsolja be. */
 (function(W){
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('arc');
 const VEC={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1]},ax=d=>d==='L'||d==='R'?0:1,N=16,MINDEPTH=2.5;
 const ARC={R:12,N,RD:30,ND:24,pl:null,hv:null,pp:null,told:0,
- on(){try{return S.set.arc!==0}catch(e){return true}},
+ on(){try{return S.set.arc===1}catch(e){return false}},
  dir(){try{if(S.st.length===1&&'LRUD'.includes(S.st))return S.st;if(S.st==='idle'){if(S.ahd&&'LRUD'.includes(S.ahd))return S.ahd;if(S.depth<=MINDEPTH&&typeof lastD!=='undefined'&&(lastD==='L'||lastD==='R'))return lastD}}catch(e){}return null},
  // a tervezett ív szakaszai: [irány, hossz] – az ív kezdőirányában mindig előbb halad, majd az új irányban
  legs(cur,s,R,n){const out=[];for(let k=1;k<=n;k++){const p0=(k-1)/n*Math.PI/2,p1=k/n*Math.PI/2;out.push([cur,R*(Math.sin(p1)-Math.sin(p0))],[s,R*(Math.cos(p0)-Math.cos(p1))])}return out},
