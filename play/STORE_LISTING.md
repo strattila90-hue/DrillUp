@@ -1,26 +1,38 @@
-# Google Play – bolti adatlap (DrillUp Core Quest, fejlesztő: strattila90)
+# Google Play – áruházi adatlap (magyar, keresésre optimalizált)
 
-**Alkalmazás neve (max 30):** DrillUp Core Quest
-**Rövid leírás (max 80):** Fúrj le a Föld magjáig valós méterekben, építs depót és vasutat!
-**Kategória:** Játékok → Szimuláció · **Címkék:** szimuláció, tycoon, tétlen játék
-**Tartalom-besorolás (IARC):** kérdőív: nincs erőszak, nincs vásárlás, nincs hirdetés → várhatóan PEGI 3
-**Adatvédelmi nyilatkozat URL:** https://<DOMAIN>/privacy.html
+**Cím (max 30):** DrillUp Core Quest: Fúrás
+**Rövid leírás (max 80):** Fúrj le a Föld magjáig! Valódi rétegek, fejlesztések, depó. Offline.
+**Kategória:** Játékok → Szimuláció · **Címkék:** szimuláció, tycoon, idle, bányászat, ismeretterjesztő
+**Adatvédelmi nyilatkozat:** https://<DOMAIN>/privacy.html
 
 ## Hosszú leírás (max 4000)
-Egy lánctalpas fúrógéppel indulsz a felszínről, és a Föld valódi rétegein át – talaj, kéreg, köpeny, külső mag, belső mag – egészen a 6 371 km-re lévő magig fúrsz.
+⛏ FÚRJ LE A FÖLD MAGJÁIG – 6 371 KM VALÓDI FÖLDTAN
 
-• Valós méretek és rétegvastagságok, hőmérséklet, nyomás, kopás, páncél.
-• Fejleszthető gép: fúrófejek, motor, generátor, zuhanófék, hűtés.
-• Depó: kirakodás a gép raktárából, tárolás, tömörítés, tehervonat – a mozdony, a vagonok, a raktártelep és a szállítószalag a 20. szintig fejleszthető.
-• Teherkikötő, daruk, vasúti jelzők, élő nappal–éjszaka.
-• Titkos leletek és gyűjthető relikviák a Dicsőségfalon.
-• Offline is működik, nincs hirdetés, nincs regisztráció, a mentés az eszközödön marad.
+Irányíts egy lánctalpas fúrógépet, és fúrj át a talajon, az üledéken, a kéregen, a köpenyen, a külső és a belső magon. Minden rétegnek valódi mélysége, hőmérséklete, nyomása és kőzetkeménysége van – minél mélyebbre jutsz, annál forróbb, keményebb és veszélyesebb.
 
-## Adatbiztonság (Data safety) – válaszok
-- Gyűjt vagy oszt meg felhasználói adatot? **Nem.**
-- Adatot titkosít átvitel közben? Nem releváns (nincs adatküldés); a fájlok HTTPS-en töltődnek.
-- Fiók létrehozása? **Nincs.** Hirdetések? **Nincsenek.** Alkalmazáson belüli vásárlás? **Nincs.**
+MIÉRT SZERETNI FOGOD
+• Fúrásszimulátor valódi léptékkel: a felszíntől a Föld középpontjáig.
+• Fejleszts mindent: fúrófej, motor, páncél, generátor, vészfék és hidraulikus felállító toronydaruval.
+• Depó-tycoon: a rakományt kirakodod, tárolod, és tehervonattal eladod. A tároló, a szállítószalag, a vagonok és a mozdony 20. szintig fejleszthető.
+• Tanulj játék közben: ásványtár, vulkán-tudnivalók, tanterem-mód és valós történelmi események, amelyek a megfelelő mélységben jelennek meg.
+• Találj titkos relikviákat és ritka ásványokat, és töltsd ki a dicsőségfalat.
+• Hangulatos nappal és éjszaka, gőz, szikrák, láva és nyugodt, eredeti zene.
+• Offline is játszható. Nincs fiók, nincs reklám, a mentésed az eszközödön marad.
 
-## Grafikai anyagok
-- Ikon 512×512: `icon-512.png` · Feature graphic 1024×500: `play/feature-graphic-1024x500.png`
-- Telefon-képernyőképek 1080×1920: `play/screens/s1–s5.png` (a Play legalább 2-t kér; angolul: `play/screens-en/`)
+HOGYAN JÁTSZHATÓ
+Fúrsz, figyeled a hőt és a kopást, hazahozod a rakományt, eladod, fejlesztesz, és mélyebbre mész. Rövid vagy hosszú játékmenet – te döntöd el, mikor merülsz.
+
+Magyarul és angolul is elérhető.
+
+## Adatbiztonság
+- Gyűjt vagy oszt meg felhasználói adatot? **Nem.** Fiók: nincs. Reklám: nincs. Alkalmazáson belüli vásárlás: nincs.
+
+## Grafikák
+- Ikon 512×512: `icon-512.png` · Feature graphic: `play/feature-graphic-1024x500.png` · Telefonos képernyőképek 1080×1920 felirattal: `play/screens/s1–s6.png`
+
+## Felfedezhetőség (ASO)
+- A cím és a rövid leírás a fő keresőszavakat tartalmazza: fúrás, szimulátor, tycoon, idle, bányászat, földtan.
+- A legerősebb képernyőkép (fúrás) legyen az első; a felirat rövid, mert a találati listában is látszik.
+- Kérj értékelést az elégedett játékosoktól egy mérföldkő után; az értékelés és a visszatérés többet számít a kulcsszavaknál.
+- Tölts fel 30 másodperces, álló formátumú játékmenet-videót.
+- Fordítsd le további nyelvekre (német, spanyol, portugál, lengyel) ugyanezzel a szerkezettel.
