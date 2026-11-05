@@ -142,3 +142,7 @@ body[data-mm="1"] #toast{top:auto!important;bottom:calc(env(safe-area-inset-bott
 #nv button{white-space:nowrap;position:relative;padding-left:2px;padding-right:2px}
 #nv button .ok{font-size:7px;margin-left:1px;vertical-align:middle}
 @media (max-width:380px){#nv button{font-size:12px}}
+/* zuhanófék gomb: ikon + felirat egymás mellett */
+.pb.brk{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px}
+.pb.brk b{font-size:24px}
+.pb.brk .bl{font:800 13px Georgia,serif;letter-spacing:.6px;color:#ffe9b0;text-shadow:0 1px 0 #000}

@@ -4,9 +4,9 @@
 (function(W){
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('tunnels');
-const HW=2.2,G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60],VMIN=1.6,SAFE=3;
+const HW=2.2,PIS=1+4*Math.pow(1.85/2.2,2),G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60],VMIN=1.6,SAFE=3;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
+const NET={hw:HW,piston:PIS,sw:0,sv:0,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
  // ---------- gyors keresés: 32 m-es rács (az utolsó, éppen növekvő szakasz és a nagyon hosszúak külön listában) ----------
  CELL:32,
  cells(g,fn){const P=HW+.1,x0=Math.min(g[0],g[2])-P,x1=Math.max(g[0],g[2])+P,d0=Math.min(g[1],g[3])-P,d1=Math.max(g[1],g[3])+P,C=NET.CELL;
@@ -50,7 +50,7 @@ const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:
  hcap(){return 1.2e8*(1+S.u.h)},
  cool(){return .04+(W.ENG&&ENG.ready()?.2:0)}, // a fék hűlése: működő motor (olajhűtő) mellett sokkal gyorsabb
  begin(){if(NET.falling)return;if(!NET.free(S.x,S.depth)){S.depth+=.05;NET.trail('D',.05)}NET.falling=true;NET.assist=false;NET.fd=0;S.mode='';NET.alarmT=0;
-  msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a FÉK gombbal te is fékezhetsz – a gép a fékezés közben is tovább süllyed).':'⚠ SZABADESÉS! Tartsd nyomva a FÉK gombot – lassít, de a gép tovább zuhan a járat aljáig!');if(W.alarm3)alarm3()},
+  msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a ZUHANÓFÉK gombbal te is fékezhetsz – a gép a fékezés közben is tovább süllyed).':'⚠ SZABADESÉS! Tartsd nyomva a ZUHANÓFÉK gombot – lassít, de a gép tovább zuhan a járat aljáig!');if(W.alarm3)alarm3()},
  slip(){if(!NET.falling&&NET.openBelow(S.x,S.depth)&&(S.st==='U'||S.st==='H')){S.st='idle';NET.begin()}},
  crash(v){const tol=VTOL[S.u.h],dmg=NET.fd<SAFE?0:Math.max(0,Math.pow(v/tol,2)-.36)*55;NET.shake=clamp(v/tol,0,1);
   if(dmg>0){S.hp=Math.max(0,S.hp-dmg);msg('💥 Becsapódás '+v.toFixed(1)+' m/s sebességgel – a váz '+dmg.toFixed(0)+'%-ot sérült.');if(W.clank){clank(1);scr(.5,200,50,.8)}}
@@ -59,7 +59,7 @@ const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:
  // a szimuláció lépése előtt hívódik; igaz, ha a lépést a szabadesés fizikája elvégezte
  physics(dt){if(!S)return false;
   if(!NET.falling){if(S.st==='D'&&S.depth<R-1&&NET.openBelow(S.x,S.depth))NET.begin();else{NET.settle(dt);return false}}
-  const m=mass(),k=.6*A/m,d0=S.depth;let left=dt;
+  const m=mass(),k=.6*A/m*PIS,d0=S.depth;let left=dt;
   while(left>1e-9&&NET.falling){const h=Math.min(left,.02);left-=h;
    const fl=NET.floor(S.x,S.depth),dist=fl-S.depth,eff=NET.bkT<1?1:Math.max(.4,1-(NET.bkT-1)*.5);let tgt=NET.bkIn?1:0;
    if(S.set.abk){const vl=Math.min(6,VTOL[S.u.h]*.5),avail=Math.max(1,AB*eff-G),need=NET.vz>vl?(NET.vz*NET.vz-vl*vl)/(2*Math.max(.3,dist)):0;
@@ -77,7 +77,7 @@ const NET={hw:HW,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:
 W.NET=NET;
 // ---------- fék ----------
 const BK={held:false,
- btn(){return `<button id="bBK" class="pb brk sm" style="--lc:#ffb020" onpointerdown="BK.down(event)"><b>🛑</b></button>`},
+ btn(){return `<button id="bBK" class="pb brk sm" style="--lc:#ffb020;width:100%" onpointerdown="BK.down(event)" aria-label="Zuhanófék"><b>🛑</b><span class="bl">ZUHANÓFÉK</span></button>`},
  down(e){if(e){e.preventDefault();e.stopPropagation()}aInit();BK.held=true;NET.bkIn=1;if(W.clk)clk(300);if(navigator.vibrate)navigator.vibrate(20)},
  up(){if(!BK.held)return;BK.held=false;NET.bkIn=0}};
 W.BK=BK;
@@ -100,11 +100,13 @@ if(W.on){
    if(NET.bkT>1&&Math.random()<V.dt*8){const[a,b]=V.lw(-7.4,1.9);pr.push({x:V.rx+(a-V.cx)/V.K,y:V.ry+(b-V.cy)/V.K,vx:0,vy:-1.5,l:2,t:'k'})}}});
  on('hud',V=>{if(!NET.falling&&NET.bk<.05&&NET.shake<.02)return;const x=V.x,w=V.w;x.save();
   if(NET.falling){x.strokeStyle='rgba(255,255,255,.28)';x.lineWidth=1.5;const sp=NET.vz;for(let i=0;i<26;i++){const px=(i*47.3)%w,q=((V.ts*sp*.0012*(.7+i%4*.15)+i*.37)%1),py=V.h*(1-q);x.beginPath();x.moveTo(px,py);x.lineTo(px,py+Math.min(60,6+sp*.8));x.stroke()}
-   x.fillStyle='rgba(10,8,6,.88)';rr(x,w/2-112,66,224,68,8);x.fill();x.strokeStyle=Math.sin(V.ts/110)>0?'#ff3b2f':'#7a1a12';x.lineWidth=1.6;x.stroke();
-   x.font='bold 11px Georgia';x.fillStyle='#ff6a4a';x.textAlign='left';x.fillText('⚠ SZABADESÉS',w/2-104,81);x.fillStyle='#fff';x.textAlign='right';x.fillText(Math.round(NET.vz)+' m/s',w/2+104,81);
-   x.font='10px Georgia';x.fillStyle='#ddd';x.textAlign='left';x.fillText('talajig',w/2-104,95);x.textAlign='right';x.fillText(fd(Math.max(0,NET.floor(S.x,S.depth)-S.depth)),w/2+104,95);
-   x.textAlign='left';x.font='9px Georgia';x.fillStyle='#bfb09a';x.fillText('FÉK',w/2-104,110);x.fillText('HŐ',w/2-104,122);
-   x.fillStyle='#2a2118';x.fillRect(w/2-76,104,180,6);x.fillRect(w/2-76,116,180,6);x.fillStyle='#ffb020';x.fillRect(w/2-76,104,180*NET.bk,6);x.fillStyle=NET.bkT>1?'#ff3b2f':'#f0a030';x.fillRect(w/2-76,116,180*Math.min(1,NET.bkT),6)}
+   // egysoros sáv a játéktér tetején, a HUD-kártyák fölött: sebesség, talajig, zuhanófék és hő
+   const X0=8,W2=w-16,Y0=30,H2=20,dist=Math.max(0,NET.floor(S.x,S.depth)-S.depth),ds=dist>=1e3?(dist/1e3).toFixed(1).replace('.',',')+' km':Math.round(dist)+' m';
+   x.fillStyle='rgba(10,8,6,.92)';rr(x,X0,Y0,W2,H2,7);x.fill();x.strokeStyle=Math.sin(V.ts/110)>0?'#ff3b2f':'#7a1a12';x.lineWidth=1.4;x.stroke();
+   x.textBaseline='middle';x.textAlign='left';x.font='bold 11px Georgia';x.fillStyle='#ff6a4a';x.fillText('⚠ '+Math.round(NET.vz)+' m/s',X0+7,Y0+H2/2+.5);
+   x.font='10px Georgia';x.fillStyle='#ddd';x.fillText('talajig '+ds,X0+72,Y0+H2/2+.5);
+   x.font='9px Georgia';x.fillStyle='#bfb09a';const bx=X0+W2-182;x.fillText('ZUHANÓFÉK',bx,Y0+H2/2+.5);x.fillText('HŐ',bx+112,Y0+H2/2+.5);
+   x.fillStyle='#2a2118';x.fillRect(bx+54,Y0+7,54,6);x.fillRect(bx+126,Y0+7,48,6);x.fillStyle='#ffb020';x.fillRect(bx+54,Y0+7,54*NET.bk,6);x.fillStyle=NET.bkT>1?'#ff3b2f':'#f0a030';x.fillRect(bx+126,Y0+7,48*Math.min(1,NET.bkT),6);x.textBaseline='alphabetic'}
   if(NET.shake>.02){x.fillStyle=`rgba(255,60,30,${NET.shake*.35})`;x.fillRect(0,0,V.w,V.h)}
   x.restore()});
 }
