@@ -125,3 +125,20 @@ body.cin #awCard{display:none!important}
 body.cin #fpsB{display:none!important}
 /* figyelmeztetés (toast): világos betű, tömör sötét háttér + arany keret – a sötét háttérben is jól olvasható */
 #toast{color:#fff4dc!important;background:rgba(28,20,12,.96)!important;border:1px solid #e8b84a!important;box-shadow:0 4px 18px rgba(0,0,0,.6);font-size:14px;line-height:1.35}
+
+/* ===== Egységes felugró réteg (v5.0) =====
+   Fent csak a rövid figyelmeztetés (toast) jelenik meg, a fejléc alatt. A kártyák (Beszámoló, bázis, Távollétedben)
+   alulról, a vezérlőpult felett nyílnak (--dk = a vezérlők magassága, a layout.js méri), így nem takarják a játékteret és a HUD-ot. */
+#toast{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(92vw,420px);box-sizing:border-box;padding:8px 12px!important;font-size:13px!important;text-align:center;top:calc(env(safe-area-inset-top,0px) + 50px)!important;z-index:80!important}
+#stoCard,#srfCard,#awCard{top:auto!important;bottom:calc(var(--dk,150px) + 8px)!important;max-height:min(46vh,340px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#stoCard{z-index:55;font-size:12.5px!important}
+#srfCard{z-index:58}
+#awCard{z-index:62}
+body:not([data-tab="0"]) #stoCard,body:not([data-tab="0"]) #srfCard{display:none!important}
+#stoCard .sth{margin-bottom:4px}#stoCard .stk{font-size:22px}
+/* a főmenün a figyelmeztetés alul jelenik meg, hogy ne takarja a címet */
+body[data-mm="1"] #toast{top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)!important}
+/* fülsor: keskeny telefonon sem törik két sorba a „Műhely ●" */
+#nv button{white-space:nowrap;position:relative;padding-left:2px;padding-right:2px}
+#nv button .ok{font-size:7px;margin-left:1px;vertical-align:middle}
+@media (max-width:380px){#nv button{font-size:12px}}
