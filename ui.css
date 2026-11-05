@@ -270,3 +270,8 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
 #nv button .ok{position:absolute;top:5px;right:3px;margin:0}
 @media (max-width:380px){#nv button{font-size:11px}}
 #nv button{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}#nv .ni{font-style:normal;font-size:17px}#nv .nl{font-size:11px;white-space:nowrap}@media (max-width:380px){#nv .nl{font-size:10px}}
+
+/* v5.18: a Beszámoló alapból összecsukott (csak cím + ✕), koppintásra kinyílik – nem takarja a gépet */
+#stoCard:not(.open) .stb{display:none}
+#stoCard .sth{cursor:pointer}
+#stoCard:not(.open) .sth{margin-bottom:0}

@@ -46,8 +46,9 @@ const STO={DB:BYID,cur:null,Q:[],gap:0,show:true,
   if(W.CIN&&CIN.on){if(!CIN.lec)CIN.caption(e);return}
   if(typeof document==='undefined'||!document.body||!document.createElement||!document.getElementById){return}
   let c=document.getElementById('stoCard');if(!c){c=document.createElement('div');c.id='stoCard';document.body.appendChild(c)}
-  c.innerHTML=`<div class="sth"><span class="stk">${e.k}</span><div><div class="stm">📜 Beszámoló · ${e.y} · ${STO.fd(e.d)}</div><b>${e.t}</b></div><button class="srx" aria-label="Bezár" onclick="STO.close()">✕</button></div><div class="stb">${e.s}</div>`;
-  c.style.display='block';c.classList.remove('out');clearTimeout(STO._t);STO._t=setTimeout(STO.close,Math.min(22000,8000+e.s.length*45))},
+  c.innerHTML=`<div class="sth" onclick="STO.tg()"><span class="stk">${e.k}</span><div><div class="stm">📜 Beszámoló · ${e.y} · ${STO.fd(e.d)}</div><b>${e.t}</b></div><button class="srx" aria-label="Bezár" onclick="STO.close()">✕</button></div><div class="stb" id="stoBody">${e.s}</div>`;
+  c.style.display='block';c.classList.remove('out');c.classList.remove('open');clearTimeout(STO._t);STO._t=setTimeout(STO.close,7000)},
+ tg(){try{const c=document.getElementById('stoCard');if(c){c.classList.toggle('open');clearTimeout(STO._t);if(c.classList.contains('open'))STO._t=setTimeout(STO.close,20000)}}catch(e){}},
  close(){STO.cur=null;if(typeof document==='undefined'||!document.getElementById)return;const c=document.getElementById('stoCard');if(c)c.style.display='none'},
  // gyűjtemény kártya a Tudás/Műhely fülön
  html(){const sn=STO.seen(),n=sn.length;let h=`<div class="card">📜 <b>Beszámolók</b> <span class="mu">${n}/${DB.length}</span><div class="mu">Valós események és tudásmorzsák – fúrás közben, az adott mélység elérésekor jelennek meg.</div><div class="bar"><i style="width:${n/DB.length*100}%"></i></div><details style="margin-top:6px"><summary class="mu">Gyűjtemény megnyitása</summary>`;
