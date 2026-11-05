@@ -4,7 +4,7 @@
 (function(W){
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('tunnels');
-const HW=2.2,PIS=1+4*Math.pow(1.85/2.2,2),G=9.81,AB=22,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60],VMIN=1.6,SAFE=3;
+const HW=2.2,PIS=1+4*Math.pow(1.85/2.2,2),G=9.81,AB=40,A=Math.PI*1.85*1.85,VTOL=[10,14,20,28,40,60],VMIN=1.6,SAFE=3;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NET={hw:HW,piston:PIS,sw:0,sv:0,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,shake:0,alarmT:0,idx:null,
  // ---------- gyors keresés: 32 m-es rács (az utolsó, éppen növekvő szakasz és a nagyon hosszúak külön listában) ----------
@@ -47,7 +47,7 @@ const NET={hw:HW,piston:PIS,sw:0,sv:0,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,
   NET.each(S.x,S.depth,g=>{if(!NET.hit(g,S.x,S.depth,0))return false;if(g[0]===g[2])inV=true;else if(ds===null)ds=g[1];return false});
   if(ds===null||inV||Math.abs(S.depth-ds)<.02)return;
   const dd=Math.max(-S.depth,clamp(ds-S.depth,-4*dt,4*dt));S.depth+=dd;NET.trail(dd>0?'D':'U',Math.abs(dd))},
- hcap(){return 1.2e8*(1+S.u.h)},
+ hcap(){return 1.9e8*(1+S.u.h)},
  cool(){return .04+(W.ENG&&ENG.ready()?.2:0)}, // a fék hűlése: működő motor (olajhűtő) mellett sokkal gyorsabb
  begin(){if(NET.falling)return;if(!NET.free(S.x,S.depth)){S.depth+=.05;NET.trail('D',.05)}NET.falling=true;NET.assist=false;NET.fd=0;S.mode='';NET.alarmT=0;
   msg(S.set.abk?'⚠ Szabadesés! Az automata fékasszisztens lassít a talaj közelében (a ZUHANÓFÉK gombbal te is fékezhetsz – a gép a fékezés közben is tovább süllyed).':'⚠ SZABADESÉS! Tartsd nyomva a ZUHANÓFÉK gombot – lassít, de a gép tovább zuhan a járat aljáig!');if(W.alarm3)alarm3()},

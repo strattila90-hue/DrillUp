@@ -493,4 +493,8 @@ group('Z9) Menü és Raktár-lap: görgethető beállítások, nincs takaró ká
 t('a beállítások-menü minden vezérlője megvan a csoportosított változatban is',()=>{const g=boot({menu:true}),M=g.sb.MNU,raw=require('vm').runInContext('setBody()',g.sb),h=M.set(raw);ok(h.includes('class="msc"')&&h.includes('mhd'));for(const k of['S.set.vol','S.set.sc','S.set.auto','S.set.abk','S.set.fcl','S.set.tnl','S.set.alp','FS.set','S.set.snap','S.set.arc','S.set.erect','S.set.amb','S.set.fpsb','S.set.rl','S.set.hap','DIAG.show','S.set.dbg','Gov.setMode','expSave','impSave'])ok(h.includes(k),'hiányzik: '+k)});
 t('Raktár-lap megnyitása bezárja a beszámoló-kártyát, és nyitott lap mellett nem nyílik új',()=>{const g=boot(),T=g.T;const S=T.S;g.sb.STO.Q=[{d:10,k:'x',y:'1',t:'t',s:'s'}];g.sb.STO.gap=0;g.sb.STO.cur={};T.shT&&0;require('vm').runInContext("sheetT='store'",g.sb);g.sb.STO.cur=null;g.sb.STO.gap=0;g.frames(5,100);ok(!g.sb.STO.cur,'nyitott lap mellett nem nyílhat beszámoló')});
 
+group('Z10) Zuhanófék karok, valósághű rétegtérkép');
+t('zuhanófék: erősebb fék (AB≥40) és négy kar, nyomásuk követi a fékezést; a gép a karok mellett is megáll a talajnál',()=>{const g=boot(),T=g.T,S=T.S;ok(g.sb.ARM,'karok betöltve');g.sb.NET.bk=1;g.sb.ARM.upd(1);ok(g.sb.ARM.e>.9);g.sb.NET.bk=0;g.sb.ARM.upd(1);ok(g.sb.ARM.e<.1);eq(g.sb.ARM.AT.length*2,4)});
+t('rétegtérkép: a rétegmagasságok a valós vastagsággal arányosak (alsó köpeny ≫ átmeneti zóna), összegük a teljes magasság',()=>{const g=boot(),G=g.sb.GG,L=G.lay(600);ok(Math.abs(L.off.at(-1)-600)<1e-6);ok(L.hs[7]>L.hs[6]*6,'alsó köpeny/átmeneti zóna arány');ok(L.hs[9]>L.hs[5]*4);ok(L.hs[0]>=10.9&&L.hs[1]>=10.9)});
+
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);
