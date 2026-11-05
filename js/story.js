@@ -41,7 +41,7 @@ const STO={DB:BYID,cur:null,Q:[],gap:0,show:true,
  check(dt){if(typeof S==='undefined'||!isFinite(S.depth))return;STO.gap=Math.max(0,STO.gap-dt);const sn=STO.seen();let top=null;
   for(const e of DB){if(S.depth>=e.d&&sn.indexOf(e.id)<0){sn.push(e.id);top=e}}
   if(top){STO.Q.push(top);if(STO.Q.length>1)STO.Q.splice(0,STO.Q.length-1)}
-  if(STO.Q.length&&STO.gap<=0&&!STO.cur&&!(W.NET&&NET.falling)&&!(W.DMG&&DMG.busy&&DMG.busy())){STO.open(STO.Q.shift())}},
+  if(STO.Q.length&&STO.gap<=0&&!STO.cur&&!(typeof sheetT!=='undefined'&&sheetT)&&!(W.NET&&NET.falling)&&!(W.DMG&&DMG.busy&&DMG.busy())){STO.open(STO.Q.shift())}},
  open(e){if(W.PN&&!PN.vis('sto'))return;STO.cur=e;STO.gap=25;try{beep(520,.1,.04,'sine');setTimeout(()=>beep(780,.16,.04,'sine'),110)}catch(x){}
   if(W.CIN&&CIN.on){if(!CIN.lec)CIN.caption(e);return}
   if(typeof document==='undefined'||!document.body||!document.createElement||!document.getElementById){return}

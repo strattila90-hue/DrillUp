@@ -22,7 +22,7 @@ const SRF={Q:[],H:[],pills:[],card:null,seen:0,
  up(id){if(typeof base==='function'&&!base())return toast('Fejleszteni csak a bázison lehet.');
   if(id==='lab'){if(window.LAB)LAB.buy();SRF.card=null;SRF.showCard(id);return}
   const l=SRF.lv(id),c=SRF.cost(id);if(!c)return;if(S.cash<c)return toast('Nincs elég pénz ('+nf(c,0)+' Ft).');S.cash-=c;SRF.st()[id]=l+1;msg((INFO[id].e)+' '+INFO[id].n+' fejlesztve: '+(l+1)+'. szint – '+INFO[id].eff(l+1));try{beep(660,.12,.06,'triangle');setTimeout(()=>beep(990,.18,.06,'triangle'),110)}catch(e){}try{save()}catch(e){}SRF.showCard(id)},
- showCard(id){if(typeof document==='undefined'||!document.getElementById||!document.body||!document.createElement)return;let c=document.getElementById('srfCard');if(!c){c=document.createElement('div');c.id='srfCard';document.body.appendChild(c)}
+ showCard(id){if(typeof sheetT!=='undefined'&&sheetT)return;if(typeof document==='undefined'||!document.getElementById||!document.body||!document.createElement)return;let c=document.getElementById('srfCard');if(!c){c=document.createElement('div');c.id='srfCard';document.body.appendChild(c)}
   const I=INFO[id],l=SRF.lv(id),cs=SRF.cost(id),on=SRF.on(id),stars='★'.repeat(l)+'☆'.repeat(3-l);
   const nx=l<3?`<div class="mu">Következő szint: ${I.eff(l+1)}</div>`:'<div class="mu ok">Maximális szint</div>';
   c.innerHTML=`<div class="srh"><b>${I.e} ${I.n}</b><span class="srs">${stars}</span><button class="srx" aria-label="Bezár" onclick="SRF.close()">✕</button></div><div class="mu">${I.ds}</div><div class="srv">Most: <b>${I.eff(l)}</b></div>${nx}
