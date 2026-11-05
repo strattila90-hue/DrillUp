@@ -217,3 +217,17 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
 .mrw{position:relative;cursor:pointer}
 .mrw .b{width:100%}.mfoot{text-align:center;color:#6b5a44;font-size:11px;letter-spacing:.3em;padding:8px 0}
 .sheet{background:#120e0afa}
+
+/* Filmes relikviák: Dicsőségfal és találat-kártya */
+.relWall{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px}
+.relFr{display:flex;flex-direction:column;gap:3px;padding:6px 6px 8px;border-radius:12px;background:linear-gradient(160deg,#2b2218,#15100b);border:2px solid #8a6a3a;box-shadow:0 4px 12px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,220,150,.12);text-align:left;color:#f1e4cc;font:inherit}
+.relFr img{width:100%;border-radius:7px;display:block;aspect-ratio:240/170;object-fit:cover}
+.relFr b{font-size:12.5px;line-height:1.2}.relFr small{font-size:10px;color:#b9a581;line-height:1.25}
+.relFr.lk{border-style:dashed;border-color:#4a3c28;opacity:.75;justify-content:center;min-height:150px}
+.relQ{display:flex;align-items:center;justify-content:center;aspect-ratio:240/170;border-radius:7px;background:repeating-linear-gradient(45deg,#1a140e,#1a140e 8px,#201910 8px,#201910 16px);font:700 44px Georgia;color:#4a3c28}
+.relHd .bar{margin:8px 0 4px}
+#relCard{display:none;position:fixed;inset:0;z-index:70;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:16px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+#relCard .rcIn{width:min(94vw,400px);max-height:92vh;overflow:auto;padding:14px;border-radius:18px;background:linear-gradient(#2c2218,#120d08);border:2px solid #d9b36a;box-shadow:0 0 40px rgba(255,190,80,.35);text-align:center;color:#f1e4cc}
+#relCard img{width:100%;border-radius:10px;margin:8px 0;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+#relCard .rcK{font-size:12px;letter-spacing:.12em;color:#ffd48a}#relCard b{font:700 20px Georgia,serif}.rcF{font-size:12px;color:#b9a581;margin:2px 0 8px}
+#relCard p{font-size:13px;line-height:1.45;margin:0 0 12px;text-align:left}.rcB{display:flex;gap:8px}.rcB .b{flex:1}
