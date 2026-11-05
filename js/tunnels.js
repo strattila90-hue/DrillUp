@@ -100,10 +100,11 @@ if(W.on){
    if(NET.bkT>1&&Math.random()<V.dt*8){const[a,b]=V.lw(-7.4,1.9);pr.push({x:V.rx+(a-V.cx)/V.K,y:V.ry+(b-V.cy)/V.K,vx:0,vy:-1.5,l:2,t:'k'})}}});
  on('hud',V=>{if(!NET.falling&&NET.bk<.05&&NET.shake<.02)return;const x=V.x,w=V.w;x.save();
   if(NET.falling){x.strokeStyle='rgba(255,255,255,.28)';x.lineWidth=1.5;const sp=NET.vz;for(let i=0;i<26;i++){const px=(i*47.3)%w,q=((V.ts*sp*.0012*(.7+i%4*.15)+i*.37)%1),py=V.h*(1-q);x.beginPath();x.moveTo(px,py);x.lineTo(px,py+Math.min(60,6+sp*.8));x.stroke()}
-   x.fillStyle='rgba(10,8,6,.88)';rr(x,w/2-112,66,224,50,8);x.fill();x.strokeStyle=Math.sin(V.ts/110)>0?'#ff3b2f':'#7a1a12';x.lineWidth=1.6;x.stroke();
-   x.font='bold 11px Georgia';x.fillStyle='#ff6a4a';x.textAlign='left';x.fillText('⚠ SZABADESÉS',w/2-104,80);x.fillStyle='#fff';x.textAlign='right';x.fillText(Math.round(NET.vz)+' m/s · talajig '+fd(Math.max(0,NET.floor(S.x,S.depth)-S.depth)),w/2+104,80);
-   x.textAlign='left';x.font='9px Georgia';x.fillStyle='#bfb09a';x.fillText('FÉK',w/2-104,96);x.fillText('HŐ',w/2-104,108);
-   x.fillStyle='#2a2118';x.fillRect(w/2-76,90,180,6);x.fillRect(w/2-76,102,180,6);x.fillStyle='#ffb020';x.fillRect(w/2-76,90,180*NET.bk,6);x.fillStyle=NET.bkT>1?'#ff3b2f':'#f0a030';x.fillRect(w/2-76,102,180*Math.min(1,NET.bkT),6)}
+   x.fillStyle='rgba(10,8,6,.88)';rr(x,w/2-112,66,224,68,8);x.fill();x.strokeStyle=Math.sin(V.ts/110)>0?'#ff3b2f':'#7a1a12';x.lineWidth=1.6;x.stroke();
+   x.font='bold 11px Georgia';x.fillStyle='#ff6a4a';x.textAlign='left';x.fillText('⚠ SZABADESÉS',w/2-104,81);x.fillStyle='#fff';x.textAlign='right';x.fillText(Math.round(NET.vz)+' m/s',w/2+104,81);
+   x.font='10px Georgia';x.fillStyle='#ddd';x.textAlign='left';x.fillText('talajig',w/2-104,95);x.textAlign='right';x.fillText(fd(Math.max(0,NET.floor(S.x,S.depth)-S.depth)),w/2+104,95);
+   x.textAlign='left';x.font='9px Georgia';x.fillStyle='#bfb09a';x.fillText('FÉK',w/2-104,110);x.fillText('HŐ',w/2-104,122);
+   x.fillStyle='#2a2118';x.fillRect(w/2-76,104,180,6);x.fillRect(w/2-76,116,180,6);x.fillStyle='#ffb020';x.fillRect(w/2-76,104,180*NET.bk,6);x.fillStyle=NET.bkT>1?'#ff3b2f':'#f0a030';x.fillRect(w/2-76,116,180*Math.min(1,NET.bkT),6)}
   if(NET.shake>.02){x.fillStyle=`rgba(255,60,30,${NET.shake*.35})`;x.fillRect(0,0,V.w,V.h)}
   x.restore()});
 }

@@ -372,6 +372,12 @@ t('ambiens hang: hangkörnyezettel a csomópontok létrejönnek, a kikapcsolás/
 t('teljesítmény-figyelő: az fps az átlagolt képidőből jön; ha a minőségváltó visszavesz, számol és értesít (legfeljebb percenként)',()=>{const g=lg(),S=g.T.S,P=g.sb.PF,G=g.sb.Gov;ok(!!P);P.ema=16.7;ok(P.fps()===60);P.ema=33.3;ok(P.fps()===30);S.set.fps=1;G.setMode(2);P.q=null;P.frame(.016);ok(P.q===2);G.q=1;const p0=(S.ss&&S.ss.pd)||0;P.lastWarn=0;P.frame(.016);ok(S.ss.pd===p0+1&&P.lastWarn>0,'visszavétel számolva');G.q=0;P.frame(.016);ok(S.ss.pd===p0+2);
  for(const v of[0,.0001,.7,NaN])P.frame(v);ok(isFinite(P.ema))});
 
+group('Y2) Szabadesés: irányítás és tájolás');
+t('szabadesés közben a mozgásgombok nem állítanak át állapotot (jelzés), a stop és a fék működik; leérkezés után újra irányítható',()=>{const g=shaft([[0,0,0,300]],{abk:1}),T=g.T,S=T.S,N=g.sb.NET;S.st='D';let started=false;until(g,()=>{if(N.falling)started=true;return started},500);ok(N.falling);
+ T.go('L');ok(S.st==='D','a ◀ nem írja át az állapotot esés közben: '+S.st);T.go('U');ok(S.st==='D');N.bkIn=1;T.go('idle');ok(S.st==='idle','stop mehet');N.bkIn=0;
+ const r=until(g,()=>!N.falling,4000);ok(!N.falling,'leérkezett');T.go('U');ok(S.st==='U','leérkezés után újra irányítható')});
+t('szabadesés: a forgókamra-kapu nem tartja félúton a gépet (esés közben nincs kamra-fúrás)',()=>{const g=shaft([[0,0,0,300]],{abk:1}),T=g.T,S=T.S,N=g.sb.NET,C=g.sb.CH;S.st='D';const n0=(S.ch||[]).length;until(g,()=>!N.falling&&S.depth>250,4000);ok((S.ch||[]).length===n0,'nem fúrt kamrát esés közben')});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
