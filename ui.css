@@ -123,3 +123,5 @@ body.cin #lecBtn{display:none!important}
 body.cin #awCard{display:none!important}
 #fpsB{display:none;position:fixed;right:8px;top:calc(env(safe-area-inset-top,0px) + 54px);z-index:70;padding:2px 7px;border-radius:8px;background:rgba(0,0,0,.6);color:#7cff6a;font:11px/1.4 monospace;pointer-events:none}
 body.cin #fpsB{display:none!important}
+/* figyelmeztetés (toast): világos betű, tömör sötét háttér + arany keret – a sötét háttérben is jól olvasható */
+#toast{color:#fff4dc!important;background:rgba(28,20,12,.96)!important;border:1px solid #e8b84a!important;box-shadow:0 4px 18px rgba(0,0,0,.6);font-size:14px;line-height:1.35}
