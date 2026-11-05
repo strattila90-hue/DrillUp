@@ -5,6 +5,8 @@
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('vlight');
 const VL={
+ // a világítás kizárólag a generátorról működik: bekapcsolt generátor = fény (fokozatosan gyullad), nincs generátor = sötét lámpák
+ _g:1,gl(dt){const t=W.GEN?(GEN.running()?1:0):1;VL._g+=(t-VL._g)*Math.min(1,(dt||.016)*(t?3:6));if(Math.abs(t-VL._g)<.004)VL._g=t;return VL._g},
  // lámpa-helyek a gép méteres koordinátáiban (x: előre +, y: lefelé +)
  P:{front:[-4.6,-1.62],frontLow:[-4.6,1.25],rear:[-12.05,-.6],sideTop:[-7.4,-1.64],sideBot:[-7.4,1.25],sideF:[-5.8,1.25],sideR:[-9.6,1.25]},
  // a rajz: lencse + fény a karosszérián (a mach() végén)

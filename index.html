@@ -65,6 +65,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
 <script src="js/depotui.js"></script>
+<script src="js/depotscene.js"></script>
 <script src="js/menu.js"></script>
 <script src="js/brakearms.js"></script>
 <script src="js/relics.js"></script>
@@ -79,7 +80,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.14';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.15';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -522,7 +523,7 @@ if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){an
   else if(p.t=='sp'){p.vy+=16*dt;x.strokeStyle=`rgba(255,${130+p.l*200|0},50,${Math.min(1,p.l*3)})`;x.lineWidth=1.6;x.beginPath();x.moveTo(X,Y);x.lineTo(X-p.vx*dt*K*2.5,Y-p.vy*dt*K*2.5);x.stroke()}
   else{x.fillStyle=p.t=='k'?`rgba(60,60,60,${p.l/3})`:`rgba(235,235,235,${p.l/4})`;x.beginPath();x.arc(X,Y,3+(3.5-p.l)*4,0,7);x.fill()}});
  // ---- a gép (méterben) ----
- const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.VOL?VOL.sh*3:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);if(window.HILL){const ht=HILL.tilt(dt,S.x,fc,ry,ang);if(Math.abs(ht.rot)>.0005||Math.abs(ht.dy)>.001){x.translate(0,ht.dy*K);const pxc=-6*K*sc;x.translate(pxc,2*K);x.rotate(ht.rot);x.translate(-pxc,-2*K)}}x.rotate(ang);const lit2=ry>2||day<.55,fo=(()=>{const u=clamp((Math.abs(sY)-.5)/.42,0,1);return u*u*(3-2*u)})();
+ const vb=clamp(rate/14,0,1)*.7+(window.ENG?ENG.rpm*.12:0)+(window.VOL?VOL.sh*3:0)+(window.NET?NET.shake*2.5+NET.bk*Math.min(1,NET.vz/30)*.9:0),vx0=vb*(Math.sin(ts*.061)+Math.sin(ts*.113)*.6),vy0=vb*(Math.sin(ts*.077)+Math.sin(ts*.139)*.5);x.save();x.translate(cx+vx0,Ty+vy0);if(window.HILL){const ht=HILL.tilt(dt,S.x,fc,ry,ang);if(Math.abs(ht.rot)>.0005||Math.abs(ht.dy)>.001){x.translate(0,ht.dy*K);const pxc=-6*K*sc;x.translate(pxc,2*K);x.rotate(ht.rot);x.translate(-pxc,-2*K)}}x.rotate(ang);const lit2=(ry>2||day<.55)&&(!window.GEN||GEN.running()),fo=(()=>{const u=clamp((Math.abs(sY)-.5)/.42,0,1);return u*u*(3-2*u)})();
  const u3=window.T3?(()=>{const u=clamp(Math.abs(sY)/.5,0,1);return u*u*(3-2*u)})():0,a2=(()=>{const u=clamp((u3-.45)/.55,0,1);return 1-u*u*(3-2*u)})();if(a2>.003&&!(window.DMG&&DMG.gone())){x.save();x.globalAlpha=a2;x.transform(1,0,sY*.05*fc,1,0,0);x.translate(0,1.6*K);x.scale(1,1-.09*Math.abs(sY));x.translate(0,-1.6*K);x.scale(K*(Math.abs(sc)<.05?(sc<0?-.05:.05):sc),K*(1+.05*Math.abs(sY)));if(window.MX){const jt=MX.jit(ts);x.translate(jt[0],jt[1])}mach(x,{glow:window.HGL?HGL.g(ry,hl):0,ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat:hh,ht:S.u.f,stroke,trk:trkM,pv,grip,hyd:hydAct,alarm:(tl&&act)||S.st=='H',brk:window.NET?NET.bk:0,bkT:window.NET?NET.bkT:0});x.restore()}
  if(window.HGL){const gg=HGL.g(ry,hl);if(gg>.05){HGL.halo(x,0,0,K,gg,ts);const[ga,gb]=lw(-6.5,0),gm=Math.min(1,gg);GL.push({x:ga,y:gb,r:K*(10+6*gm),c:'255,'+(110+70*gm|0)+',40',i:.5*gm})}}
  if(u3>.001){try{const R3=Math.min(3,window.devicePixelRatio||1),W3=Math.ceil(28*K*R3),H3=Math.ceil(8*K*R3);if(!t3c||t3c.width!==W3||t3c.height!==H3){t3c=document.createElement('canvas');t3c.width=W3;t3c.height=H3}const c3=t3c.getContext('2d');c3.setTransform(1,0,0,1,0,0);c3.clearRect(0,0,W3,H3);c3.translate(W3/2,H3/2);c3.scale(K*R3,K*R3);T3.draw(c3,{yaw,sp,hl,ht:S.u.f,heat:hh,lit:lit2,gnd:ry<2,glow:window.HGL?HGL.g(ry,hl):0});x.save();x.globalAlpha=u3;x.drawImage(t3c,-W3/2/R3,-H3/2/R3,W3/R3,H3/R3);x.restore()}catch(e){DBG.err='t3: '+e.message}}
@@ -530,7 +531,7 @@ if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){an
  x.restore();
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
  // fények
- {const eL=window.ENG?Math.min(1,ENG.rpm*1.25):1;if(eL>.03){if(window.VL)VL.light({lw,lamp,CN,GL,fc,cA,sA,dr,eL,ts});else{const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5*eL);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:(dr?55:200)*eL,s:.5});lamp(nx,ny,dr?75:90,.9*eL);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25*eL})}}}
+ {const eL=window.VL&&VL.gl?VL.gl(dt):(window.ENG?Math.min(1,ENG.rpm*1.25):1);if(eL>.03){if(window.VL)VL.light({lw,lamp,CN,GL,fc,cA,sA,dr,eL,ts});else{const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5*eL);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:(dr?55:200)*eL,s:.5});lamp(nx,ny,dr?75:90,.9*eL);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25*eL})}}}
  const dsk=(window.Gov&&Gov.q===0)?.5:1,dkw=Math.max(1,cv.width*dsk|0);if(dk&&dk.width!=dkw)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=dkw;dk.height=Math.max(1,cv.height*dsk|0)}
  const d2=dk.getContext('2d');d2.setTransform(dp*dsk,0,0,dp*dsk,0,0);d2.globalCompositeOperation='source-over';d2.clearRect(0,0,w,h);const ys=clamp(Ys,0,h);
  d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.5+.35*Math.min(1,ry/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
