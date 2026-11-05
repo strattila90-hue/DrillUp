@@ -513,4 +513,8 @@ t('a rajz kattintható területeket ad (szilók, szalag, mozdony, kocsik) és sz
 t('generátor nélkül nem gyullad ki a fúrógép lámpája; futó generátornál fokozatosan világít',()=>{const g=boot(),V=g.sb.VL;ok(V&&V.gl);g.engineOn();g.sb.GEN.running=()=>false;V._g=1;for(let i=0;i<60;i++)V.gl(.1);ok(V._g<.02,'ki: '+V._g);g.sb.GEN.running=()=>true;for(let i=0;i<60;i++)V.gl(.1);ok(V._g>.98,'be: '+V._g)});
 t('a hidraulikus felállító + daru rajza éjjel-nappal, minden fázisban kivétel nélkül',()=>{const g=boot(),T=g.T,S=T.S;g.engineOn();S.fuel=900;S.depth=0;S.x=0;const e=[];for(const d of['up','down']){try{g.sb.HYD.start(d)}catch(x){}for(let i=0;i<80;i++){e.push(...g.frames(2,60))}}eq(e,[])});
 
+group('Z13) Play-áruház előkészítés');
+t('manifest: azonosító, hatókör, maszkolható ikonok, létező képernyőképek és ikonok',()=>{const fs=require('fs'),m=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));eq(m.id,'/');eq(m.scope,'/');ok(m.icons.some(i=>i.purpose==='maskable'&&i.sizes==='512x512')&&m.icons.some(i=>i.purpose==='maskable'&&i.sizes==='192x192'));for(const i of m.icons)ok(fs.existsSync(i.src),i.src);ok(m.screenshots.length>=2);for(const s of m.screenshots)ok(fs.existsSync(s.src),s.src)});
+t('assetlinks.json érvényes JSON, adatvédelmi oldal és TWA-sablon megvan, a service worker gyorsítótárazza',()=>{const fs=require('fs');const a=JSON.parse(fs.readFileSync('.well-known/assetlinks.json','utf8'));ok(a[0].target.package_name);ok(/Adatvédelmi/.test(fs.readFileSync('privacy.html','utf8')));JSON.parse(fs.readFileSync('play/twa-manifest.json','utf8'));ok(/privacy\.html/.test(fs.readFileSync('sw.js','utf8')))});
+
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);

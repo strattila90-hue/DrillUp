@@ -1,10 +1,10 @@
 {
- "id": "./",
- "name": "Drill Up",
- "short_name": "Drill Up",
+ "id": "/",
+ "name": "DrillUp Core Quest",
+ "short_name": "Core Quest",
  "description": "Fúrj le a Föld magjáig – valós méterekben.",
- "start_url": "./",
- "scope": "./",
+ "start_url": "/",
+ "scope": "/",
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#14100c",
@@ -30,6 +30,12 @@
    "purpose": "any"
   },
   {
+   "src": "icon-maskable-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "maskable"
+  },
+  {
    "src": "icon-maskable-512.png",
    "sizes": "512x512",
    "type": "image/png",
@@ -48,13 +54,44 @@
   {
    "name": "Játék folytatása",
    "short_name": "Folytatás",
-   "url": "./",
+   "url": "/",
    "icons": [
     {
      "src": "icon-192.png",
      "sizes": "192x192"
     }
    ]
+  }
+ ],
+ "dir": "ltr",
+ "screenshots": [
+  {
+   "src": "play/screens/s1.png",
+   "sizes": "1080x1920",
+   "type": "image/png",
+   "form_factor": "narrow",
+   "label": "Fúrás a Föld rétegein át"
+  },
+  {
+   "src": "play/screens/s2.png",
+   "sizes": "1080x1920",
+   "type": "image/png",
+   "form_factor": "narrow",
+   "label": "Depó: tartályok, vonat, kikötő"
+  },
+  {
+   "src": "play/screens/s3.png",
+   "sizes": "1080x1920",
+   "type": "image/png",
+   "form_factor": "narrow",
+   "label": "Fejlesztések"
+  },
+  {
+   "src": "play/screens/s4.png",
+   "sizes": "1080x1920",
+   "type": "image/png",
+   "form_factor": "narrow",
+   "label": "Dicsőségfal – relikviák"
   }
  ]
 }
