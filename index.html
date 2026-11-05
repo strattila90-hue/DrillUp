@@ -71,11 +71,11 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/cine.js"></script>
 <script src="js/panels.js"></script>
 <script src="js/appshell.js"></script><script src="js/lecture.js"></script>
-<script src="js/fullscreen.js"></script><script src="js/layout.js"></script><script src="js/stats.js"></script><script src="js/wear.js"></script><script src="js/quests.js"></script><script src="js/paint.js"></script><script src="js/ambient.js"></script><script src="js/perf.js"></script><script src="js/diag.js"></script><script src="js/goals.js"></script><script src="js/gauge.js"></script>
+<script src="js/fullscreen.js"></script><script src="js/layout.js"></script><script src="js/terrain.js"></script><script src="js/stats.js"></script><script src="js/wear.js"></script><script src="js/quests.js"></script><script src="js/paint.js"></script><script src="js/ambient.js"></script><script src="js/perf.js"></script><script src="js/diag.js"></script><script src="js/goals.js"></script><script src="js/gauge.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.0.1';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.0.2';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';

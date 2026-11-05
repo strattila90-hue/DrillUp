@@ -383,6 +383,14 @@ t('teljes képernyő: alapból KI (nem kér, nem zavar), csak bekapcsolva kér, 
  S.set.fs=undefined;ok(!F.want()&&!F.req()&&n===0,'alapból nem kér');S.set.fs=1;ok(F.want()&&F.req()&&n===1);ok(!F.req()&&n===1,'3 mp-en belül nem kér újra');F.last=0;g.sb.document.fullscreenElement={};ok(!F.req()&&n===1,'már teljes képernyő');S.set.fs=0;F.last=0;g.sb.document.fullscreenElement=null;ok(!F.req()&&n===1,'kikapcsolva nem kér');
  const m=JSON.parse(require('fs').readFileSync(require('path').join(__dirname,'..','manifest.webmanifest'),'utf8'));ok(m.display==='standalone'&&!m.display_override.includes('fullscreen'))});
 
+group('Z2) Kiérés a felszínre dombon');
+t('domboldalon vízszintesen kifúrt járat: a gép kiér a felszínre, nem megy tovább a levegőben; a visszaút-verem következetes',()=>{const g=lg(),T=g.T,S=T.S,H=g.sb.HILL,R=g.sb.TER;ok(!!R);g.engineOn();S.fuel=900;S.cash=1e9;
+ H.e0=90;S.e0=90;S.x=-700;S.depth=20;S.tr=[['D',20]];S.tn=[[-700,0,-700,20]];S.st='R';S.mode='travel';let hist=[];
+ for(let i=0;i<4000&&S.x<-250;i++){g.frames(1,50);hist.push(S.depth);if(S.x>-700&&S.depth<.6&&R.n>0)break}
+ ok(R.n>=1,'kiért (n='+R.n+')');ok(S.depth>=0&&S.depth<1,'a felszínen: '+S.depth);ok(Math.abs(S.e0-H.E(S.x))<8||Math.abs(H.e0-H.E(S.x))<8,'a szint a terephez igazodik');
+ const net=S.tr.reduce((a,m)=>a+(m[0]==='D'?m[1]:m[0]==='U'?-m[1]:0),0);ok(Math.abs(net-S.depth)<.6,'verem '+net+' ≈ mélység '+S.depth)});
+t('sík terepen a rendes mélység nem változik: a föld alatti vízszintes járat nem „bukkan ki"',()=>{const g=lg(),T=g.T,S=T.S,H=g.sb.HILL,R=g.sb.TER;g.engineOn();S.fuel=900;H.e0=0;S.e0=0;S.x=0;S.depth=30;S.tr=[['D',30]];S.st='R';S.mode='travel';g.frames(200,50);ok(R.n===0&&S.depth>=29.9,'mélység '+S.depth+' n='+R.n)});
+
 group('G) Fuzz: véletlen kezelés, minden állapot-invariáns megmarad');
 const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
 for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gombnyomással, járatokkal, esésekkel',()=>{const R=rng(seed),g=boot(),T=g.T,S=T.S,N=g.sb.NET,B=g.sb.BK,P=g.sb.PW;
