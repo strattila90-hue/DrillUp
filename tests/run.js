@@ -235,7 +235,7 @@ t('páncél/legénység/remegés: a MX állapotgép halad, a rajzok és hangok k
 
 t('3D fordulás: a modell minden szögben, minden fejszinten kivétel nélkül rajzol; a fordulás közben a játék hibátlanul fut',()=>{const g=lg(),S=g.T.S;ok(!!g.sb.T3);const x=g.sb.document?null:null;g.T.tab=0;for(const d of['L','R','D','U','L'])for(let h=0;h<3;h++){S.u.f=h*2;g.T.go(d);eq(g.frames(25,40),[])}});
 
-t('forgókamra: föld alatt a fordulás csak kifúrt kamrában történik (idő + mentés), a felszínen nem kell',()=>{const g=lg(),S=g.T.S,C=g.sb.CH;ok(!!C);S.depth=500;S.x=0;S.tr=[['D',500]];g.T.go('R');g.frames(40,30);const n0=C.list().length;g.T.go('L');eq(g.frames(10,30),[]);ok(C.act===1&&C.g<.5,'ásás indul g='+C.g);g.frames(200,30);ok(C.list().length===n0+1,'kamra kész');ok(C.at(S.x,S.depth),'van kamra');ok(g.T.S.ch.length>=1);g.T.save();
+t('forgókamra: föld alatt a fordulás csak kifúrt kamrában történik (idő + mentés), a felszínen nem kell',()=>{const g=lg(),S=g.T.S,C=g.sb.CH;ok(!!C);S.set.snap=0;S.depth=500;S.x=0;S.tr=[['D',500]];g.T.go('R');g.frames(40,30);const n0=C.list().length;g.T.go('L');eq(g.frames(10,30),[]);ok(C.act===1&&C.g<.5,'ásás indul g='+C.g);g.frames(200,30);ok(C.list().length===n0+1,'kamra kész');ok(C.at(S.x,S.depth),'van kamra');ok(g.T.S.ch.length>=1);g.T.save();
  const g2=boot({store:g.store});ok(g2.sb.CH.list().length>=1,'a kamra mentésből visszajön');
  const h=lg(),H=h.T.S;H.depth=0;H.x=0;h.T.go('R');h.frames(30,30);h.T.go('L');h.frames(80,30);eq(h.sb.CH.list().length,0)});
 
@@ -454,5 +454,11 @@ t('kikapcsolt beállításnál a régi viselkedés (nincs ív-terv)',()=>{const 
 t('merülés felszíni járatnál (kész járat a gép előtt) és felfelé nem ível',()=>{const g=dv(),T=g.T,S=T.S;T.go('R');g.frames(20,30);T.go('idle');T.go('U');ok(!g.sb.ARC.pl,'felfelé a felszínről nincs ív')});
 
 t('simaság: a merülés közben a haladás és a mód nem váltogat szakaszonként (nincs villogás/ugrás)',()=>{const g=boot(),T=g.T,S=T.S;g.engineOn();S.depth=0;S.x=-150;S.tr=[];S.fuel=900;S.cg={};S.set.sc=40;S.st='idle';T.go('R');g.frames(30,30);T.go('idle');T.go('D');const A=g.sb.ARC,modes=new Set();let maxJump=0,px=S.x,pd=S.depth;for(let i=0;i<3000&&A.pl;i++){g.frames(1,30);modes.add(S.mode);maxJump=Math.max(maxJump,Math.hypot(S.x-px,S.depth-pd));px=S.x;pd=S.depth}eq([...modes],['drill']);ok(maxJump<1.5,'legnagyobb ugrás képkockánként: '+maxJump.toFixed(2))});
+
+group('Z5) Gyors megfordulás (nincs pörgés, nincs forgókamra-kényszer)');
+const sn=()=>{const g=boot(),T=g.T,S=T.S;g.engineOn();S.depth=80;S.x=0;S.tn=[[0,0,0,80]];S.tr=[['D',80]];S.fuel=900;S.cg={};S.set.sc=30;S.set.arc=1;return g};
+t('megfordulás föld alatt (jobbra→balra): a modell ≤0,3 mp alatt átfordul, kamra nélkül, és azonnal halad',()=>{const g=sn(),T=g.T,S=T.S,C=g.sb.CH;T.go('R');g.frames(60,30);const n0=C?C.list().length:0,x0=S.x;T.go('L');let f=0;const vm=require('vm');for(;f<40;f++){g.frames(1,16);const y=vm.runInContext('Math.abs(yaw-Math.PI)',g.sb);if(y<.05)break}ok(f*16<=300,'átfordulás '+f*16+' ms');g.frames(60,30);ok(S.x<x0-.01,'balra halad: '+(S.x-x0).toFixed(2));eq(C?C.list().length:0,n0)});
+t('megfordulás fel↔le a járatban: azonnal visszafordul és halad, nem áll meg forgókamráért',()=>{const g=sn(),T=g.T,S=T.S;T.go('D');g.frames(60,30);const d0=S.depth;T.go('U');g.frames(80,30);ok(S.depth<d0-.01,'fölfelé: '+(S.depth-d0).toFixed(2))});
+t('a beállítással kikapcsolva a régi (lassú, kamrás) megfordulás marad',()=>{const g=sn(),T=g.T,S=T.S,C=g.sb.CH;S.set.snap=0;T.go('R');g.frames(40,30);const n0=C.list().length;T.go('L');g.frames(10,30);ok(C.act===1,'ásás indul')});
 
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);
