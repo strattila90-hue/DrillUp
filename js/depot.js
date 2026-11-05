@@ -113,16 +113,16 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
   const p=(t-w.t0)/Math.max(1,w.t1-w.t0),e=u=>u*u*(3-2*u);
   if(p<.4)return{f:e(p/.4),loaded:true,away:true,p};if(p<.6)return{f:1,loaded:false,away:true,p};return{f:e(1-(p-.6)/.4),loaded:false,away:true,p}},
  holdCard(){const u=DEP.used(),c=cap(),cz=sum(S.cq),b=base(),has=sum(S.cg)>1e-6||sum(S.fin)>0;
-  return`<div class="card">📦 <b>A gép raktára</b><div class="mu">Foglalt hely: ${fk(u)} / ${fk(c)}${cz>0?` · tömörítve: ${fk(cz)} (−${Math.round((1-CVAL)*100)}% érték)`:''}</div><div class="bar"><i style="width:${Math.min(100,u/c*100)}%"></i></div>
+  return`<div class="card">📦 <b>A gép raktára</b><div class="mu">Foglalt hely: <span id="dtUse">${fk(u)} / ${fk(c)}</span>${cz>0?` · tömörítve: ${fk(cz)} (−${Math.round((1-CVAL)*100)}% érték)`:''}</div>${W.DUI&&tab==3?DUI.rows():`<div class="bar"><i style="width:${Math.min(100,u/c*100)}%"></i></div>`}
   <div class="row"><button class="b" ${b&&S.st==='idle'&&has?'':'disabled'} onclick="DEP.${DEP.job?'stop':'start'}()">${DEP.job?'■ Megállít':'⬇ Kirakodás'}</button><button class="b g" style="flex:.6" ${S.st==='idle'&&sum(S.cg)>sum(S.cq)+1e-6?'':'disabled'} onclick="DEP.compress()">🗜 Tömörítés</button></div>${b?'':'<div class="mu">Kirakodás csak a bázison. Tömöríteni bárhol lehet, álló gépnél.</div>'}</div>`},
  html(){
   DEP.age();const b=base(),sk=DEP.stock(),cs=val('s'),away=DEP.trainAway(),p=DEP.plan();let rows='',tot=0;
-  for(const n in S.dp){const kg=S.dp[n];if(kg<=0)continue;const bb=bp(n);if(bb==null)continue;const q=DEP.q(n),u=price(n,bb)*q;tot+=kg*u;rows+=`<tr><td>${n}</td><td>${fk(kg)}</td><td>${Math.round(q*100)}%</td><td>${ft(u)}/kg</td><td>${ft(kg*u)}</td></tr>`}
+  for(const n in S.dp){const kg=S.dp[n];if(kg<=0)continue;const bb=bp(n);if(bb==null)continue;const q=DEP.q(n),u=price(n,bb)*q;tot+=kg*u;rows+=`<tr><td>${W.DUI?'<i class="dtc" style="background:hsl('+[...n].reduce((h,c)=>(h*31+c.charCodeAt(0))%360,0)+',55%,52%)"></i>':''}${n}</td><td>${fk(kg)}</td><td>${Math.round(q*100)}%</td><td>${ft(u)}/kg</td><td>${ft(kg*u)}</td></tr>`}
   for(const n in S.dpf){const f=FD.find(x=>x[0]==n),c=S.dpf[n];if(!f)continue;tot+=c*f[5];rows+=`<tr><td>${n} ×${c}</td><td>${fk(c*f[4])}</td><td>–</td><td>${ft(f[5])}/db</td><td>${ft(c*f[5])}</td></tr>`}
   const w=S.tw,left=away?Math.max(0,Math.ceil((w.t1-now())/1e3)):0;
-  let h=`<h3>Depó</h3>${DEP.flow(b,sk,cs,away,left)}<canvas id="dpc" style="width:100%;height:170px;display:block;border-radius:12px;background:#10161e"></canvas>`;
+  let h=`<h3>Depó</h3>${W.DUI?DUI.tanks():DEP.flow(b,sk,cs,away,left)}<canvas id="dpc" style="width:100%;height:170px;display:block;border-radius:12px;background:#10161e"></canvas>`;
   h+=`<div class="stp">① Kirakodás a gépből</div>`+DEP.holdCard();
-  h+=`<div class="stp">② Depó készlet</div><div class="card">🏗 <b>Raktártelep</b><div class="mu" id="dpj">${DEP.job?'Kirakodás folyamatban…':'Kirakodás: '+nf(val('b'))+' kg/s'}</div><div class="mu">Készlet: ${fk(sk)} / ${fk(cs)}</div><div class="bar"><i style="width:${Math.min(100,sk/cs*100)}%"></i></div>
+  h+=`<div class="stp">② Depó készlet</div><div class="card">🏗 <b>Raktártelep</b><div class="mu" id="dpj">${DEP.job?'Kirakodás folyamatban…':'Kirakodás: '+nf(val('b'))+' kg/s'}</div><div class="mu">Készlet: ${fk(sk)} / ${fk(cs)}</div>
   ${rows?`<table>${rows}</table>`:'<div class="mu">A depó üres. Ürítsd ki a gépet!</div>'}<div class="mu">A tárolt anyag minősége napi ${DECAY*100}%-ot romlik (legfeljebb ${Math.round((1-QMIN)*100)}%-ig). Az árak naponta ±15%-ot ingadoznak; a leleteket múzeum veszi meg.</div></div>`;
   h+=`<div class="stp">③ Eladás vonattal</div><div class="card">🚂 <b>Tehervonat</b><div class="mu" id="dpt">${away?'Úton… visszaér: '+left+' mp':'Várakozik a depónál'} · ${nf(val('v'))} kg/út · ${val('m')} mp/kör</div>${tot>p.cash+1?`<div class="mu">A vonat a legdrágább anyagot viszi előre; a maradék ${ft(tot-p.cash)} értékű készlet a következő útra vár.</div>`:''}<div class="mu">A pénz a vonat indulásakor megérkezik. Úton lévő vonat mellett is bányászhatsz.</div></div><details class="card dpUp"><summary><b>🏗 Fejlesztések</b> <span class="mu">raktár · szalag · vagon · mozdony</span></summary>`;
   for(const k in BLD){const B=BLD[k],l=lv(k),max=l>=MAXL,np=max?0:B.p[l+1];h+=`<div class="card">${B.ic} <b>${B.n}</b> <span class="mu">${l+1}/${MAXL+1}</span><div class="mu">${B.d}: <b>${nf(B.v[l])}</b> ${B.u}${max?' (maximum)':' → <b>'+nf(B.v[l+1])+'</b> '+B.u}</div>${max?'':`<button class="b g" style="width:100%" ${b&&S.cash>=np?'':'disabled'} onclick="DEP.upgrade('${k}')">Fejlesztés – ${ft(np)}</button>`}</div>`}
@@ -191,7 +191,7 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
    if(t){const aw=DEP.trainAway();t.textContent=(aw?'Úton… visszaér: '+Math.max(0,Math.ceil((S.tw.t1-now())/1e3))+' mp':'Várakozik a depónál')+' · '+nf(val('v'))+' kg/út · '+val('m')+' mp/kör';
     if(!aw&&DEP.wasAway){DEP.wasAway=false;DEP.refresh()}if(aw)DEP.wasAway=true}}
   if(typeof tab!=='undefined'&&tab==3)DEP.paint(dt)}};
-W.DEP=DEP;
+DEP.val=val;DEP.lv=lv;DEP.bp=bp;W.DEP=DEP;
 // régi mentések (4→5 után): a depó mezői, a rakomány-korlát alapból be
 if(W.Save)Save.addMig(5,o=>{o.dp=o.dp||{};o.dq=o.dq||{};o.dpf=o.dpf||{};o.cq=o.cq||{};o.bd=o.bd||{s:0,b:0,v:0,m:0};if(o.tw===undefined)o.tw=null;o.dT=o.dT||0});
 if(W.on){

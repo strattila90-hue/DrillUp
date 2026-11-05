@@ -47,7 +47,7 @@ const RT={
   if(window.BIT&&BIT.wear)BIT.wear(dist,c.L)},
  home(){const p=RT.path();let net=null;
   if(p&&p.length){const fwd=[];for(let i=p.length-1;i>=0;i--){const d=OPD[p[i][0]],l=p[i][1];if(fwd.length&&fwd[fwd.length-1][0]===d)fwd[fwd.length-1][1]+=l;else fwd.push([d,l])}
-   const dv=fwd.reduce((a,t)=>a+(t[0]==='D'?t[1]:t[0]==='U'?-t[1]:0),0);if(Math.abs(dv-S.depth)<=.5)net=fwd}
+   const dv=fwd.reduce((a,t)=>a+(t[0]==='D'?t[1]:t[0]==='U'?-t[1]:0),0);const hv=fwd.reduce((a,t)=>a+(t[0]==='R'?t[1]:t[0]==='L'?-t[1]:0),0);if(Math.abs(dv-S.depth)<=.5&&Math.abs(hv-S.x)<=.5)net=fwd}
   const old=RT.trailLen(S.tr),neuN=net?RT.trailLen(net):old,best=Math.min(old,neuN);
   // közvetlen akna, ha jóval rövidebb a bejárt (vagy a hálózaton talált) útnál
   const dg=RT.digPlan();if(dg&&dg.len<best*.85&&S.fuel>dg.fuel*1.25+(window.calc?calc().fr*20:0)&&Math.abs(S.x)>=0){

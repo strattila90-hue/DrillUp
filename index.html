@@ -64,6 +64,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/hydro.js"></script>
 <script src="js/lab.js"></script>
 <script src="js/depotgfx.js"></script>
+<script src="js/depotui.js"></script>
 <script src="js/mechfx.js"></script><script src="js/rpm.js"></script><script src="js/native.js"></script><script src="js/turn3d.js"></script><script src="js/chamber.js"></script><script src="js/heatglow.js"></script><script src="js/volcano.js"></script><script src="js/hill.js"></script><script src="js/damage.js"></script><script src="js/sensor.js"></script><script src="js/vlight.js"></script>
 <script src="js/zoom.js"></script>
 <script src="js/surface.js"></script>
@@ -489,8 +490,13 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
   for(let k=Math.floor((rx-w/K)/11)-1;k<=(rx+w/K)/11+1;k++){const m=k*11+rnd(k)*6;if(m>-54&&m<52)continue;const Em=window.HILL?HILL.E(m):0;if(window.VOL&&Math.abs(Math.abs(m)-1000)<205)continue;if(Em>70&&Math.abs(m)>600)continue;const tx2=SX(m),hh=60+rnd(k+5)*60,Yt=Y0-(Em-(window.HILL?HILL.e0:0))*K;x.fillStyle=mix('#12100a','#5a3b1e',day);x.fillRect(tx2-4,Yt-hh*.5,8,hh*.5);x.fillStyle=mix('#0a1a0c','#2f6b2a',day);x.beginPath();x.arc(tx2,Yt-hh*.62,hh*.32,0,7);x.arc(tx2-hh*.16,Yt-hh*.48,hh*.24,0,7);x.arc(tx2+hh*.16,Yt-hh*.48,hh*.24,0,7);x.fill()}}
  if(Math.random()<dt*7)pr.push({x:-44.5,y:-12.5,vx:.7,vy:-1.2,l:3.5,t:'s'});
  // gép: tájolás (3D fordulás: yaw = jobb↔bal, fel↔le)
- const ld=(window.NET&&NET.falling)?(lastD='D'):dir!='idle'?(lastD=dir):lastD;if(ld=='L'||ld=='R')hf=ld=='L'?-1:1;
- let angT=(ld=='U'||ld=='D'?Math.PI/2:0)+((window.NET&&NET.falling)?NET.sw||0:0),faceT=ld=='D'?1:ld=='U'?-1:hf;if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){angT=_ah.ang;faceT=_ah.fc}if(window.HYD&&HYD.on())angT=HYD.ang();
+ const ld=(window.NET&&NET.falling)?(lastD='D'):dir!='idle'?(lastD=dir):lastD;
+ // Hátramenet: a kész járatban (zsákutca vége, akna alja) a gép NEM fordul meg – a keskeny furatban a 14 m-es test megfordulása a tömör kőzetbe érne –, hanem fordított lánctalpakkal kitolat. Megfordulás csak új, még nem fúrt irányba kell (az a forgókamra / gyors fordulás dolga).
+ const revOK=(vx,vy)=>{try{return !(window.NET&&NET.falling)&&ry>=1&&S.set.rev!==0&&(S.st=='H'||(S.tr.length&&S.tr.at(-1)[0]===OP[vy<0?'U':vy>0?'D':vx<0?'L':'R'])||(window.NET&&NET.ahead(S.x,S.depth,vx,vy)>NET.hw+.1))}catch(e){return false}};
+ if(ld=='L'||ld=='R'){const nh=ld=='L'?-1:1;if(nh!==hf&&revOK(nh,0)&&window._fcH===hf){}else{hf=nh}window._fcH=hf}
+ let angT=(ld=='U'||ld=='D'?Math.PI/2:0)+((window.NET&&NET.falling)?NET.sw||0:0),faceT=ld=='D'?1:ld=='U'?-1:hf;
+ if(ld=='U'||ld=='D'){const fv=window._fcV||faceT;if(fv!==faceT&&revOK(0,ld=='U'?-1:1))faceT=fv;else window._fcV=faceT;window._rev=faceT!==(ld=='D'?1:-1)}else window._rev=ld=='L'||ld=='R'?hf!==(ld=='L'?-1:1):false;
+if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){angT=_ah.ang;faceT=_ah.fc}if(window.HYD&&HYD.on())angT=HYD.ang();
  const yawT=faceT>0?0:Math.PI,arcR=tlA&&act?Math.max(.55,Math.min(1.5,.5+Math.abs(vsp)/(K*7))):1,mvv=(a,b)=>{const d=b-a;return a+Math.sign(d)*Math.min(Math.abs(d),dt*(tlA&&act?(.55+1.1*Math.abs(d))*arcR:1.2+3.2*Math.abs(d)))};const snapF=S.set.snap!==0,yawQ=(a,b)=>{const d=b-a;window._vY=0;return a+Math.sign(d)*Math.min(Math.abs(d),dt*18)};if(tlA&&act){ang=mvv(ang,angT);yaw=snapF?yawQ(yaw,yawT):mvv(yaw,yawT);window._vA=window._vY=0}else{const cm=((window.NET&&NET.falling)||_ah)?1:window.CH?CH.gate(dt,(snapF?0:Math.abs(yaw-yawT)>.05)||Math.abs(ang-angT)>.05):1;const sm2=(c,t0,vk)=>{const d=t0-c,tg=Math.sign(d)*(Math.abs(d)>.002?.9+1.2*Math.abs(d):0)*cm;let v=window[vk]||0;v+=(tg-v)*Math.min(1,dt*7);const n=c+v*dt;if(Math.abs(t0-n)<.004||(d>0)!=(t0-n>0)){window[vk]=0;return t0}window[vk]=v;return n};ang=sm2(ang,angT,'_vA');yaw=snapF?yawQ(yaw,yawT):sm2(yaw,yawT,'_vY')}tl=Math.abs(yaw-yawT)>.22||Math.abs(ang-angT)>.22;tlA=(window.NET&&NET.free(S.x,S.depth)&&Math.abs(yaw-yawT)<=.22)?1:0;ldt=Date.now();
  if(window.HYD&&HYD.on())ang=HYD.ang();const sY=Math.sin(yaw),sc=Math.cos(yaw),fc=sc>=0?1:-1,fa=Math.abs(Math.sin(ang)),lift=ry<1?20*(1-fa):0,Ty=cy-lift,cA=Math.cos(ang),sA=Math.sin(ang),lw=(a,b)=>[cx+K*(sc*a*cA-b*sA),Ty+K*(sc*a*sA+b*cA)];
  if(ry<1&&day>.15){x.fillStyle=`rgba(0,0,0,${.3*day*(1-fa)})`;x.beginPath();x.ellipse(cx-60*sc,Ys,70+20*Math.abs(sY),5,0,0,7);x.fill()}

@@ -14,10 +14,12 @@ const HYD={pose:null,seq:null,told:0,A:null,
  enabled(){try{return S.set.erect!==0}catch(e){return true}},
  sync(){if(typeof S==='undefined'||!S)return;if(HYD.pose===null)HYD.pose=S.depth>1.5?1:0;if(!HYD.seq&&S.depth>1.5)HYD.pose=1},
  // az aktuális szög: 0 = vízszintes, π/2 = függőleges (lefelé néz)
- ang(){const q=HYD.seq;if(!q)return HYD.pose>=.5?Math.PI/2:0;const l=ease(cl((q.p-.2)/.7,0,1));return(q.dir>0?l:1-l)*Math.PI/2},
+ // a szekvencia a gép tényleges (éppen látható) szögéből indul, így a kép sosem ugrik
+ ang(){const q=HYD.seq;if(!q)return HYD.pose>=.5?Math.PI/2:0;const l=ease(cl((q.p-.2)/.7,0,1)),a0=q.a0||0,a1=q.dir>0?Math.PI/2:0;return a0+(a1-a0)*l},
+ cur(){try{const a=Math.abs(ang);return isFinite(a)?cl(a,0,Math.PI/2):(HYD.pose>=.5?Math.PI/2:0)}catch(e){return HYD.pose>=.5?Math.PI/2:0}},
  // a lábak kinyúlása 0..1 (előbb ereszkednek, a végén visszahúzódnak)
  legs(){const q=HYD.seq;if(!q)return 0;const p=q.p;return q.dir>0?cl(p/.2,0,1)*(1-cl((p-.9)/.1,0,1)):cl(p/.2,0,1)*(1-cl((p-.9)/.1,0,1))},
- start(dir){HYD.seq={dir,t0:Date.now(),dur:dir>0?TE:TL,p:0,pu:0};S.mode='';
+ start(dir){const a0=HYD.cur();HYD.seq={dir,a0,t0:Date.now(),dur:(dir>0?TE:TL)*(.35+.65*(dir>0?1-a0/(Math.PI/2):a0/(Math.PI/2))),p:0,pu:0};S.mode='';
   if(!HYD.told){HYD.told=1;try{toast(dir>0?'🛠 Hidraulikus felállító: a gép függőlegesre áll fúráshoz…':'🛠 A gép lefekszik a hidraulikán…')}catch(e){}}
   try{aInit()}catch(e){}HYD.snd(true);try{clank(.3)}catch(e){}HYD.steam(6)},
  finish(){const q=HYD.seq;HYD.pose=q.dir>0?1:0;HYD.seq=null;HYD.snd(false);try{clank(.25)}catch(e){}HYD.steam(8)},
@@ -33,7 +35,9 @@ const HYD={pose:null,seq:null,told:0,A:null,
   if(W.ENG&&!ENG.ready())return false;
   const st=S.st,surf=S.depth<=1;
   if(surf&&st==='D'&&HYD.pose<.5){HYD.start(1);return true}
-  if(surf&&(st==='L'||st==='R'||st==='H')&&HYD.pose>=.5){HYD.start(-1);return true}
+  // lefekvés: csak ha a gép már nem fordul (a fordulás közben a szög nem ugorhat); a haza-úton is megvárja a fordulás végét
+  let turning=false;try{turning=!!(tl&&Date.now()-ldt<400)}catch(e){}
+  if(surf&&(st==='L'||st==='R'||st==='H')&&HYD.pose>=.5&&!turning){HYD.start(-1);return true}
   return false}catch(e){if(W.DBG)DBG.err='hyd: '+(e.message||e);HYD.seq=null;return false}},
  // hang: halk hidraulika-zümmögés, a hangnyomással együtt emelkedik
  snd(on){try{if(typeof AC==='undefined'||!AC||!(S.set.vol>0))return;
