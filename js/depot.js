@@ -192,9 +192,9 @@ const DEP={job:false,jobT:0,ph:0,tk:0,uiT:0,warned:false,BLD,
  sync(dt){DEP.ph+=dt*(DEP.job?1:0);DEP.step(dt);
   if(DEP.job){DEP.tk-=dt;if(DEP.tk<=0){DEP.tk=.38;if(W.clank)clank(.1)}}
   DEP.uiT-=dt;if(DEP.uiT<=0){DEP.uiT=.25;const a=$('#dpj'),t=$('#dpt');
-   {const sb=$('#dpAct');if(sb){const x=DEP.act();if(sb.disabled!==!!x.dis)sb.disabled=!!x.dis;if(sb.textContent!==x.t)sb.textContent=x.t;if(DEP._k!==x.k){DEP._k=x.k;DEP.refresh()}}}
-   if(a&&DEP.job)a.textContent='Kirakodás: '+fk(sum(S.cg))+' maradt · '+fk(DEP.stock())+' / '+fk(val('s'));
-   if(t){const aw=DEP.trainAway();t.textContent=(aw?'Úton… visszaér: '+Math.max(0,Math.ceil((S.tw.t1-now())/1e3))+' mp':'Várakozik a depónál')+' · '+nf(val('v'))+' kg/út · '+val('m')+' mp/kör';
+   {const sb=$('#dpAct');if(sb){const x=DEP.act();if(sb.disabled!==!!x.dis)sb.disabled=!!x.dis;if(sb._t!==x.t){sb._t=x.t;sb.textContent=x.t}if(DEP._k!==x.k){DEP._k=x.k;DEP.refresh()}}}
+   if(a&&DEP.job){const v='Kirakodás: '+fk(sum(S.cg))+' maradt · '+fk(DEP.stock())+' / '+fk(val('s'));if(a._t!==v){a._t=v;a.textContent=v}}
+   if(t){const aw=DEP.trainAway();const tv=(aw?'Úton… visszaér: '+Math.max(0,Math.ceil((S.tw.t1-now())/1e3))+' mp':'Várakozik a depónál')+' · '+nf(val('v'))+' kg/út · '+val('m')+' mp/kör';if(t._t!==tv){t._t=tv;t.textContent=tv}
     if(!aw&&DEP.wasAway){DEP.wasAway=false;DEP.refresh()}if(aw)DEP.wasAway=true}}
   if(typeof tab!=='undefined'&&tab==3)DEP.paint(dt)}};
 DEP.val=val;DEP.lv=lv;DEP.bp=bp;W.DEP=DEP;
