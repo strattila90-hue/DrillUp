@@ -91,7 +91,7 @@ const STM={held:0,rh:0,rp:0,vl:0,rl:0,sl:0,ch:0,pf:0,bt:0,sc:0,al:0,A:null,burst
   f.style.display=on&&B[2]<2?'':'none';v.style.display=on?'':'none';r.style.display=on&&STM.faults()?'':'none';
   if(o){v.classList.toggle('hot',o.p>1.0);v.classList.toggle('on',!!STM.held);f.classList.toggle('low',o.f<.2);const nd=STM.need();r.style.setProperty('--p',(nd>0?Math.round(100*cl(STM.rp/nd,0,1)):0)+'%')}},
  // ---- kijelző: kártya a páncél-kártya alatt ----
- hud(V){if(!STM.active()||(W.PN&&!PN.vis('kz'))||(W.CIN&&CIN.on))return;const o=STM.st();if(!o)return;const x=V.x,B=STM.B(),hr=W.PN?PN.rc('hull'):null,X=6,Y=hr?hr.y+hr.h+6:104,w=122,h=46;
+ hud(V){if(!STM.active()||(W.PN&&!PN.vis('kz'))||(W.CIN&&CIN.on))return;const o=STM.st();if(!o)return;const x=V.x,B=STM.B(),hr=W.PN?PN.rc('hull'):null,X=6,Y=hr?hr.y+hr.h+6:104,w=122,h=58;
   if(W.PN)PN.reg('kz',X,Y,w,h);
   const hot=o.p>1.05&&B[1]<1,bl=(hot||o.lk)&&Math.floor(V.ts/280)%2===0;x.save();x.fillStyle='rgba(8,10,12,.97)';x.strokeStyle=bl?'#ff4a3a':'rgba(255,255,255,.18)';x.lineWidth=1;x.beginPath();x.roundRect?x.roundRect(X,Y,w,h,6):x.rect(X,Y,w,h);x.fill();x.stroke();
   x.textBaseline='alphabetic';x.textAlign='left';x.font='bold 9px Georgia';x.fillStyle='#cdbfa8';x.fillText('♨ KAZÁN',X+8,Y+12);x.textAlign='right';x.font='bold 11px Georgia';x.fillStyle=o.p>1.2?'#ff5a45':o.p>1?'#f0b83a':'#58e07c';x.fillText((o.p*BAR).toFixed(1).replace('.',',')+' bar',X+w-20,Y+12);
@@ -99,6 +99,7 @@ const STM={held:0,rh:0,rp:0,vl:0,rl:0,sl:0,ch:0,pf:0,bt:0,sc:0,al:0,A:null,burst
   x.fillStyle='rgba(255,255,255,.85)';x.fillRect(bx+bw/1.5-.5,Y+17,1,10); // névleges határ
   x.fillStyle='#bfb09a';x.font='9px Georgia';x.textAlign='left';x.fillText(B[2]===2?'TŰZ · AUTO':'TŰZ',bx,Y+37);x.fillStyle='#2a2118';x.fillRect(bx+(B[2]===2?52:24),Y+31,bw-(B[2]===2?52:24),6);x.fillStyle=o.f<.2?'#ff5a45':'#ff9a30';x.fillRect(bx+(B[2]===2?52:24),Y+31,(bw-(B[2]===2?52:24))*o.f,6);
   if(STM.faults()){x.textAlign='right';x.font='11px Georgia';x.fillStyle='#fff';x.fillText((o.lk?'💧':'')+(STM.chain()?'⛓':''),X+w-8,Y+38)}
+  {const hint=o.lk?['Szivárgás – tartsd a 🔧 gombot','#ff5a45']:o.p>1.05&&B[1]<1?['Túl magas – tartsd a ♨ gombot','#ff9a30']:o.p<.45?[B[2]===2?'Melegszik…':'Hideg – etesd a tüzet 🔥','#5ab0e8']:['Optimális – teljes teljesítmény','#58e07c'];x.textAlign='left';x.font='9px Georgia';x.fillStyle=hint[1];x.fillText(hint[0],bx,Y+52)}
   x.restore()},
  // ---- látvány a gép testén (helyi méter-koordináták): lendkerék + lengőkar + nyomásmérő ----
  mach(x,o){const k=S.kz;if(!k)return;const act=o.act,ph=o.ph||0,ts=o.ts||0,run=S.en?1:0,a=act?ph*6:(run?ts/240:0),lv=STM.lv(),p=k.p;
