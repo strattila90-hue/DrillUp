@@ -11,7 +11,7 @@ const legacy=(x={})=>JSON.stringify(Object.assign({cash:123456,depth:0,st:'idle'
 
 group('A) Mentés: betöltés, migráció, védelem');
 t('régi (verziótlan) mentés változatlanul betöltődik, v=aktuális',()=>{const raw=legacy(),g=boot({store:{drillup1:raw}}),S=g.T.S;
- eq(S.cash,123456);eq(S.u,{d:1,h:1,t:1,c:1,f:0,g:0});eq(S.set.vol,30);eq(S.set.sc,600);eq(S.set.auto,0);eq(S.cg['Kőszén'],12.5);eq(S.max,812);eq(S.tn.map(a=>a.slice(0,4)),[[0,0,0,812]]);eq(S.v,g.sb.Save.VER);eq(S.set.q,'a');eq(S.gf,60);eq(S.gon,1);eq(S.en,0)});
+ eq(S.cash,123456);eq(S.u,{d:1,h:1,t:1,c:1,f:0,g:0,b:0});eq(S.set.vol,30);eq(S.set.sc,600);eq(S.set.auto,0);eq(S.cg['Kőszén'],12.5);eq(S.max,812);eq(S.tn.map(a=>a.slice(0,4)),[[0,0,0,812]]);eq(S.v,g.sb.Save.VER);eq(S.set.q,'a');eq(S.gf,60);eq(S.gon,1);eq(S.en,0)});
 t('migráció előtt másolat készül (drillup1_pre_v1) és nem íródik felül',()=>{const raw=legacy(),g=boot({store:{drillup1:raw}});eq(g.store.drillup1_pre_v1,raw);
  g.store.drillup1=legacy({cash:5});const g2=boot({store:g.store});eq(g2.store.drillup1_pre_v1,raw,'az első másolat marad')});
 t('sérült főmentés → tartalék betöltése, a sérült megőrzése',()=>{const g=boot({store:{drillup1:'{rossz',drillup1_bak:legacy({cash:777})}});eq(g.T.S.cash,777);eq(g.store.drillup1_corrupt,'{rossz');eq(g.sb.Save.info.src,'drillup1_bak')});
@@ -419,5 +419,21 @@ group('Y5) Üzemanyag kifogyása: nincs automatikus átváltás');
 t('kifogyott tank + van szén a raktárban: a gép megáll és jelez, a raktárhoz nem nyúl',()=>{const g=boot(),T=g.T,S=T.S;S.cg={'Kőszén':50};S.fuel=0;S.depth=30;S.x=5;S.st='D';S.en=0;g.frames(120,30);const t0=S.cg['Kőszén'];ok(S.st==='idle','megállt: '+S.st);ok(S.fuel<=1e-6,'üzemanyag 0: '+S.fuel);eq(t0,50);ok(!T.S.str,'nem ragadt be');ok(S.depth===30,'nem mozdult')});
 t('jóváhagyás: irányt nyomva a gép átvált a saját tárolóra és ég a raktárból',()=>{const g=boot(),T=g.T,S=T.S;S.cg={'Kőszén':50};S.fuel=0;S.depth=30;S.x=5;S.st='idle';T.go('L');ok(S.cg['Kőszén']<50,'raktár fogyott '+S.cg['Kőszén']);ok(S.fuel>0,'tank '+S.fuel)});
 t('nincs tartalék sem: a régi viselkedés (leáll/beszorul), nem történik hiba',()=>{const g=boot(),T=g.T,S=T.S;S.cg={};S.fuel=0;S.depth=30;S.x=5;S.st='D';g.frames(120,30);ok(S.fuel<=1e-6,'üres marad')});
+
+group('Y6) Kazán és gőzrendszer (fejleszthető)');
+const kz=()=>{const g=boot(),S=g.T.S,M=g.sb.STM;S.en=1;S.st='idle';S.depth=30;S.x=5;return{g,S,M,st:(real,n)=>{for(let i=0;i<n;i++)M.step(real)}}};
+t('a kazán fejleszthető: U.b a Műhely listájában, 5 szint, S.u.b alapból 0, vétel növeli',()=>{const g=boot(),S=g.T.S,M=g.sb.STM;ok(!!M&&g.sb.BL.length===5);const U=g.sb.eval?0:0;eq(S.u.b|0,0);S.cash=1e9;S.depth=0;S.x=0;S.st='idle';g.sb.buy('b');eq(S.u.b,1);ok(S.cash<1e9,'fizetett')});
+t('régi mentés (S.u.b nélkül) hibátlanul betöltődik és a kazán 0. szintű',()=>{const raw=legacy(),g=boot({store:{drillup1:raw}}),S=g.T.S;g.frames(30,30);ok((S.u.b|0)===0&&isFinite(S.u.b),'b='+S.u.b);const k=g.sb.STM.st();ok(isFinite(k.p)&&isFinite(k.f))});
+t('tüzelés: a 🔥 több tüzet ad (korlát 1), üres tanknál nem',()=>{const{S,M}=kz();M.st();S.kz.f=.2;S.fuel=100;M.sc=0;M.stoke();ok(Math.abs(S.kz.f-.48)<1e-9,'f '+S.kz.f);S.fuel=0;M.sc=0;M.stoke();ok(Math.abs(S.kz.f-.48)<1e-9)});
+t('kézi kazán: a nyomás a tűzzel nő, túlnyomásnál sérülés, majd repedés + szivárgás',()=>{const{S,M,st}=kz();M.st();S.kz.f=1;S.kz.p=.7;S.st='idle';S.hp=100;st(.1,200);ok(S.kz.p>1.1,'nyomás '+S.kz.p);st(.1,600);ok(S.hp<100||S.kz.lk,'sérülés/repedés hp='+S.hp)});
+t('biztonsági szelepes kazán: magától enged, nem sérül, nem reped',()=>{const{S,M,st}=kz();S.u.b=1;M.st();S.kz.f=1;S.kz.p=.9;S.hp=100;st(.1,1500);ok(S.kz.p<1.2,'nyomás '+S.kz.p);eq(S.hp,100);eq(S.kz.lk,0)});
+t('kézi szelep: nyomva tartva csökken a nyomás',()=>{const{S,M,st}=kz();M.st();S.kz.f=0;S.kz.p=1.1;M.held=1;st(.1,5);ok(S.kz.p<1.1-.3,'p '+S.kz.p)});
+t('automata tüzelés: a tűz magától ~0,74-en áll, a 🔥 nem kell',()=>{const{S,M,st}=kz();S.u.b=3;M.st();S.kz.f=.05;st(.1,100);ok(Math.abs(S.kz.f-.74)<.02,'f '+S.kz.f)});
+t('teljesítmény-szorzó: hideg kazánnal lassabb (.75), üzemi nyomásnál 1; a calc() használja',()=>{const{S,M,g}=kz();M.st();S.kz.p=0;ok(Math.abs(M.mult()-.75)<1e-9);S.kz.p=.9;eq(M.mult(),1);const c1=g.sb.calc().d[1];S.kz.p=0;const c0=g.sb.calc().d[1];ok(Math.abs(c0/c1-.75)<1e-6,'calc szorzó '+(c0/c1))});
+t('helyszíni javítás: a szivárgás nyomva tartva a szint szerinti idő alatt elzárul; elengedve visszacsúszik',()=>{const{S,M,st}=kz();M.st();S.kz.lk=1;S.u.b=2;ok(M.need()===3);M.rh=1;st(.1,20);ok(S.kz.lk===1,'még szivárog');st(.1,15);eq(S.kz.lk,0);M.rh=0;S.kz.lk=1;M.rp=1;st(.1,10);ok(M.rp<.01)});
+t('leesett lánc a mélyben megjavítható (1,6× idő), a szivárgás előbb',()=>{const{S,M,st,g}=kz();M.st();S.u.b=0;g.sb.DMG.st().t=1;ok(M.chain()&&Math.abs(M.need()-8)<1e-9);M.rh=1;st(.1,90);ok(!M.chain(),'lánc megjavítva')});
+t('intelligens vezérlő: a szivárgást ~10 mp alatt magától lezárja',()=>{const{S,M,st}=kz();S.u.b=4;M.st();S.kz.lk=1;st(.1,120);eq(S.kz.lk,0)});
+t('hosszú szünet utáni lépés (away): semmi sem romlik, biztonságos állapot',()=>{const{S,M}=kz();M.st();S.kz.p=1.4;S.kz.f=0;M.away();ok(S.kz.p<=.95&&S.kz.f>=.6)});
+t('a kazán nem akasztja meg a játékot: fuzz-szerű kezelés után minden érték véges',()=>{const{S,M,st}=kz();M.st();for(let i=0;i<300;i++){M.held=Math.random()<.3?1:0;M.rh=Math.random()<.2?1:0;if(Math.random()<.2)M.sc=0,M.stoke();S.u.b=i%5;st(Math.random()*.3,3)}ok(isFinite(S.kz.p)&&isFinite(S.kz.f)&&S.kz.p>=0&&S.kz.f>=0&&S.kz.f<=1&&S.hp>=5)});
 
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);

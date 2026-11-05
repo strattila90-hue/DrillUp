@@ -69,13 +69,13 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/surface.js"></script>
 <script src="js/story.js"></script>
 <script src="js/cine.js"></script>
-<script src="js/panels.js"></script>
+<script src="js/panels.js"></script><script src="js/steam.js"></script>
 <script src="js/appshell.js"></script><script src="js/lecture.js"></script>
 <script src="js/fullscreen.js"></script><script src="js/layout.js"></script><script src="js/terrain.js"></script><script src="js/shaft.js"></script><script src="js/stats.js"></script><script src="js/wear.js"></script><script src="js/quests.js"></script><script src="js/paint.js"></script><script src="js/ambient.js"></script><script src="js/perf.js"></script><script src="js/diag.js"></script><script src="js/goals.js"></script><script src="js/gauge.js"></script>
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.3';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.4';
 const nf=(n,d=0)=>n.toLocaleString('hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -92,6 +92,7 @@ const HD=[['Acélfogas fúrófej',120,0],['Volfrám-karbid fúrófej',300,4e5],[
 const HR=[1,5,80,250,350,600,900,1500,2200,1000,4000]; // kőzet egyirányú nyomószilárdsága (MPa) rétegenként
 const U={d:['Meghajtás',D,x=>`${x[1]} MW, hatásfok ${x[2]*100|0}%, ${F[x[3]].n}`],h:['Páncél',H,x=>`${x[1]} °C / ${x[2]} GPa`],t:['Üzemanyagtartály',T,x=>fk(x[1])],c:['Raktér',C,x=>fk(x[1])],f:['Fúrófej',HD,x=>`kőzetszilárdság-határ: ${x[1]} MPa`]};
 if(window.GN)U.g=['Áramfejlesztő',GN,x=>`${x[1]} kW · ${F[x[3]].n} · tank ${fk(x[4])}`];
+if(window.BL)U.b=['Kazán és gőzrendszer',BL,x=>`${['kézi szelep','biztonsági túlnyomás-szelep','nyomásszabályozó'][x[1]]} · ${['kézi tüzelés','lassú égésű adagoló','automata tüzelés'][x[2]]} · javítás ${x[3]} mp${x[4]?' · öngyógyító':''}`];
 const PT=[[0,0],[35e3,1],[410e3,13.4],[660e3,23.8],[2890e3,135.8],[5150e3,328.9],[6371e3,364]];
 const TT=[[0,15],[35e3,900],[410e3,1500],[660e3,1700],[2890e3,3700],[5150e3,5000],[6371e3,5400]];
 const lerp=(t,d)=>{for(let i=1;i<t.length;i++)if(d<=t[i][0]){const a=t[i-1],b=t[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return t.at(-1)[1]};
@@ -117,7 +118,7 @@ const FD=[['Antropocén jelzőréteg',0,1,.1,.2,3e3,'Plutónium-239 és mikromű
 ['Meteorit-vas',5e3,15e3,.003,80,5e6,'Földön kívüli vas-nikkel.'],['4,4 milliárd éves cirkon',15e3,3e4,.002,.001,2e8,'A Föld legősibb ismert anyaga.'],
 ['Kimberlit-gyémánt',150e3,200e3,2e-4,.1,5e6,'Köpenyből felhozott gyémánt.'],['Vizes ringwoodit',410e3,660e3,2e-5,.5,5e7,'Óceánnyi vizet rejthet a köpeny.'],
 ['Theia-maradvány',2700e3,2890e3,4e-5,50,9e8,'Az elmélet szerint a Holdat létrehozó ütközés bolygójának anyaga.'],['Ősi hélium-3 zseb',3e6,5e6,1e-5,.01,4e9,'Primordiális gáz a Föld születéséből.']];
-const init=()=>({dp:{},dq:{},dpf:{},cq:{},bd:{s:0,b:0,v:0,m:0},tw:null,dT:0,hw:0,hf:0,hs:[],lamps:[],gf:60,gon:1,en:0,cash:25e4,depth:0,st:'idle',fuel:300,hp:100,u:{d:0,h:0,t:0,c:0,f:0,g:0},cg:{},fin:{},disc:{},max:0,t:Date.now(),log:[],set:{vol:60,sc:60,auto:1,q:'a',abk:1,alp:1},won:0,x:0,tr:[],tn:[]});
+const init=()=>({dp:{},dq:{},dpf:{},cq:{},bd:{s:0,b:0,v:0,m:0},tw:null,dT:0,hw:0,hf:0,hs:[],lamps:[],gf:60,gon:1,en:0,cash:25e4,depth:0,st:'idle',fuel:300,hp:100,u:{d:0,h:0,t:0,c:0,f:0,g:0,b:0},cg:{},fin:{},disc:{},max:0,t:Date.now(),log:[],set:{vol:60,sc:60,auto:1,q:'a',abk:1,alp:1},won:0,x:0,tr:[],tn:[]});
 let tab=0,S;try{S=window.Save?Save.load(init,sanitizeSave):Object.assign(init(),JSON.parse(localStorage.getItem('drillup1')))}catch(e){S=init()}
 window.Gov&&Gov.init(S.set.q);
 const LE=['Talaj: a Föld legfelső, élő rétege – humusz, agyag, homok. Itt élnek a gyökerek és a talajlakók; itt maradtak meg az emberi kultúrák (római, őskori) nyomai.',
@@ -138,7 +139,7 @@ if(S.st.length>1)S.st='idle';S.u.f=S.u.f||0;if(S.depth>0&&!S.tr.length)S.tr=[['D
 const layer=d=>LY.find(l=>d<l[2])||LY.at(-1);
 const cargoKg=()=>Object.values(S.cg).reduce((a,b)=>a+b,0)+Object.entries(S.fin).reduce((a,[n,c])=>a+c*FD.find(f=>f[0]==n)[4],0);
 const cap=()=>C[S.u.c][1],tank=()=>T[S.u.t][1],mass=()=>(D[S.u.d][4]+H[S.u.h][3])*1e3+cargoKg()+S.fuel;
-function calc(){const d0=D[S.u.d],pm=window.GEN?GEN.mult():1,d=[d0[0],d0[1]*pm,d0[2],d0[3],d0[4],d0[5]],f=F[d[3]],L=layer(S.depth),P=lerp(PT,S.depth),Tm=window.VOL?VOL.tm(S.x,S.depth,lerp(TT,S.depth)):lerp(TT,S.depth),m=mass();
+function calc(){const d0=D[S.u.d],pm=(window.GEN?GEN.mult():1)*(window.STM?STM.mult():1),d=[d0[0],d0[1]*pm,d0[2],d0[3],d0[4],d0[5]],f=F[d[3]],L=layer(S.depth),P=lerp(PT,S.depth),Tm=window.VOL?VOL.tm(S.x,S.depth,lerp(TT,S.depth)):lerp(TT,S.depth),m=mass();
  const e=L[3]*(1+P/100),v=Math.min(3,d[1]/(e*A)),fr=d0[1]/(d[2]*f.e),fm=m*G/(.5*d[2]*f.e*1e6),vu=Math.min(5,d[1]*1e6*.5/(m*G));
  const fh=fm*.1,vh=Math.min(5,d[1]*1e6*.5/(m*G*.1));return{d,f,L,P,Tm,m,v,fr,fm,vu,fh,vh,need:S.tr.reduce((a,t)=>a+t[1]*(t[0]=='D'?fm:t[0]=='U'?fm*.2:fh),0)}}
 let t3c=null,wasB=false,tl=0,tlA=0,ldt=0,acc=0,HEAT=0,STALL=0;
@@ -155,7 +156,7 @@ function emerg(ok){if(S.fuel>1e-6)FOUT=0;
 function stall(Ln,hd){const i=HD.findIndex(h=>h[1]>=hd);S.st='idle';S.mode='';STALL=Date.now();HEAT=1.2;msg('⛔ Túl kemény kőzet: '+Ln[0]+' ('+hd+' MPa). Legalább ez a fúrófej kell hozzá: '+HD[i][0]+' (≥'+HD[i][1]+' MPa).');scr(.5,2800,600,.7)}const base=()=>S.depth<2&&S.x>-70&&S.x<50;
 function msg(t,quiet){S.log.unshift(new Date().toLocaleTimeString('hu-HU')+' '+t);S.log.length=Math.min(S.log.length,30);if(!quiet)toast(t)}
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',3500)}
-function strand(why){msg('💀 '+why+' A gép elveszett a mélyben – rakomány és fejlesztések oda. Új gépet kell építened (pénzed megmaradt).');S.cg={};S.fin={};S.u={d:0,h:0,t:0,c:0,f:0,g:S.u.g||0};S.en=0;S.depth=0;S.x=0;S.tr=[];if(window.NET){NET.falling=false;NET.vz=0}window.BIT&&BIT.reset();window.DEP&&DEP.reset();S.fuel=0;S.hp=100;S.st='idle'}
+function strand(why){msg('💀 '+why+' A gép elveszett a mélyben – rakomány és fejlesztések oda. Új gépet kell építened (pénzed megmaradt).');S.cg={};S.fin={};S.u={d:0,h:0,t:0,c:0,f:0,g:S.u.g||0,b:S.u.b||0};S.en=0;S.depth=0;S.x=0;S.tr=[];if(window.NET){NET.falling=false;NET.vz=0}window.BIT&&BIT.reset();window.DEP&&DEP.reset();S.fuel=0;S.hp=100;S.st='idle'}
 function step(dt){if(window.NET&&NET.physics(dt))return;const c=calc(),h=H[S.u.h];let m=S.st;if(m=='idle')return;let arcF=1;if(tl&&Date.now()-ldt<300){if(!tlA){S.mode='';return}arcF=.55}if(S.fuel<1e-6&&!emerg()&&emStock()>0){S.st='idle';S.mode='';return}
  if(window.ENG&&!ENG.ready()){S.mode='';if(!ENG.start()&&S.fuel<=1e-6){if(emStock()>0)S.st='idle';else if(S.depth>0)strand('Elfogyott az üzemanyag.');else{S.st='idle';msg('Elfogyott az üzemanyag a felszínen.')}}return}
  const tp=S.tr.at(-1);if(m=='H'){if(!tp){S.st='idle';S.mode='';msg('☀ Hazaértél a bázisra!');return}m=OP[tp[0]]}
@@ -367,7 +368,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  x.save();x.translate(stroke,0);cyl(-4.7,-1.6,1.65,c1,c2);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);for(let k=0;k<=hl+1;k++){x.fillStyle=c1;x.fillRect(-1.9-k*.5,-1.65,.2,3.3)}
  for(let i=0;i<7;i++){x.fillStyle=i%2?'#f0b020':'#222';x.fillRect(-4.7,-1.65+i*.47,.3,.47)}for(let i=0;i<8;i++){const a=sp*.5+i*.785;if(Math.cos(a)>0){x.fillStyle='#c8ccd2';x.beginPath();x.arc(-4.4,1.35*Math.sin(a),.06,0,7);x.fill()}}
  x.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<6;i++){x.fillRect(-4.2+i*.45,-1.52,.07,.07);x.fillRect(-4.2+i*.45,1.45,.07,.07)}
- if(window.BG&&BG.shell&&window.MX)BG.shell(x,{ts,hl,shell:MX.sh(),lit:lit2});if(window.BG)BG.shieldFx(x,{ts,act,hl});if(window.HGL&&o.glow>0)HGL.hull(x,{ts,g:o.glow});
+ if(window.BG&&BG.shell&&window.MX)BG.shell(x,{ts,hl,shell:MX.sh(),lit:lit2});if(window.BG)BG.shieldFx(x,{ts,act,hl});if(window.STM&&STM.mach)STM.mach(x,{ts,ph,act});if(window.HGL&&o.glow>0)HGL.hull(x,{ts,g:o.glow});
  if(S.hp<75){x.strokeStyle='#111';x.lineWidth=.05;for(let i=0;i<Math.ceil((100-S.hp)/10);i++){const b=-1.8-rnd(i+3)*2.6;x.beginPath();x.moveTo(b,-1.65);x.lineTo(b+.3,-.7);x.lineTo(b-.1,-.2);x.stroke()}}
  x.fillStyle='#0b0b0d';rr(-4.2,-1.2,1.2,2.4,.1);x.fill();const cf=clamp((window.DEP?DEP.used():cargoKg())/cap(),0,1),ff=clamp(S.fuel/tank(),0,1);
  x.fillStyle='#2a0d0d';x.fillRect(-4,-1.05,.3,2.1);x.fillStyle='#e5333a';x.fillRect(-4,1.05-2.1*cf,.3,2.1*cf);x.fillStyle='#2a1c08';x.fillRect(-3.5,-1.05,.3,2.1);x.fillStyle='#f0a030';x.fillRect(-3.5,1.05-2.1*ff,.3,2.1*ff);x.fillStyle='rgba(255,255,255,.25)';x.fillRect(-4,-1.05,.05,2.1);
