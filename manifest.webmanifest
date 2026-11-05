@@ -5,7 +5,7 @@
  "description": "Fúrj le a Föld magjáig – valós méterekben.",
  "start_url": "./",
  "scope": "./",
- "display": "fullscreen",
+ "display": "standalone",
  "orientation": "portrait",
  "background_color": "#14100c",
  "theme_color": "#14100c",
@@ -37,7 +37,6 @@
   }
  ],
  "display_override": [
-  "fullscreen",
   "standalone"
  ],
  "categories": [
