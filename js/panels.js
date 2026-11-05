@@ -24,7 +24,7 @@ const PN={NAMES,R:[],H:[],L:{},bt:0,
  step(dt){PN.bt+=dt;if(PN.bt>.6){PN.bt=0;PN.btn()}}
 };
 W.PN=PN;
-if(W.on){on('frame',dt=>{try{PN.step(Math.min(dt,.1))}catch(e){}});on('hud',V=>{try{PN.draw(V.x,V)}catch(e){DBG.err='panels: '+(e.message||e)}})}
+if(W.on){on('frame',dt=>{try{PN.step(Math.min(dt,.1))}catch(e){}});on('hud2',V=>{try{PN.draw(V.x,V)}catch(e){DBG.err='panels: '+(e.message||e)}})}
 if(typeof document!=='undefined'){let dn=null;
  document.addEventListener('pointerdown',e=>{dn=e.target&&e.target.id==='cv'?{x:e.clientX,y:e.clientY,t:Date.now()}:null;const p=document.getElementById&&document.getElementById('pnPop');if(p&&!p.contains(e.target)&&!(e.target&&e.target.id==='pnBtn'))p.remove()},true);
  document.addEventListener('pointerup',e=>{if(!dn||!e.target||e.target.id!=='cv')return;const d=dn;dn=null;if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>9||Date.now()-d.t>600)return;

@@ -560,7 +560,7 @@ if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){an
  x.fillStyle='#fff';x.fillRect(10,h-14,100,2);x.fillRect(10,h-18,2,10);x.fillRect(108,h-18,2,10);x.font='10px Georgia';x.fillText('10 m',44,h-20);
 
  }
- if(!cinOn)EV('hud',V);
+ if(!cinOn){EV('hud',V);EV('hud2',V)}
  if(S.set.dbg){x.font='10px monospace';x.fillStyle='rgba(0,0,0,.65)';x.fillRect(4,34,236,124);x.fillStyle='#7cff6a';const L=[`FPS ${DBG.fps|0}  dt ${(dt*1e3)|0} ms`,`st ${S.st} mode ${S.mode||'-'} turn ${tl|0}`,`x ${S.x.toFixed(2)}  d ${S.depth.toFixed(2)}`,`lag ${(rx-S.x).toFixed(2)}/${(ry-S.depth).toFixed(2)} m  v ${vsp|0} px/s`,`spin ${rate.toFixed(1)} pv ${pv.toFixed(2)} ang ${ang.toFixed(2)} yaw ${yaw.toFixed(2)}`,`part ${pr.length} lights ${LT.length} fuel ${S.fuel.toFixed(1)}`,`gomb ${DBG.btn||'-'}`,`gfx Q${window.Gov?Gov.q:'-'} ${window.Gov?Gov.ema.toFixed(1):''} ms`];L.forEach((t,i)=>x.fillText(t,8,46+i*13));if(DBG.err){x.fillStyle='#ff6a5a';x.fillText(DBG.err.slice(0,42),8,46+L.length*13)}}
 }
 // ---- főmenü: élő fúrás-jelenet (a jelenlegi géppel) ----

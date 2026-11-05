@@ -260,3 +260,8 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
 #mm .stats{gap:6px!important;margin-bottom:10px!important}#mm .stat{padding:6px 10px!important}#mm .stat b{font-size:13px!important}
 #mm .mb.pri.big{padding:14px!important;margin-bottom:10px!important}
 #mm .lnk{margin-top:6px!important;padding:8px!important}
+/* v5.18 – telefon fekvő helyzetben a kezelőpult elfoglalná a képernyőt: forgatási kérés (a játék álló nézetre készült) */
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){
+ body::after{content:"↻  Fordítsd álló helyzetbe a telefont\A Rotate your phone to portrait";white-space:pre-line;position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:#0b0806;color:#f0e6d2;font:700 20px/1.6 Georgia,serif}
+}
+#iosHint{bottom:auto!important;top:64px}#iosHint button{width:28px;height:28px;border-radius:50%;background:#d62f27!important;color:#fff!important;border:2px solid #fff!important;font-size:14px;padding:0;top:50%!important;transform:translateY(-50%)}
