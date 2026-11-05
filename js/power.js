@@ -13,14 +13,14 @@ if(W.Save)Save.addMig(2,o=>{o.u=o.u&&typeof o.u==='object'?o.u:{};if(o.u.g==null
 const ENG={rpm:0,hyd:0,ld:0,cr:0,phase:'off',idleT:0,flash:0,burst:0,inited:false,wasReady:0,
  init(){if(ENG.inited)return;ENG.inited=true;if(S.en){ENG.rpm=1;ENG.hyd=1;ENG.phase='run';ENG.wasReady=1}},
  ready(){ENG.init();return S.en==1&&ENG.phase==='run'&&ENG.rpm>=.85&&ENG.hyd>=.7},
- start(){ENG.init();if(S.en)return true;if(S.fuel<=1e-6&&!emerg())return false;
+ start(user){ENG.init();if(S.en)return true;if(S.fuel<=1e-6&&!emerg(user))return false;
   S.en=1;ENG.phase='crank';ENG.cr=0;ENG.rpm=0;ENG.hyd=0;ENG.idleT=0;ENG.wasReady=0;ENG.snd('crank');return true},
  stop(){ENG.init();if(!S.en)return;S.en=0;ENG.phase='stop';ENG.wasReady=0;ENG.snd('stop');if(S.st!=='idle')go('idle')},
  pre(){return{m:clamp(ENG.rpm/.85,0,1),h:clamp(ENG.hyd/.7,0,1),f:clamp((ENG.rpm-.35)/.5,0,1)}},
  // valós idejű (nem időgyorsított) frissítés a szimuláció elején
  update(real){ENG.init();
   if(!S.en){if(ENG.rpm>0){ENG.rpm=Math.max(0,ENG.rpm-real/1.6);ENG.hyd=Math.max(0,ENG.hyd-real/1.2);ENG.phase=ENG.rpm>0?'stop':'off'}else ENG.phase='off';ENG.ld*=Math.pow(.2,Math.min(real,5));return}
-  if(S.fuel<=1e-6&&!emerg()){S.en=0;ENG.phase='stop';msg('⚙ A motor leállt: nincs üzemanyag.');alarm3();if(W.NET)NET.slip();return}
+  if(S.fuel<=1e-6&&!emerg()){S.en=0;ENG.phase='stop';if(!(typeof emStock==='function'&&emStock()>0)){msg('⚙ A motor leállt: nincs üzemanyag.');alarm3()}if(W.NET)NET.slip();return}
   if(ENG.phase==='crank'){ENG.cr+=real;ENG.rpm=Math.min(.18,ENG.cr*.3);if(ENG.cr>=.8){ENG.phase='run';ENG.burst=1;ENG.snd('ignite')}}
   else{ENG.phase='run';const tgt=1-.12*Math.max(0,ENG.ld-.8);ENG.rpm+=(tgt-ENG.rpm)*(1-Math.exp(-real*1.1));ENG.hyd+=((ENG.rpm>.5?1:0)-ENG.hyd)*(1-Math.exp(-real*1.3))}
   if(ENG.phase==='run'&&!ENG.wasReady&&ENG.ready()){ENG.wasReady=1;ENG.flash=1;ENG.snd('ready')}
@@ -61,7 +61,7 @@ W.GEN=GEN;
 // ================= KEZELŐFELÜLET =================
 const PW={t:0,
  dock(){return `<button id="swM" class="tb sw" style="font-size:11px;padding:8px 0" onclick="PW.toggleEng()"><i class="led"></i>⚙ Motor</button><button id="swG" class="tb sw" style="font-size:11px;padding:8px 0" onclick="PW.toggleGen()"><i class="led"></i>⚡ Gen.</button>`},
- toggleEng(){aInit();if(S.en){ENG.stop()}else if(!ENG.start())toast('⛽ Nincs üzemanyag a motor indításához.');PW.live()},
+ toggleEng(){aInit();if(S.en){ENG.stop()}else if(!ENG.start(1))toast('⛽ Nincs üzemanyag a motor indításához.');PW.live()},
  toggleGen(){GEN.toggle()},
  live(){const m=$('#swM'),g=$('#swG');
   if(m){m.className='tb sw '+(!S.en?'':(ENG.ready()?'run':'start'));m.style.setProperty('--p',Math.round(clamp(ENG.rpm,0,1)*100)+'%')}

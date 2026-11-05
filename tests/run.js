@@ -415,4 +415,9 @@ for(const seed of [1,2,3,4,5,6]){t('fuzz #'+seed+': 2000 képkocka véletlen gom
    ok(S.st==='idle'||'UDLRH'.includes(S.st),'állapot @'+f)}}
  eq(errs,[]);T.save();const g2=boot({store:g.store});ok(g2.T.S.tn.length>=1&&g2.T.S.v===g2.sb.Save.VER,'a fuzz utáni mentés betölthető')})}
 
+group('Y5) Üzemanyag kifogyása: nincs automatikus átváltás');
+t('kifogyott tank + van szén a raktárban: a gép megáll és jelez, a raktárhoz nem nyúl',()=>{const g=boot(),T=g.T,S=T.S;S.cg={'Kőszén':50};S.fuel=0;S.depth=30;S.x=5;S.st='D';S.en=0;g.frames(120,30);const t0=S.cg['Kőszén'];ok(S.st==='idle','megállt: '+S.st);ok(S.fuel<=1e-6,'üzemanyag 0: '+S.fuel);eq(t0,50);ok(!T.S.str,'nem ragadt be');ok(S.depth===30,'nem mozdult')});
+t('jóváhagyás: irányt nyomva a gép átvált a saját tárolóra és ég a raktárból',()=>{const g=boot(),T=g.T,S=T.S;S.cg={'Kőszén':50};S.fuel=0;S.depth=30;S.x=5;S.st='idle';T.go('L');ok(S.cg['Kőszén']<50,'raktár fogyott '+S.cg['Kőszén']);ok(S.fuel>0,'tank '+S.fuel)});
+t('nincs tartalék sem: a régi viselkedés (leáll/beszorul), nem történik hiba',()=>{const g=boot(),T=g.T,S=T.S;S.cg={};S.fuel=0;S.depth=30;S.x=5;S.st='D';g.frames(120,30);ok(S.fuel<=1e-6,'üres marad')});
+
 console.log(`\nÖsszesen: ${pass} sikeres, ${fail} sikertelen`);process.exit(fail?1:0);
