@@ -11,7 +11,11 @@
   "dependencies": {
     "@capacitor/android": "8.6.0",
     "@capacitor/core": "8.6.0",
-    "@capacitor/ios": "8.6.0"
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/ios": "8.6.0",
+    "@capacitor/share": "8.0.3",
+    "@capgo/capacitor-updater": "8.54.2"
   },
   "devDependencies": {
     "@capacitor/assets": "4.0.0",

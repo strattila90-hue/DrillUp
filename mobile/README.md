@@ -6,12 +6,19 @@ A Play-es TWA-val ellentétben itt minden fájl az appban van, nem kell hozzá a
 A webes fájlokat (`index.html`, `js/`, `ui.css`, ikonok) a `copy-web.js` másolja be a `www/` mappába; a fájllistát a `sw.js` `A` listájából veszi.
 Új modul felvételekor tehát elég a `sw.js`-t bővíteni (ezt a web miatt amúgy is meg kell tenni).
 
-## APK letöltése (nem kell hozzá semmit telepítened)
-1. GitHub → **Actions** → **Mobile build** → **Run workflow** (vagy automatikusan lefut, ha a `main` ágon változik a játék).
-2. A kész futás alján, az **Artifacts** részben: `android` → ebben a `CoreQuest-<verzió>….apk`.
-3. Telefonon: nyisd meg az APK-t → engedélyezd az „ismeretlen forrásból való telepítést” → Telepítés.
+## APK letöltése
+A legújabb: **https://github.com/strattila90-hue/DrillUp/releases/latest** → `CoreQuest-….apk`.
+Telefonon: töltsd le → nyisd meg (értesítés, vagy Fájlok → Letöltések) → engedélyezd az „ismeretlen forrásból való telepítést” → Telepítés.
 
-Ha a **Run workflow**-nál bepipálod a „release” opciót (vagy `v*` címkét pusholsz), a fájlok egy **GitHub Release**-be is bekerülnek, onnan közvetlen linkkel tölthetők le.
+Minden `main`-re kerülő játékváltozásnál a GitHub Actions („Mobile build”) magától új kiadást készít (`v<VER>-b<sorszám>`), benne az APK, az iOS IPA és a `web-b<sorszám>.zip` frissítőcsomag.
+
+## Frissítés a játékon belül
+Menü → **Frissítés** gomb (rajta a verzió és a csomagszám, pl. `v5.18·12`):
+1. megnézi a GitHub legújabb kiadását (`releases/latest`),
+2. ha abban nagyobb sorszámú `web-bN.zip` van, letölti, és újraindítja vele a játékot – **a mentés megmarad**, újratelepítés nem kell.
+Ha az új csomag nem indulna el rendben, a frissítő (Capgo updater, statisztika-küldés kikapcsolva) magától visszaáll az előzőre.
+
+Új APK csak akkor kell, ha a natív keret változik (új Capacitor-plugin, ikon, jogosultság) – ilyenkor kézzel kell telepíteni.
 
 ### Saját aláíró kulcs (ajánlott, egyszer kell)
 Kulcs nélkül a CI **debug** APK-t készít: telepíthető, de minden fordítás más kulccsal készül, ezért frissítéskor a régi appot előbb el kell távolítani (**a mentés is törlődik**, előtte: Menü → Beállítások → Adatok → Exportálás).
@@ -53,6 +60,8 @@ npm run assets          # ikonok/indítókép újragenerálása az assets/ mapp�
 ```
 
 ## Natív sajátosságok
-- Service worker nem fut az appban (nincs rá szükség, minden fájl helyben van); a „Frissítés” gomb csak újratölt – új verzióhoz új APK kell.
+- Service worker nem fut az appban (nincs rá szükség, minden fájl helyben van).
+- A natív kiegészítést a `shim/native-app.js` adja (csak az appba kerül): frissítés, rezgés (Haptics), megosztás (Share), mentés-exportálás fájlba (Dokumentumok/DrillUp + megosztás), a böngészős teljes képernyő kikapcsolása.
+- A kijelző játék közben nem alszik el (Android: `FLAG_KEEP_SCREEN_ON`, iOS: `isIdleTimerDisabled`).
 - Csak álló tájolás; az Android vissza-gomb a játék menüjét nyitja (a `js/native.js` kezeli).
 - A mentés az app saját tárolójában van, külön a böngészőétől: átvitelhez Exportálás / Importálás.

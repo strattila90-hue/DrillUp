@@ -14,4 +14,12 @@ const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const miss=[...html.matchAll(/<script src="([^"]+)"/g)].map(x=>x[1]).filter(s=>!files.includes(s));
 for(const s of miss){if(!fs.existsSync(path.join(ROOT,s)))throw new Error('Hiányzó szkript: '+s);
  fs.mkdirSync(path.dirname(path.join(OUT,s)),{recursive:true});fs.copyFileSync(path.join(ROOT,s),path.join(OUT,s))}
+// natív kiegészítés: Capacitor-mag + native-app.js a <head> elejére, és a csomag sorszáma (frissítés-ellenőrzéshez)
+const BUILD=parseInt(process.env.BUILD_NUMBER||'0',10)||0;
+fs.copyFileSync(path.join(__dirname,'node_modules/@capacitor/core/dist/capacitor.js'),path.join(OUT,'capacitor.js'));
+fs.copyFileSync(path.join(__dirname,'shim/native-app.js'),path.join(OUT,'native-app.js'));
+const ix=path.join(OUT,'index.html');let h=fs.readFileSync(ix,'utf8');
+if(!/<head>/.test(h))throw new Error('index.html: nincs <head>');
+h=h.replace('<head>','<head><script src="capacitor.js"></script><script>window.APPBUILD='+BUILD+'</script><script src="native-app.js"></script>');
+fs.writeFileSync(ix,h);
 console.log('www: '+(files.length+miss.length)+' fájl'+(miss.length?' (sw.js-ből hiányzott: '+miss.join(', ')+')':''));

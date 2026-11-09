@@ -4,5 +4,13 @@
   "webDir": "www",
   "backgroundColor": "#14100c",
   "android": { "backgroundColor": "#14100c" },
-  "ios": { "backgroundColor": "#14100c", "contentInset": "never" }
+  "ios": { "backgroundColor": "#14100c", "contentInset": "never" },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "statsUrl": "",
+      "appReadyTimeout": 15000,
+      "resetWhenUpdate": true
+    }
+  }
 }

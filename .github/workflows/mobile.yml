@@ -1,26 +1,32 @@
 # Önálló (offline) Android APK és iOS IPA készítése a játékból – Capacitor.
-# Futtatás: GitHub → Actions → "Mobile build" → Run workflow, vagy automatikusan v* címke pusholásakor.
-# Az elkészült fájlok a futás "Artifacts" részéből tölthetők le; v* címkénél GitHub Release is készül.
+# Automatikusan lefut, ha a main ágon változik a játék (vagy kézzel: Actions → "Mobile build" → Run workflow).
+# Minden main-futás GitHub Release-t készít (v<VER>-b<sorszám>), benne:
+#   CoreQuest-….apk, CoreQuest-unsigned.ipa és web-b<sorszám>.zip – ez utóbbit tölti le az app a Frissítés gombra.
 name: Mobile build
 
 on:
   workflow_dispatch:
-    inputs:
-      release:
-        description: 'GitHub Release készítése (v + a játék VER verziója)'
-        type: boolean
-        default: false
   push:
     tags: ['v*']
     branches: [main]
-    paths: ['index.html', 'ui.css', 'js/**', 'sw.js', 'mobile/**', '.github/workflows/mobile.yml']
+    paths: ['index.html', 'ui.css', 'js/**', 'sw.js', 'privacy.html', 'mobile/**', '.github/workflows/mobile.yml']
 
 permissions:
   contents: write
 
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+  DO_RELEASE: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+
 jobs:
   android:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.ver.outputs.tag }}
     env:
       VERSION_CODE: ${{ github.run_number }}
     steps:
@@ -30,10 +36,18 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - name: Verzió a játékból (VER)
-        run: echo "VERSION_NAME=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)" >> $GITHUB_ENV
+        id: ver
+        run: |
+          V=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)
+          echo "VERSION_NAME=$V" >> $GITHUB_ENV
+          echo "tag=v$V-b$BUILD_NUMBER" >> $GITHUB_OUTPUT
       - name: Web-csomag + szinkron
         working-directory: mobile
         run: npm ci && node copy-web.js && npx cap sync android
+      - name: Frissítő csomag (web-bN.zip)
+        run: |
+          mkdir -p dist
+          (cd mobile/www && zip -qr ../../dist/web-b$BUILD_NUMBER.zip .)
       - name: Aláíró kulcs (ha van GitHub Secret)
         env:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -43,7 +57,7 @@ jobs:
             echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> $GITHUB_ENV
             echo "SIGNED=1" >> $GITHUB_ENV
           else
-            echo "::warning::Nincs ANDROID_KEYSTORE_BASE64 secret – debug-kulccsal aláírt APK készül (telepíthető, de a frissítéshez előbb el kell távolítani a régit). Lásd mobile/README.md"
+            echo "::warning::Nincs ANDROID_KEYSTORE_BASE64 secret – debug-kulccsal aláírt APK készül. Lásd mobile/README.md"
           fi
       - name: Fordítás
         working-directory: mobile/android
@@ -53,35 +67,35 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          mkdir -p ../../dist
           if [ "$SIGNED" = "1" ]; then
             ./gradlew --no-daemon assembleRelease bundleRelease
-            cp app/build/outputs/apk/release/app-release.apk ../../dist/CoreQuest-$VERSION_NAME.apk
-            cp app/build/outputs/bundle/release/app-release.aab ../../dist/CoreQuest-$VERSION_NAME.aab
+            cp app/build/outputs/apk/release/app-release.apk ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.apk
+            cp app/build/outputs/bundle/release/app-release.aab ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.aab
           else
             ./gradlew --no-daemon assembleDebug
-            cp app/build/outputs/apk/debug/app-debug.apk ../../dist/CoreQuest-$VERSION_NAME-debug.apk
+            cp app/build/outputs/apk/debug/app-debug.apk ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.apk
           fi
       - uses: actions/upload-artifact@v4
         with: { name: android, path: dist/* }
-      - if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+      - if: env.DO_RELEASE == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          tag_name: ${{ steps.ver.outputs.tag }}
           target_commitish: ${{ github.sha }}
-          name: DrillUp Core Quest ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          name: DrillUp Core Quest ${{ steps.ver.outputs.tag }}
+          make_latest: true
           body: |
-            **Android:** töltsd le az `.apk` fájlt a telefonon, nyisd meg, és engedélyezd az „ismeretlen forrásból” telepítést.
-            **iOS:** Safariban nyisd meg a játék weboldalát → Megosztás → „Főképernyőhöz adás”; vagy a `CoreQuest-unsigned.ipa` telepíthető Sideloadly / AltStore segítségével.
-            Részletek: mobile/README.md
+            **Android:** töltsd le a `CoreQuest-….apk` fájlt a telefonon, nyisd meg (értesítés vagy Fájlok → Letöltések), és engedélyezd az „ismeretlen forrásból” telepítést.
+            Ha már fent van az app: elég a játékban a **Frissítés** gomb – letölti ezt a verziót, a mentés megmarad.
+            **iOS:** Safari → Megosztás → „Főképernyőhöz adás”; vagy a `CoreQuest-unsigned.ipa` Sideloadly / AltStore segítségével.
+            (`web-b…zip`: a Frissítés gomb által letöltött játékcsomag – kézzel nem kell vele foglalkozni.)
 
   ios:
+    needs: android
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verzió a játékból (VER)
-        run: echo "VERSION_NAME=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)" >> $GITHUB_ENV
       - uses: maxim-lobanov/setup-xcode@v1
         with: { xcode-version: latest-stable }
       - uses: actions/setup-node@v4
@@ -95,20 +109,15 @@ jobs:
           xcodebuild -project App.xcodeproj -scheme App -configuration Release \
             -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }} build
+            CURRENT_PROJECT_VERSION=$BUILD_NUMBER build
           mkdir -p Payload ../../../dist
           cp -R build/Build/Products/Release-iphoneos/App.app Payload/
           zip -qr ../../../dist/CoreQuest-unsigned.ipa Payload
       - uses: actions/upload-artifact@v4
         with: { name: ios, path: dist/* }
-      - if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+      - if: env.DO_RELEASE == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
-          target_commitish: ${{ github.sha }}
-          name: DrillUp Core Quest ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
-          body: |
-            **Android:** töltsd le az `.apk` fájlt a telefonon, nyisd meg, és engedélyezd az „ismeretlen forrásból” telepítést.
-            **iOS:** Safariban nyisd meg a játék weboldalát → Megosztás → „Főképernyőhöz adás”; vagy a `CoreQuest-unsigned.ipa` telepíthető Sideloadly / AltStore segítségével.
-            Részletek: mobile/README.md
+          tag_name: ${{ needs.android.outputs.tag }}
+          make_latest: true
