@@ -31,7 +31,7 @@ function tr(s){
  if(cache.size>6000)cache.clear();cache.set(s,out);return out}
 if(L==='en'){I.tr=tr;
  // ---- rajzra írt feliratok (canvas) ----
- try{const P=W.CanvasRenderingContext2D&&CanvasRenderingContext2D.prototype;if(P)for(const f of['fillText','strokeText','measureText']){const o=P[f];P[f]=function(t,...a){return o.call(this,typeof t==='string'?tr(t):t,...a)}}}catch(e){}
+ try{const P=W.CanvasRenderingContext2D&&CanvasRenderingContext2D.prototype;if(P)for(const f of['fillText','strokeText','measureText']){const o=P[f];P[f]=function(t,a,b,c){return o.call(this,typeof t==='string'?tr(t):t,a,b,c)}}}catch(e){}
  // ---- DOM ----
  const skip=new Set(['SCRIPT','STYLE','CANVAS','TEXTAREA']);
  function node(n){

@@ -6,7 +6,7 @@
 W.MODS=W.MODS||[];W.MODS.push('realism');
 const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 const RZ={off:false,tile:null,pat:null,
- on(){if(RZ.off)return false;try{if(S.set&&S.set.rl===0)return false;if(W.CIN&&CIN.on&&0)return false;return(W.Gov?Gov.q:2)>=1}catch(e){return false}},
+ on(){if(RZ.off)return false;try{if(S.set&&S.set.rl===0)return false;if(W.CIN&&CIN.on&&0)return false;return(W.Gov?Gov.q:2)>=2}catch(e){return false}},
  // 160×160-as kőzet-szemcse csempe (seedelt, ismétlődés nélküli látszatú, közép-szürke → „overlay" módban nem változtatja a fényerőt)
  mk(){if(RZ.tile||typeof document==='undefined'||!document.createElement)return RZ.tile;const N=160,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext&&c.getContext('2d');if(!g)return null;
   const d=g.createImageData(N,N);let s=1234567;const r=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296};

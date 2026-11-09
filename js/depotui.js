@@ -21,8 +21,8 @@ const DUI={sig:'',last:{},
  // minden képkockán: csak a méretek és a számok (olcsó); ha az anyagok halmaza változik, újrarajzoltatja a fület
  update(){try{
   const tb=typeof tab!=='undefined'?tab:-1;if(tb!==3&&tb!==2)return;const f=DUI.fr(),q=id=>document.getElementById(id);
-  const set=(id,pct)=>{const e=q(id);if(!e)return;const v=(pct*100).toFixed(1);if(DUI.last[id]!==v){DUI.last[id]=v;e.style.height=v+'%';const p=e.parentNode&&e.parentNode.querySelector('em');if(p)p.textContent=Math.round(pct*100)+'%'}};
-  const txt=(id,t)=>{const e=q(id);if(e&&DUI.last[id]!==t){DUI.last[id]=t;e.textContent=t}};
+  const set=(id,pct)=>{const e=q(id);if(!e)return;const v=(pct*100).toFixed(1);if(DUI.last[id]!==v&&(Date.now()-(DUI.lt&&DUI.lt['h'+id]||0)>120)){DUI.lt=DUI.lt||{};DUI.lt['h'+id]=Date.now();DUI.last[id]=v;e.style.height=v+'%';const p=e.parentNode&&e.parentNode.querySelector('em');if(p)p.textContent=Math.round(pct*100)+'%'}};
+  const now=Date.now(),slow={dtUse:1,dtMt:1,dtDt:1,dtR:1};DUI.lt=DUI.lt||{};const txt=(id,t)=>{const e=q(id);if(e&&DUI.last[id]!==t){if(slow[id]&&now-(DUI.lt[id]||0)<300)return;DUI.lt[id]=now;DUI.last[id]=t;e.textContent=t}};
   set('dtM',f.m);set('dtD',f.d);set('dtT',f.away&&f.tl?1:0);
   txt('dtUse',fk(DEP.used())+' / '+fk(cap()));txt('dtMt',fk(DEP.used())+' / '+fk(cap()));txt('dtDt',fk(DEP.stock())+' / '+fk(DEP.val('s')));
   const left=f.away?Math.max(0,Math.ceil((S.tw.t1-Date.now())/1e3)):0;txt('dtTt',f.away?(f.tl?'tele · úton':'üresen vissza'):'otthon');txt('dtS',f.away?left+' mp':'🚂');txt('dtR',DEP.job?nf(DEP.val('b'))+' kg/s':'⬇');

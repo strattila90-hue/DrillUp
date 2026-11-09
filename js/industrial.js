@@ -8,7 +8,7 @@ W.MODS=W.MODS||[];W.MODS.push('industrial');
 const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rn=(i,k)=>{const s=Math.sin(i*127.1+k*311.7)*43758.5453;return s-Math.floor(s)};
 const IND={off:false,
- on(){if(IND.off)return false;try{if(S.set&&S.set.rl===0)return false;return(W.Gov?Gov.q:2)>=1}catch(e){return false}},
+ on(){if(IND.off)return false;try{if(S.set&&S.set.rl===0)return false;return(W.Gov?Gov.q:2)>=2}catch(e){return false}},
  wear(){try{return cl(((S.tk||0)/100)*.6+((S.hw||0)/100)*.4,0,1)}catch(e){return 0}},
  // egy hengeres szakasz részletei: x0..x1, félmagasság r
  part(x,x0,x1,r,seed,wr,dust,hole){
