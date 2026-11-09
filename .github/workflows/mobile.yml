@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     tags: ['v*']
-    branches: [main, 'ccr-*']
+    branches: [main]
     paths: ['index.html', 'ui.css', 'js/**', 'sw.js', 'mobile/**', '.github/workflows/mobile.yml']
 
 permissions:
