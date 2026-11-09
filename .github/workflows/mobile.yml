@@ -75,6 +75,8 @@ jobs:
             ./gradlew --no-daemon assembleDebug
             cp app/build/outputs/apk/debug/app-debug.apk ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.apk
           fi
+          # állandó nevű másolat: https://github.com/strattila90-hue/DrillUp/releases/latest/download/CoreQuest.apk
+          cp ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.apk ../../dist/CoreQuest.apk
       - uses: actions/upload-artifact@v4
         with: { name: android, path: dist/* }
       - if: env.DO_RELEASE == 'true'

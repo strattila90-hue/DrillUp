@@ -7,12 +7,15 @@ A webes fájlokat (`index.html`, `js/`, `ui.css`, ikonok) a `copy-web.js` másol
 Új modul felvételekor tehát elég a `sw.js`-t bővíteni (ezt a web miatt amúgy is meg kell tenni).
 
 ## APK letöltése
-A legújabb: **https://github.com/strattila90-hue/DrillUp/releases/latest** → `CoreQuest-….apk`.
+Közvetlen link (mindig a legújabb): **https://github.com/strattila90-hue/DrillUp/releases/latest/download/CoreQuest.apk**
+(A kiadás oldala: https://github.com/strattila90-hue/DrillUp/releases/latest)
 Telefonon: töltsd le → nyisd meg (értesítés, vagy Fájlok → Letöltések) → engedélyezd az „ismeretlen forrásból való telepítést” → Telepítés.
 
 Minden `main`-re kerülő játékváltozásnál a GitHub Actions („Mobile build”) magától új kiadást készít (`v<VER>-b<sorszám>`), benne az APK, az iOS IPA és a `web-b<sorszám>.zip` frissítőcsomag.
 
 ## Frissítés a játékon belül
+**Automatikusan:** induláskor (és visszatéréskor legfeljebb 6 óránként) az app a háttérben megnézi a legújabb kiadást, letölti az új `web-bN.zip` csomagot, és a **következő indításkor** azzal indul (játék közben nem szakít meg). Kézzel azonnal is lehet:
+
 Menü → **Frissítés** gomb (rajta a verzió és a csomagszám, pl. `v5.18·12`):
 1. megnézi a GitHub legújabb kiadását (`releases/latest`),
 2. ha abban nagyobb sorszámú `web-bN.zip` van, letölti, és újraindítja vele a játékot – **a mentés megmarad**, újratelepítés nem kell.
