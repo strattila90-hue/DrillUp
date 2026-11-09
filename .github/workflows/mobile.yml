@@ -24,7 +24,6 @@ jobs:
         with: { node-version: 22, cache: npm, cache-dependency-path: mobile/package-lock.json }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
-      - uses: android-actions/setup-android@v3
       - name: Verzió a játékból (VER)
         run: echo "VERSION_NAME=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)" >> $GITHUB_ENV
       - name: Web-csomag + szinkron
