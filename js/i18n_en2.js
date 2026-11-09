@@ -1,6 +1,7 @@
 /* DrillUp Core Quest – English dictionary, part 2: minerals, classroom, volcanoes, layer descriptions, energy facts. */
 (function(W){'use strict';
 W.I18N_DICT=Object.assign(W.I18N_DICT||{},{
+"📋 Beillesztés":"📋 Paste",
 "Az előadás csak álló gépnél indul.":"The lecture only starts while the machine is standing still.",
 "Kemény, ellenálló – a folyók legömbölyítik.":"Hard and resistant – rivers round it off.",
 "Nem ásvány: elbomlott növényi maradék a talajban.":"Not a mineral: decomposed plant matter in the soil.",
