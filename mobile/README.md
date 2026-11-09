@@ -11,7 +11,7 @@ A webes fájlokat (`index.html`, `js/`, `ui.css`, ikonok) a `copy-web.js` másol
 2. A kész futás alján, az **Artifacts** részben: `android` → ebben a `CoreQuest-<verzió>….apk`.
 3. Telefonon: nyisd meg az APK-t → engedélyezd az „ismeretlen forrásból való telepítést” → Telepítés.
 
-Ha `v*` címkét pusholsz (pl. `git tag v5.18 && git push origin v5.18`), a fájlok egy **GitHub Release**-be is bekerülnek, onnan közvetlen linkkel tölthetők le.
+Ha a **Run workflow**-nál bepipálod a „release” opciót (vagy `v*` címkét pusholsz), a fájlok egy **GitHub Release**-be is bekerülnek, onnan közvetlen linkkel tölthetők le.
 
 ### Saját aláíró kulcs (ajánlott, egyszer kell)
 Kulcs nélkül a CI **debug** APK-t készít: telepíthető, de minden fordítás más kulccsal készül, ezért frissítéskor a régi appot előbb el kell távolítani (**a mentés is törlődik**, előtte: Menü → Beállítások → Adatok → Exportálás).

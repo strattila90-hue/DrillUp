@@ -5,6 +5,11 @@ name: Mobile build
 
 on:
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'GitHub Release készítése (v + a játék VER verziója)'
+        type: boolean
+        default: false
   push:
     tags: ['v*']
     branches: [main]
@@ -59,14 +64,24 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with: { name: android, path: dist/* }
-      - if: startsWith(github.ref, 'refs/tags/v')
+      - if: startsWith(github.ref, 'refs/tags/v') || inputs.release
         uses: softprops/action-gh-release@v2
-        with: { files: dist/* }
+        with:
+          files: dist/*
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          target_commitish: ${{ github.sha }}
+          name: DrillUp Core Quest ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          body: |
+            **Android:** töltsd le az `.apk` fájlt a telefonon, nyisd meg, és engedélyezd az „ismeretlen forrásból” telepítést.
+            **iOS:** Safariban nyisd meg a játék weboldalát → Megosztás → „Főképernyőhöz adás”; vagy a `CoreQuest-unsigned.ipa` telepíthető Sideloadly / AltStore segítségével.
+            Részletek: mobile/README.md
 
   ios:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Verzió a játékból (VER)
+        run: echo "VERSION_NAME=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)" >> $GITHUB_ENV
       - uses: maxim-lobanov/setup-xcode@v1
         with: { xcode-version: latest-stable }
       - uses: actions/setup-node@v4
@@ -86,6 +101,14 @@ jobs:
           zip -qr ../../../dist/CoreQuest-unsigned.ipa Payload
       - uses: actions/upload-artifact@v4
         with: { name: ios, path: dist/* }
-      - if: startsWith(github.ref, 'refs/tags/v')
+      - if: startsWith(github.ref, 'refs/tags/v') || inputs.release
         uses: softprops/action-gh-release@v2
-        with: { files: dist/* }
+        with:
+          files: dist/*
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          target_commitish: ${{ github.sha }}
+          name: DrillUp Core Quest ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.VERSION_NAME) }}
+          body: |
+            **Android:** töltsd le az `.apk` fájlt a telefonon, nyisd meg, és engedélyezd az „ismeretlen forrásból” telepítést.
+            **iOS:** Safariban nyisd meg a játék weboldalát → Megosztás → „Főképernyőhöz adás”; vagy a `CoreQuest-unsigned.ipa` telepíthető Sideloadly / AltStore segítségével.
+            Részletek: mobile/README.md
