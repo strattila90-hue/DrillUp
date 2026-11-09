@@ -1,0 +1,20 @@
+{
+  "name": "drillup-mobile",
+  "version": "5.18.0",
+  "private": true,
+  "description": "DrillUp Core Quest – standalone Android APK / iOS app (Capacitor wrapper, offline bundle)",
+  "scripts": {
+    "www": "node copy-web.js",
+    "sync": "node copy-web.js && cap sync",
+    "assets": "capacitor-assets generate --iconBackgroundColor '#14100c' --iconBackgroundColorDark '#14100c' --splashBackgroundColor '#14100c' --splashBackgroundColorDark '#14100c'"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "4.0.0",
+    "@capacitor/cli": "8.6.0"
+  }
+}

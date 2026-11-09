@@ -1,0 +1,92 @@
+# Önálló (offline) Android APK és iOS IPA készítése a játékból – Capacitor.
+# Futtatás: GitHub → Actions → "Mobile build" → Run workflow, vagy automatikusan v* címke pusholásakor.
+# Az elkészült fájlok a futás "Artifacts" részéből tölthetők le; v* címkénél GitHub Release is készül.
+name: Mobile build
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+    branches: [main]
+    paths: ['index.html', 'ui.css', 'js/**', 'sw.js', 'mobile/**', '.github/workflows/mobile.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: mobile/package-lock.json }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - uses: android-actions/setup-android@v3
+      - name: Verzió a játékból (VER)
+        run: echo "VERSION_NAME=$(grep -o "VER='[^']*'" index.html | head -1 | cut -d"'" -f2)" >> $GITHUB_ENV
+      - name: Web-csomag + szinkron
+        working-directory: mobile
+        run: npm ci && node copy-web.js && npx cap sync android
+      - name: Aláíró kulcs (ha van GitHub Secret)
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> $GITHUB_ENV
+            echo "SIGNED=1" >> $GITHUB_ENV
+          else
+            echo "::warning::Nincs ANDROID_KEYSTORE_BASE64 secret – debug-kulccsal aláírt APK készül (telepíthető, de a frissítéshez előbb el kell távolítani a régit). Lásd mobile/README.md"
+          fi
+      - name: Fordítás
+        working-directory: mobile/android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          mkdir -p ../../dist
+          if [ "$SIGNED" = "1" ]; then
+            ./gradlew --no-daemon assembleRelease bundleRelease
+            cp app/build/outputs/apk/release/app-release.apk ../../dist/CoreQuest-$VERSION_NAME.apk
+            cp app/build/outputs/bundle/release/app-release.aab ../../dist/CoreQuest-$VERSION_NAME.aab
+          else
+            ./gradlew --no-daemon assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk ../../dist/CoreQuest-$VERSION_NAME-debug.apk
+          fi
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: dist/* }
+      - if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with: { files: dist/* }
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with: { xcode-version: latest-stable }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: mobile/package-lock.json }
+      - name: Web-csomag + szinkron
+        working-directory: mobile
+        run: npm ci && node copy-web.js && npx cap sync ios
+      - name: Fordítás (aláírás nélkül)
+        working-directory: mobile/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} build
+          mkdir -p Payload ../../../dist
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qr ../../../dist/CoreQuest-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with: { name: ios, path: dist/* }
+      - if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with: { files: dist/* }

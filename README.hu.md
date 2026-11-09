@@ -31,6 +31,9 @@ A böngésző helyi tárolójában. Menü → Beállítások → Adatok: rendsze
 ## Kompatibilitás
 Chrome / Android WebView 80+, Safari 13.1+. A `js/compat.js` pótolja az `Array.at`, `flat`, `flatMap` függvényeket régebbi motorokon. Érintés-központú, álló tájolás; rezgés, képernyő-ébrentartás és teljes képernyő csak ahol elérhető.
 
+## Önálló APK / iOS
+Teljesen offline, önálló Android APK és iOS-csomag (Capacitor) – a GitHub Actions készíti, lásd [`mobile/README.md`](mobile/README.md).
+
 ## Google Play
 A Play-változat a hosztolt PWA köré épített Trusted Web Activity – lásd [`play/CHECKLIST.md`](play/CHECKLIST.md), [`play/STORE_LISTING.md`](play/STORE_LISTING.md), [`privacy.html`](privacy.html).
 

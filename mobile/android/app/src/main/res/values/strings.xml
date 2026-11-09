@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Core Quest</string>
+    <string name="title_activity_main">Core Quest</string>
+    <string name="package_name">hu.strattila90.corequest</string>
+    <string name="custom_url_scheme">hu.strattila90.corequest</string>
+</resources>

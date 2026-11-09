@@ -32,7 +32,7 @@ Stored in the browser's local storage. Menu → Settings → Data: **export / im
 Chrome / Android WebView 80+ (optional chaining syntax), Safari 13.1+. A polyfill (`js/compat.js`) covers `Array.at`, `flat`, `flatMap` on older engines. Touch-first, portrait; vibration, wake lock and fullscreen are used only where available.
 
 ## Google Play
-The Play build is a Trusted Web Activity wrapper around the hosted PWA – see [`play/CHECKLIST.md`](play/CHECKLIST.md), [`play/STORE_LISTING.md`](play/STORE_LISTING.md) and [`privacy.html`](privacy.html).
+A standalone, fully offline Android APK / iOS build (Capacitor) is built by GitHub Actions – see [`mobile/README.md`](mobile/README.md). The Play build can be that AAB or a Trusted Web Activity wrapper around the hosted PWA – see [`play/CHECKLIST.md`](play/CHECKLIST.md), [`play/STORE_LISTING.md`](play/STORE_LISTING.md) and [`privacy.html`](privacy.html).
 
 ## License / credits
 All game content and the film relics are original and fictional. Developer: strattila90.

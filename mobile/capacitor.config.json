@@ -1,0 +1,8 @@
+{
+  "appId": "hu.strattila90.corequest",
+  "appName": "Core Quest",
+  "webDir": "www",
+  "backgroundColor": "#14100c",
+  "android": { "backgroundColor": "#14100c" },
+  "ios": { "backgroundColor": "#14100c", "contentInset": "never" }
+}
