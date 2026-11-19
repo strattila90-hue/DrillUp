@@ -2,7 +2,26 @@
 
 🇬🇧 English · [🇭🇺 Magyar](README.hu.md)
 
+<p align="center"><img src="docs/demo.gif" alt="DrillUp Core Quest gameplay" width="320"></p>
+
+<p align="center"><b><a href="https://drillup-seven.vercel.app">▶ Play now</a></b> &nbsp;·&nbsp; <b><a href="https://github.com/strattila90-hue/DrillUp/releases/latest/download/CoreQuest.apk">📱 Download APK</a></b></p>
+
+<p align="center">
+
+[![License: MIT](https://img.shields.io/github/license/strattila90-hue/DrillUp)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp/commits)
+[![Release](https://img.shields.io/github/v/release/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp/releases/latest)
+[![Repo size](https://img.shields.io/github/repo-size/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp)
+![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
+![No build step](https://img.shields.io/badge/build%20step-none-brightgreen)
+[![Stars](https://img.shields.io/github/stars/strattila90-hue/DrillUp?style=social)](https://github.com/strattila90-hue/DrillUp/stargazers)
+
+</p>
+
 Drill down to the Earth's core – 6,371 km – in real meters. A tracked drilling machine, real geological layers, temperature and pressure, wear and armor, a depot with a freight train, minerals, fossils and collectible film relics. Single-player, offline-capable, no ads, no accounts, no tracking.
+
+## Screenshots
+<p><img src="docs/screenshot-menu.png" alt="Main menu" width="240"> &nbsp; <img src="docs/screenshot-drilling.png" alt="Drilling through the sediment layer" width="240"></p>
 
 ## Features
 - **Real scale**: soil → crust → mantle → outer core → inner core, with realistic layer thicknesses (layer map on the right).
@@ -34,8 +53,20 @@ Chrome / Android WebView 80+ (optional chaining syntax), Safari 13.1+. A polyfil
 ## Google Play
 A standalone, fully offline Android APK / iOS build (Capacitor) is built by GitHub Actions – see [`mobile/README.md`](mobile/README.md). The Play build can be that AAB or a Trusted Web Activity wrapper around the hosted PWA – see [`play/CHECKLIST.md`](play/CHECKLIST.md), [`play/STORE_LISTING.md`](play/STORE_LISTING.md) and [`privacy.html`](privacy.html).
 
+## Tech
+Vanilla JavaScript, HTML5 canvas and CSS – no framework, no bundler, no runtime dependencies. Installable PWA with a service worker; the Android/iOS builds wrap the same files with Capacitor. Tests are plain Node scripts (`tests/`).
+
+## Contributing
+Bug reports, ideas and pull requests are welcome – see [CONTRIBUTING.md](CONTRIBUTING.md). Issues labelled `good first issue` are a good place to start.
+
 ## License / credits
-All game content and the film relics are original and fictional. Developer: strattila90.
+Released under the [MIT License](LICENSE). All game content and the film relics are original and fictional. Developer: strattila90.
+
+---
+⭐ If you like it, please give it a star — it really helps!
+
+## v5.19
+- Main menu: a discreet "⭐ Star on GitHub" link.
 
 ## v5.18 additions
 - Skippable first-run tutorial (replay from Settings); original background music (volume slider in Settings); local, opt-in error report (copy from Settings – nothing is sent anywhere).
@@ -43,3 +74,5 @@ All game content and the film relics are original and fictional. Developer: stra
 - In-game windows are smaller/less intrusive and have a clear red ✕ close button (👁 brings them back).
 - Main menu now shows the drilling machine with a compact button row; the "Home" button became a "Surface" button (arrow up to the ground); Mineral library, Classroom and volcano texts are available in English.
 - Solar backup drive: on the surface the machine can always move horizontally. If the fuel runs out, solar panels on the roof power electric motors (slow, daytime only – at night wait for morning).
+
+⭐ If you like it, please give it a star — it really helps!

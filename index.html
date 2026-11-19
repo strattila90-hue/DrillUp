@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.18';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.19';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -261,7 +261,7 @@ function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id=
 <div class="stats"><div class="stat"><small>REKORD</small><b>${fd(S.max)}</b></div><div class="stat"><small>PÉNZ</small><b>${ft(S.cash)}</b></div><div class="stat wide"><small>A GÉPED</small><b>${D[S.u.d][0]} · ${H[S.u.h][0]} · ${HD[S.u.f][0]}</b></div></div>
 <button class="mb pri big" onclick="hideMM()">▶ ${has?'FOLYTATÁS':'INDULÁS'}</button>
 <div class="mg"><button class="mb sm" onclick="showMM('set')"><span class="ic">⚙</span>Beállítások</button><button class="mb sm" onclick="upd()"><span class="ic">🔄</span>Frissítés <small>v${VER}${window.NAPP&&NAPP.build?'·'+NAPP.build:''}</small></button><button class="mb sm" onclick="share()"><span class="ic">📤</span>Megosztás</button>${window.NAT&&NAT.app?'<button class="mb sm" disabled><span class="ic">✔</span>Telepítve</button>':ip?'<button class="mb sm" onclick="ip.prompt()"><span class="ic">📲</span>Telepítés</button>':`<button class="mb sm" onclick="toast('iPhone: Safari → Megosztás → Főképernyőhöz adás. Android: böngészőmenü → Telepítés.')"><span class="ic">📲</span>Telepítés</button>`}<a class="mb sm" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ic">🔒</span>Adatvédelem</a></div>
-<button class="lnk" onclick="NAT.ask('Biztosan törlöd a mentést? Ez nem vonható vissza.','Törlés',()=>{S=init();hideMM();view()})">🗑 Új játék kezdése</button>`)+'</div>'}
+<button class="lnk" onclick="NAT.ask('Biztosan törlöd a mentést? Ez nem vonható vissza.','Törlés',()=>{S=init();hideMM();view()})">🗑 Új játék kezdése</button><button class="lnk" id="starGH" onclick="window.open('https://github.com/strattila90-hue/DrillUp','_blank','noopener')">⭐ Csillag a GitHubon</button>`)+'</div>'}
 function hideMM(){const m=$('#mm');if(m)m.remove()}
 const vs=[vDrill,vShop,vStore,()=>window.DEP?DEP.html():vMarket(),()=>(window.REL?REL.html():'')+vLog()+(window.VOL?VOL.html():''),vMenu],names=['⛏ Fúrás','🏭 Műhely','📦 Raktár','🏗 Depó','📖 Tudás','☰ Menü'];
 function nav(){$('#nv').innerHTML=names.map((n,i)=>`<button class="${i==tab?'on':''}" onclick="${i==5?'showMM()':`tab=${i};view()`}">${(()=>{const q=n.split(' ');return q.length>1?`<i class="ni">${q[0]}</i><span class="nl">${q.slice(1).join(' ')}</span>`:n})()}${(i==1||i==3)&&base()?'<span class="ok">●</span>':''}</button>`).join('')}

@@ -2,7 +2,26 @@
 
 [🇬🇧 English](README.md) · 🇭🇺 Magyar
 
+<p align="center"><img src="docs/demo.gif" alt="DrillUp Core Quest játékmenet" width="320"></p>
+
+<p align="center"><b><a href="https://drillup-seven.vercel.app">▶ Játék most</a></b> &nbsp;·&nbsp; <b><a href="https://github.com/strattila90-hue/DrillUp/releases/latest/download/CoreQuest.apk">📱 APK letöltése</a></b></p>
+
+<p align="center">
+
+[![License: MIT](https://img.shields.io/github/license/strattila90-hue/DrillUp)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp/commits)
+[![Release](https://img.shields.io/github/v/release/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp/releases/latest)
+[![Repo size](https://img.shields.io/github/repo-size/strattila90-hue/DrillUp)](https://github.com/strattila90-hue/DrillUp)
+![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
+![No build step](https://img.shields.io/badge/build%20step-none-brightgreen)
+[![Stars](https://img.shields.io/github/stars/strattila90-hue/DrillUp?style=social)](https://github.com/strattila90-hue/DrillUp/stargazers)
+
+</p>
+
 Fúrj le a Föld magjáig – 6 371 km – valós méterekben. Lánctalpas fúrógép, valódi földtani rétegek, hőmérséklet és nyomás, kopás és páncél, depó tehervonattal, ásványok, kövületek és gyűjthető filmes relikviák. Egyjátékos, offline is működik, nincs hirdetés, regisztráció vagy követés.
+
+## Képernyőképek
+<p><img src="docs/screenshot-menu.png" alt="Főmenü" width="240"> &nbsp; <img src="docs/screenshot-drilling.png" alt="Fúrás az üledékrétegben" width="240"></p>
 
 ## Jellemzők
 - **Valós léptékek**: talaj → kéreg → köpeny → külső mag → belső mag, a rétegek valósághű vastagságával (jobb oldali rétegtérkép).
@@ -37,8 +56,17 @@ Teljesen offline, önálló Android APK és iOS-csomag (Capacitor) – a GitHub 
 ## Google Play
 A Play-változat a hosztolt PWA köré épített Trusted Web Activity – lásd [`play/CHECKLIST.md`](play/CHECKLIST.md), [`play/STORE_LISTING.md`](play/STORE_LISTING.md), [`privacy.html`](privacy.html).
 
+## Technológia
+Sima JavaScript, HTML5 canvas és CSS – nincs keretrendszer, nincs csomagoló, nincs futásidejű függőség. Telepíthető PWA service workerrel; az Android/iOS változat ugyanezeket a fájlokat csomagolja Capacitorral. A tesztek sima Node-szkriptek (`tests/`).
+
+## Közreműködés
+Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRIBUTING.md](CONTRIBUTING.md). A `good first issue` címkéjű feladatok jó kezdőpontok.
+
 ## Licenc / közreműködők
-A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
+[MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
+
+## v5.19
+- Főmenü: diszkrét „⭐ Csillag a GitHubon” link.
 
 ## v5.18 újdonságok
 - Kihagyható első indítási bemutató (a Beállításokból újraindítható); saját, eredeti háttérzene (hangerő a Beállításokban); helyi, önkéntes hibajelentés (másolható, sehová nem küldi el).
@@ -46,3 +74,5 @@ A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejles
 - A játék közbeni kisablakok kisebbek, kevésbé takarnak, jól látható piros ✕ gombbal zárhatók (a 👁 visszahozza).
 - A főmenüben látszik a fúrógép, a gombok tömören alul vannak; a „Haza” gomb „Felszín” gomb lett (felfelé nyíl a talajhoz); az Ásványtár, a Tanterem és a vulkán-szövegek angolul is elérhetők.
 - Napelemes tartalék-hajtás: a felszínen a gép mindig tud vízszintesen mozogni. Ha elfogy az üzemanyag, a tetején lévő napelemek által táplált elektromotorok viszik (lassan, csak nappal – éjjel reggelig várni kell).
+
+⭐ Ha tetszik, adj neki egy csillagot — sokat segít!
