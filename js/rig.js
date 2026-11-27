@@ -153,6 +153,23 @@ RIG.world=function(V){if(typeof S==='undefined')return;const x=V.x,Y0=V.Ys;RIG.h
 // ================= fedőréteg (állomás nézet) =================
 let ov=null,cv=null,cx=null,raf=0,lt=0,dp=1,CW=0,CH=0,skyC=null,parts=[],uiKey='',hudT=0;
 const $=id=>document.getElementById(id);
+// tananyag: a fúrószál részei (felülről lefelé), a fúrófejek és a fúrómag – saját összefoglaló
+const PARTS=[['#9aa3ad','Forgófej / felső hajtás','Ezen át jut a nagynyomású iszap a csőszálba; a felső hajtás forgatja és tartja a szálat.'],
+ ['#d9dee4','Fúrócső (12 m)','Vékonyabb falú cső. A két végén menetes szerszámcsatlakozó van: kúpos „pin” és „box”, a kopás ellen keményhegesztéssel.'],
+ ['#a77bf0','Nehéz fúrócső (HWDP)','Átmenet a könnyű fúrócső és a merev nehézrudak között – csökkenti a hajlítást és a fáradást.'],
+ ['#3a4048','Ütőszerszám (jar)','Beragadáskor nagy rántással szabadítja ki a szálat.'],
+ ['#1d2228','Nehézrudak (drill collar)','Vastag falú acélrudak: ezek adják a terhelést a fúrófejre, és feszesen tartják a fölöttük lógó csöveket.'],
+ ['#c9ced6','Stabilizátor','Lapátjai a lyukfalhoz támaszkodnak, így a fúrás egyenes marad.'],
+ ['#ff9a3a','Turbina (turbófúró)','Az iszapáram forgatja a fejet – Kolán így fúrtak: a csőszál nem forgott, csak a fej.'],
+ ['#ffe14a','Átmenet / fejcsatlakozó','Eltérő menetű részeket köt össze; a fúrófej ebbe csavarodik.']];
+function infoHTML(){return'<div class="rgIh"><b>📘 Fúrószál és fúrófejek</b><button class="rgX" id="rgInfoX" aria-label="Bezár">✕</button></div><div class="rgIb">'+
+ '<h4>A fúrószál felépítése (felülről lefelé)</h4>'+PARTS.map(p=>`<div class="rgPt"><i style="background:${p[0]}"></i><div><b>${p[1]}</b><small>${p[2]}</small></div></div>`).join('')+
+ '<h4>Fúrófejek</h4><div class="rgBits"><figure><img src="assets/rig/tricone0.svg" alt=""><figcaption><b>Háromgörgős</b><small>Forgó görgőkön keményfém betétek zúzzák a kőzetet. Kemény, töredezett kőzetben megbízható.</small></figcaption></figure>'+
+ '<figure><img src="assets/rig/pdc0.svg" alt=""><figcaption><b>PDC gyémánt</b><small>Polikristályos gyémánt lapkák nyírják a kőzetet. Puha és közepes kőzetben gyorsabb, de a hő és a kemény kőzet koptatja.</small></figcaption></figure></div>'+
+ '<h4>Mi a fúrómag?</h4><p>Magfúrással kivágott, hengeres kőzetminta. Megőrzi a harántolt kőzetek eredeti sorrendjét és szövetét, ezért pontosabb képet ad a mélyről, mint a felszíni minták.</p>'+
+ '<p>Vizsgálatai: szabad szemes leírás, vékonycsiszolat mikroszkóp alatt, geokémiai mérések, nehézásványok, kőzetfizika (például áteresztőképesség). A roncsolásos vizsgálathoz levágott darab nem pótolható – ezért értékes minden mag.</p>'+
+ '<p class="rgSrc">Az összefoglaló a Szegedi Tudományegyetem Földtani és Őslénytani Tanszékének ismeretterjesztő anyaga alapján készült (geosci.u-szeged.hu).</p></div>'}
+RIG.info=function(){if(!ov)return;let d=$('rgInfo');if(!d){d=document.createElement('div');d.id='rgInfo';ov.appendChild(d)}d.innerHTML=infoHTML();d.style.display='flex';$('rgInfoX').onclick=()=>{d.style.display='none'}};
 function ensureUI(){if(ov)return true;if(typeof document==='undefined'||!document.createElement||!document.body||!document.getElementById)return false;
  ov=document.createElement('div');ov.id='rgOv';
  ov.innerHTML='<div class="rgTop"><b>🗼 SG-3 fúróállomás</b><span id="rgLv"></span><button class="rgX" id="rgX" aria-label="Bezár">✕</button></div>'+
@@ -163,7 +180,7 @@ function ensureUI(){if(ov)return true;if(typeof document==='undefined'||!documen
  document.body.appendChild(ov);cv=$('rgc');cx=cv.getContext('2d');
  ov.addEventListener('click',e=>{const t=e.target.closest?e.target.closest('button'):e.target;if(!t||!ov.contains(t))return;try{t.blur()}catch(_){}const g=RIG.st(),a=t.dataset&&t.dataset.a,id=t.id;
   if(id==='rgX')return RIG.close();if(id==='rgGo'){if(g.lv)RIG.toggle();else RIG.build()}else if(id==='rgAdd')RIG.add();else if(id==='rgTrip')RIG.startTrip();else if(id==='rgZm'){if(RIG.zt>.5||RIG.zMan){RIG.zMan=false;RIG.zAuto=0}else RIG.zMan=true}
-  else if(id==='rgUp'){if(!g.lv||confirm('Fejlesztés: '+RIGS[g.lv][0]+' – '+nf(RIGS[g.lv][7],0)+' Ft?'))RIG.build()}else if(id==='rgAuto'){g.auto=g.auto?0:1;RIG.save()}else if(id==='rgBit'){if(RIG.ph!=='trip'){g.bt=g.bt==='t'?'d':'t';RIG.save()}}else if(id==='rgZa'){RIG.zAuto=RIG.zAuto?0:1}
+  else if(id==='rgUp'){if(!g.lv||confirm('Fejlesztés: '+RIGS[g.lv][0]+' – '+nf(RIGS[g.lv][7],0)+' Ft?'))RIG.build()}else if(id==='rgAuto'){g.auto=g.auto?0:1;RIG.save()}else if(id==='rgInfo2'){RIG.info();return}else if(id==='rgBit'){if(RIG.ph!=='trip'){g.bt=g.bt==='t'?'d':'t';RIG.save()}}else if(id==='rgZa'){RIG.zAuto=RIG.zAuto?0:1}
   else if(a==='wob-')g.wob=cl(g.wob-1,2,30);else if(a==='wob+')g.wob=cl(g.wob+1,2,30);else if(a==='q-')g.q=cl(g.q-2,10,RIG.rig()[2]);else if(a==='q+')g.q=cl(g.q+2,10,RIG.rig()[2]);
   else if(a&&a[0]==='S')g.sel=a[1];else if(a&&a[0]==='B')RIG.buy(a[1],+a.slice(2));
   uiKey='';syncUI()});
@@ -182,8 +199,8 @@ function syncUI(){if(!ov)return;const g=RIG.st(),R=RIG.rig(),m=R[4];
  let sh='';for(const k in PT){const P=PT[k];sh+=`<div class="rgP${g.sel===k?' on':''}" style="--pc:${P.col}"><button class="rgPn" data-a="S${k}"><i></i>${P.n}<small>${P.F} t · ${P.kg} kg/cső · <b>${g.inv[k]} db</b></small></button><button class="rgB" data-a="B${k}1" ${S.cash<P.c?'disabled':''}>+1</button><button class="rgB" data-a="B${k}10" ${S.cash<P.c*10?'disabled':''}>+10</button><button class="rgB" data-a="B${k}50" ${S.cash<P.c*50?'disabled':''}>+50</button></div>`}
  sh+=`<div class="mu">Ár csövenként (12 m): Alu ${nf(PT.a.c,0)} Ft · Acél ${nf(PT.s.c,0)} Ft · Titán ${nf(PT.t.c,0)} Ft</div>`;setHTML($('rgShop'),sh);
  const nx=g.lv<RIGS.length?`<button class="b" id="rgUp" ${S.cash<RIGS[g.lv][7]?'disabled':''}>⬆ ${RIGS[g.lv][0]} · ${nf(RIGS[g.lv][7],0)} Ft</button>`:'<span class="ok">Legerősebb torony</span>';
- setHTML($('rgFoot'),(g.lv?nx:'')+(g.lv?`<button class="rgB on" id="rgBit">⛏ Fej: ${BITS[g.bt].sh}${g.bt!==g.bi?' (cserénél)':''}</button>`:'')+(g.lv>=2?`<button class="rgB${g.auto?' on':''}" id="rgAuto">🔁 Auto-felcsavarás ${g.auto?'be':'ki'}</button>`:'')+`<button class="rgB${RIG.zAuto?' on':''}" id="rgZa">🎥 Auto-zoom ${RIG.zAuto?'be':'ki'}</button>`)}
-RIG.open=function(){if(!ensureUI())return;RIG.isOpen=true;ov.style.display='flex';try{document.body.classList.add('rgOn')}catch(e){}fit();uiKey='';syncUI();lt=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
+ setHTML($('rgFoot'),(g.lv?nx:'')+(g.lv?`<button class="rgB on" id="rgBit">⛏ Fej: ${BITS[g.bt].sh}${g.bt!==g.bi?' (cserénél)':''}</button>`:'')+(g.lv>=2?`<button class="rgB${g.auto?' on':''}" id="rgAuto">🔁 Auto-felcsavarás ${g.auto?'be':'ki'}</button>`:'')+`<button class="rgB" id="rgInfo2">📘 Fúrószál</button><button class="rgB${RIG.zAuto?' on':''}" id="rgZa">🎥 Auto-zoom ${RIG.zAuto?'be':'ki'}</button>`)}
+RIG.open=function(){if(!ensureUI())return;RIG.preload();RIG.isOpen=true;ov.style.display='flex';try{document.body.classList.add('rgOn')}catch(e){}fit();uiKey='';syncUI();lt=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
  const g=RIG.st();if(!g.lv)RIG.lastMsg='Építsd fel az állomást, vegyél csöveket, és csavard fel az elsőt a fúrófejjel.'};
 RIG.close=function(){RIG.isOpen=false;RIG.resume=0;if(RIG.ph==='drill')RIG.ph='idle';if(ov)ov.style.display='none';try{document.body.classList.remove('rgOn')}catch(e){}cancelAnimationFrame(raf);RIG.save()};
 function loop(ts){if(!RIG.isOpen)return;raf=requestAnimationFrame(loop);const dt=lt?Math.min(.05,(ts-lt)/1e3):.016;lt=ts;
@@ -198,6 +215,12 @@ function sky(w,h){if(skyC&&skyC.width===Math.ceil(w*dp))return skyC;skyC=documen
 function bar(x,X,Y,w,v,col){x.fillStyle='rgba(255,255,255,.12)';x.fillRect(X,Y,w,5);x.fillStyle=col;x.fillRect(X,Y,w*cl(v,0,1),5)}
 function uCol(u){return u<.6?'#3ee07a':u<.82?'#ffd23f':u<.95?'#ff8a2e':'#ff3b3b'}
 
+// ---- képek (assets/rig/*.svg): egyszer betöltve, méretenként egyszer raszterizálva
+const IMGS={},SPC=new Map();
+function im(n){if(typeof Image==='undefined')return null;let i=IMGS[n];if(!i){i=IMGS[n]=new Image();i.src='assets/rig/'+n+'.svg'}return i.complete&&i.naturalWidth?i:null}
+function spr(n,w,h){w=Math.max(4,Math.round(w/2)*2);h=Math.max(4,Math.round(h/2)*2);const k=n+'|'+w+'|'+h;let c=SPC.get(k);if(c)return c;const i=im(n);if(!i)return null;
+ c=document.createElement('canvas');c.width=Math.ceil(w*dp);c.height=Math.ceil(h*dp);c.getContext('2d').drawImage(i,0,0,c.width,c.height);if(SPC.size>90)SPC.clear();SPC.set(k,c);return c}
+RIG.preload=()=>{for(const n of['mast','sub','bha'])im(n);for(let f=0;f<6;f++){im('tricone'+f);im('pdc'+f)}};
 // ---- felszíni modell
 const SNOW=[],SMOKE=[];
 function snow(x,dt,w,GY){if(SNOW.length<46)for(let i=SNOW.length;i<46;i++)SNOW.push({x:Math.random()*w,y:Math.random()*GY,v:8+Math.random()*16,r:.6+Math.random()*1.4,p:Math.random()*6});
@@ -213,17 +236,20 @@ function surface(x,ts,dt,w,TH,GY,HX,sm,td,g,R,n,drill){
  const px=gx+50;x.fillStyle='#c73a2c';x.fillRect(px,GY-22,40,22);x.fillStyle='#f1ece2';x.fillRect(px-2,GY-25,44,4);x.fillStyle='#fff';x.fillText('НАСОС',px+5,GY-3);
  for(let i=0;i<3;i++){const st=drill?Math.sin(ts/90+i*2.09)*3:0;x.fillStyle='#8a929c';x.fillRect(px+6+i*11,GY-18,3,8+st);x.fillStyle='#3a3d42';x.fillRect(px+4+i*11,GY-11+st,7,3)}
  // alépítmény (fúrópadló), rácsozat
- x.fillStyle='#4a4f57';x.fillRect(HX-bw-16,FY,bw*2+32,5);x.strokeStyle='#6b727c';x.lineWidth=1.5;x.beginPath();
- for(const s of[-1,1]){const a=HX+s*(bw+12),b=HX+s*(bw-2);x.moveTo(a,GY);x.lineTo(a,FY);x.moveTo(b,GY);x.lineTo(b,FY);x.moveTo(a,GY);x.lineTo(b,FY);x.moveTo(b,GY);x.lineTo(a,FY)}x.stroke();
+ const MW=Math.round(16+lv*1.6),SW=bw*2+40,subH=(GY-FY)*80/58,SUB=spr('sub',SW,subH),MST=spr('mast',MW,FY-top),edge=t=>MST?MW/2:Lg(t,1);
+ if(!SUB){x.fillStyle='#4a4f57';x.fillRect(HX-bw-16,FY,bw*2+32,5);x.strokeStyle='#6b727c';x.lineWidth=1.5;x.beginPath();
+ for(const s of[-1,1]){const a=HX+s*(bw+12),b=HX+s*(bw-2);x.moveTo(a,GY);x.lineTo(a,FY);x.moveTo(b,GY);x.lineTo(b,FY);x.moveTo(a,GY);x.lineTo(b,FY);x.moveTo(b,GY);x.lineTo(a,FY)}x.stroke()}
  // kitörésgátló (BOP) a padló alatt, fejrész és visszafolyó vezeték
  const by0=FY+5,bh=GY-by0;for(let i=0;i<3;i++){const y=by0+bh*(.08+i*.29);x.fillStyle=i===1?'#b3261e':'#d8392d';x.fillRect(HX-8,y,16,bh*.24);x.fillStyle='rgba(0,0,0,.25)';x.fillRect(HX-8,y+bh*.2,16,2)}
  x.fillStyle='#6b727c';x.fillRect(HX-10,GY-3,20,3);
+ if(SUB)x.drawImage(SUB,HX-SW/2,GY-subH,SW,subH);
+ if(MST)x.drawImage(MST,HX-MW/2,top,MW,FY-top);else{
  // torony: hátsó lábak (sötétebb), első lábak, rácsozat, piros-fehér sávok, szélfal az alsó részen
  x.strokeStyle='#8f99a3';x.lineWidth=1.6;x.beginPath();x.moveTo(HX-bw*.72,FY);x.lineTo(HX-4,top);x.moveTo(HX+bw*.72,FY);x.lineTo(HX+4,top);x.stroke();
  x.fillStyle='rgba(205,222,236,.22)';x.beginPath();x.moveTo(HX-bw,FY);x.lineTo(HX+bw,FY);x.lineTo(HX+Lg(.3,1),FY-H*.3);x.lineTo(HX-Lg(.3,1),FY-H*.3);x.closePath();x.fill();
  x.strokeStyle='#e4e9ee';x.lineWidth=2.4;x.beginPath();x.moveTo(HX-bw,FY);x.lineTo(HX-5,top);x.moveTo(HX+bw,FY);x.lineTo(HX+5,top);x.stroke();
  x.lineWidth=.9;x.strokeStyle='rgba(228,233,238,.8)';x.beginPath();const seg=12;for(let i=0;i<seg;i++){const t0=i/seg,t1=(i+1)/seg,y0=lerp(FY,top,t0),y1=lerp(FY,top,t1),a0=Lg(t0,1),a1=Lg(t1,1);x.moveTo(HX-a0,y0);x.lineTo(HX+a1,y1);x.moveTo(HX+a0,y0);x.lineTo(HX-a1,y1);x.moveTo(HX-a1,y1);x.lineTo(HX+a1,y1)}x.stroke();
- for(let i=0;i<5;i++){const t=.62+i*.075,y=lerp(FY,top,t),a=Lg(t,1);x.fillStyle=i%2?'#f6f6f6':'#e5342a';x.fillRect(HX-a,y-2,a*2,4)}
+ for(let i=0;i<5;i++){const t=.62+i*.075,y=lerp(FY,top,t),a=Lg(t,1);x.fillStyle=i%2?'#f6f6f6':'#e5342a';x.fillRect(HX-a,y-2,a*2,4)}}
  // csigasor (crown block) és figyelmeztető fény
  x.fillStyle='#3d4148';x.fillRect(HX-11,top-7,22,8);x.fillStyle='#9aa3ad';for(const o of[-6,0,6]){x.beginPath();x.arc(HX+o,top-3,2.6,0,7);x.fill()}
  x.fillStyle=Math.floor(ts/500)%2?'#ff3b30':'#6a1610';x.beginPath();x.arc(HX,top-10,2.8,0,7);x.fill();
@@ -236,11 +262,11 @@ function surface(x,ts,dt,w,TH,GY,HX,sm,td,g,R,n,drill){
  const dwx=HX-bw-10,dwy=FY-7;x.fillStyle='#2f5f8f';x.fillRect(dwx-10,FY-12,20,12);x.strokeStyle='#d8dde2';x.lineWidth=1;const da=hookY*.35;x.beginPath();x.arc(dwx,dwy,5,0,7);for(let i=0;i<3;i++){const a=da+i*2.09;x.moveTo(dwx,dwy);x.lineTo(dwx+Math.cos(a)*5,dwy+Math.sin(a)*5)}x.stroke();
  x.strokeStyle='rgba(30,32,36,.8)';x.lineWidth=.8;x.beginPath();x.moveTo(dwx,dwy-5);x.lineTo(HX-9,top-2);x.stroke();
  // állócső + iszaptömlő a top drive-hoz
- const spx=HX+Lg(.0,1)-3,spTop=lerp(FY,top,.55);x.strokeStyle='#5d6670';x.lineWidth=2.2;x.beginPath();x.moveTo(spx,FY);x.lineTo(lerp(spx,HX+6,.55),spTop);x.stroke();
+ const spx=HX+edge(0)-3,spTop=lerp(FY,top,.55);x.strokeStyle='#5d6670';x.lineWidth=2.2;x.beginPath();x.moveTo(spx,FY);x.lineTo(lerp(spx,HX+6,.55),spTop);x.stroke();
  x.strokeStyle='#26292e';x.lineWidth=2.6;x.beginPath();x.moveTo(lerp(spx,HX+6,.55),spTop);x.quadraticCurveTo(HX+bw*.9,(spTop+hookY)/2+14,HX+8,hookY+15);x.stroke();
  if(drill){x.strokeStyle='rgba(120,200,255,.9)';x.lineWidth=1;x.setLineDash([3,5]);x.lineDashOffset=-ts/30;x.beginPath();x.moveTo(spx,FY);x.lineTo(lerp(spx,HX+6,.55),spTop);x.stroke();x.setLineDash([])}
  // toronypihenő (monkey board) – kiemeléskor itt sorakoznak a gyertyák
- const mby=lerp(FY,top,Math.min(.9,(R[4]*L*sm)/H+.02)),mbx=HX-Lg((FY-mby)/H,1);x.fillStyle='#5d6670';x.fillRect(mbx-18,mby,18,3);
+ const mby=lerp(FY,top,Math.min(.9,(R[4]*L*sm)/H+.02)),mbx=MST?HX+MW/2+19:HX-Lg((FY-mby)/H,1);x.fillStyle='#5d6670';x.fillRect(mbx-18,mby,18,3);
  let racked=0;if(RIG.ph==='trip'){const t=RIG.trip,lift=(t<.5?t*2:(1-t)*2)*RIG.tripD;racked=Math.min(16,Math.round(lift/(R[4]*L)))}
  for(let i=0;i<racked;i++){x.fillStyle=i%2?PT[g.p[0]||'a'].dk:PT[g.p[0]||'a'].col;x.fillRect(mbx-17+i*1.7,mby+3-i*.4,1,FY-mby-3+i*.4)}
  // a padló fölé nyúló cső + ékek
@@ -258,7 +284,7 @@ function surface(x,ts,dt,w,TH,GY,HX,sm,td,g,R,n,drill){
  if(drill){x.fillStyle=zone(g.d)[4];for(let i=0;i<4;i++){const k=((ts/400)+i/4)%1;x.fillRect(shx+28+k*3,shy+k*12,2,2)}}
  puff(shx+12,GY-8,dt,true,'225,235,245');smoke(x,dt);
  // reflektorok (fénykúp) a toronyról
- x.save();x.globalCompositeOperation='lighter';for(const[t,dir]of[[.45,-1],[.75,1]]){const ly=lerp(FY,top,t),lx=HX+dir*Lg(t,1);const gr=x.createLinearGradient(lx,ly,lx+dir*60,GY);gr.addColorStop(0,'rgba(255,240,190,.28)');gr.addColorStop(1,'rgba(255,240,190,0)');x.fillStyle=gr;x.beginPath();x.moveTo(lx,ly);x.lineTo(lx+dir*20,GY);x.lineTo(lx+dir*95,GY);x.closePath();x.fill();x.fillStyle='#fff7d0';x.fillRect(lx-1.5,ly-1.5,3,3)}x.restore();
+ x.save();x.globalCompositeOperation='lighter';for(const[t,dir]of[[.45,-1],[.75,1]]){const ly=lerp(FY,top,t),lx=HX+dir*edge(t);const gr=x.createLinearGradient(lx,ly,lx+dir*60,GY);gr.addColorStop(0,'rgba(255,240,190,.28)');gr.addColorStop(1,'rgba(255,240,190,0)');x.fillStyle=gr;x.beginPath();x.moveTo(lx,ly);x.lineTo(lx+dir*20,GY);x.lineTo(lx+dir*95,GY);x.closePath();x.fill();x.fillStyle='#fff7d0';x.fillRect(lx-1.5,ly-1.5,3,3)}x.restore();
 }
 // ---- kőzetminták (32 px-es csempék, egyszer készülnek)
 const PATS=[];
@@ -274,6 +300,9 @@ function pat(i){if(PATS[i]!==undefined)return PATS[i];let P=null;try{const c=doc
 // ---- fúrószerelvény rajza
 function bha(x,ts,HX,by,s,hw,cwid,g){const drill=RIG.ph==='drill',rot=drill?ts*RIG.rpm()/9550:0,br=Math.max(3,hw*.95);
  if(s<1.2){x.fillStyle='#ff8a2e';x.fillRect(HX-cwid*1.4,by-Math.max(4,30*s),cwid*2.8,Math.max(4,30*s));x.fillStyle='#ffd23f';x.fillRect(HX-br,by-2,br*2,2);return}
+ const BH=spr('bha',cwid*2.8,30*s);
+ if(BH){x.drawImage(BH,HX-cwid*1.4,by-30*s,cwid*2.8,30*s);const t0=by-12*s,t1=by-1.1*s,tw=cwid*1.05;x.save();x.beginPath();x.rect(HX-tw,t0,tw*2,t1-t0);x.clip();x.strokeStyle='rgba(110,35,0,.4)';x.lineWidth=2;const off=(rot*40)%10;x.beginPath();for(let y=t0-10+off;y<t1;y+=10){x.moveTo(HX-tw,y);x.lineTo(HX+tw,y+tw*.7)}x.stroke();x.restore()}
+ else{
  // nehézrudak (drill collar): vastag acél, 9 m-es illesztések
  const c0=by-30*s,c1=by-13*s;x.fillStyle='#4a515b';x.fillRect(HX-cwid*1.25,c0,cwid*2.5,c1-c0);x.fillStyle='rgba(255,255,255,.12)';x.fillRect(HX-cwid*.9,c0,cwid*.35,c1-c0);
  x.fillStyle='#2b3036';for(let m=13;m<30;m+=9)x.fillRect(HX-cwid*1.35,by-m*s-1.5,cwid*2.7,3);
@@ -281,10 +310,12 @@ function bha(x,ts,HX,by,s,hw,cwid,g){const drill=RIG.ph==='drill',rot=drill?ts*R
  const st0=by-13*s,st1=by-12*s;x.fillStyle='#7c8590';x.fillRect(HX-hw*.92,st0,hw*1.84,Math.max(3,st1-st0));x.fillStyle='rgba(0,0,0,.3)';for(let k=0;k<3;k++)x.fillRect(HX-hw*.92+((k*hw*.6+rot*20)%(hw*1.84)),st0,2,Math.max(3,st1-st0));
  // turbina (turbófúró): forgó csíkok a házon
  const t0=by-12*s,t1=by-.6*s,tw=cwid*1.4;x.fillStyle='#ff8a2e';x.fillRect(HX-tw,t0,tw*2,t1-t0);x.save();x.beginPath();x.rect(HX-tw,t0,tw*2,t1-t0);x.clip();x.strokeStyle='rgba(120,40,0,.45)';x.lineWidth=2;const off=(rot*40)%10;x.beginPath();for(let y=t0-10+off;y<t1;y+=10){x.moveTo(HX-tw,y);x.lineTo(HX+tw,y+tw*.7)}x.stroke();x.restore();
- x.fillStyle='rgba(255,255,255,.18)';x.fillRect(HX-tw*.7,t0,tw*.3,t1-t0);
- // fúrófej
+ x.fillStyle='rgba(255,255,255,.18)';x.fillRect(HX-tw*.7,t0,tw*.3,t1-t0)}
+ // fúrófej: kép (6 forgásfázis), ha még nincs betöltve, rajzolt tartalék
+ const per=g.bi==='d'?2*Math.PI/5:2*Math.PI/3,fr=((Math.floor(rot/per*6)%6)+6)%6,BW=br*2.7,BI=spr((g.bi==='d'?'pdc':'tricone')+fr,BW,BW*1.12);
  x.save();x.translate(HX,by);
- if(g.bi==='d'){// PDC: lapos gyémántbetétes fej, forgó vágóelemek
+ if(BI){x.drawImage(BI,-BW/2,-BW*1.12*.9,BW,BW*1.12)}
+ else if(g.bi==='d'){// PDC: lapos gyémántbetétes fej, forgó vágóelemek
   x.fillStyle='#3e4650';x.beginPath();x.moveTo(-br,-br*.9);x.lineTo(br,-br*.9);x.lineTo(br,-br*.2);x.quadraticCurveTo(0,br*.25,-br,-br*.2);x.closePath();x.fill();
   for(let k=0;k<7;k++){const a=rot*1.5+k*.9,cx2=Math.sin(a)*br*.8;if(Math.cos(a)<0)continue;x.fillStyle='#dff6ff';x.beginPath();x.arc(cx2,-br*.18+Math.abs(cx2)/br*-br*.05,Math.max(1,br*.12),0,7);x.fill()}
  }else{// háromgörgős (tricone) marófogas fej

@@ -65,6 +65,10 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.23
+- **Artwork at the drilling station:** original illustrations drawn from real photos and technical diagrams (`assets/rig/`): a slender red-and-white mast and a yellow X-braced substructure with a white rig-floor cabin; tricone (carbide insert) and PDC diamond bits with 6-frame spinning animation; a colour-coded bottom-hole assembly (bit sub, turbodrill, stabiliser, drill collars, jar, heavy-weight pipe).
+- **📘 Drill string lesson:** the parts of the drill string from top to bottom, the two bit types compared, and what a core is (summarised from University of Szeged outreach material).
+
 ## v5.22
 - **SG-3 drilling station – lifelike model:** substructure and rig floor, blowout preventer (BOP), crown and travelling block with drill line, drawworks drum turning with the drilling, top drive with mud hose, monkey board (stands rack up there while tripping), shale shaker and steaming mud pit, diesel generator with smoke, triplex mud pump with moving pistons, floodlights, polar snowfall.
 - **Underground:** a pattern for every rock type, detailed bottom-hole assembly (drill collars, stabiliser, turning turbodrill, mud jets), rock glowing red in the hot depths.
