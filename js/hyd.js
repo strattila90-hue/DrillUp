@@ -82,6 +82,7 @@ const HYD={pose:null,seq:null,told:0,A:null,
   x.fillStyle='#e2b228';x.beginPath();x.arc(t[0],t[1],m*.3,0,7);x.fill();x.strokeStyle='#14161a';x.lineWidth=1.2;x.stroke();x.fillStyle='#14161a';x.beginPath();x.arc(t[0],t[1],m*.12,0,7);x.fill();
   x.beginPath();x.arc(ax,Ys-m*.9,m*.32,0,7);x.fillStyle='#e2b228';x.fill();x.stroke();
   // ---------- ipari daru: torony, forgó fej, gém, ellensúly, trolly, kötél ----------
+  if(!(W.PAD&&PAD.at(S.x)))
   {const th=m*16*e,tw=m*1.5,cxs=o[0]+dirx*m*13.8,top=Ys-th;
    // betonalap + kitámasztók
    x.fillStyle='#8c8f94';x.fillRect(cxs-m*1.9,Ys-m*.8,m*3.8,m*.8);x.fillStyle='#6b6e73';x.fillRect(cxs-m*1.9,Ys-m*.8,m*3.8,m*.18);

@@ -60,12 +60,12 @@ W.GEN=GEN;
 
 // ================= KEZELŐFELÜLET =================
 const PW={t:0,
- dock(){return `<button id="swM" class="tb sw" onclick="PW.toggleEng()"><i class="led"></i>${W.ICN?ICN('engine'):'⚙'}<span>Motor</span></button><button id="swG" class="tb sw" onclick="PW.toggleGen()"><i class="led"></i>${W.ICN?ICN('bolt'):'⚡'}<span>Gen.</span></button>`},
+ dock(){return `<button id="swM" class="tb sw lv" onclick="PW.toggleEng()" aria-label="Motor be/ki"><i class="led"></i><b class="lvr"></b><span>Motor</span></button><button id="swG" class="tb sw lv" onclick="PW.toggleGen()" aria-label="Generátor be/ki"><i class="led"></i><b class="lvr"></b><span>Gen.</span></button>`},
  toggleEng(){aInit();if(S.en){ENG.stop()}else if(!ENG.start(1))toast('⛽ Nincs üzemanyag a motor indításához.');PW.live()},
  toggleGen(){GEN.toggle()},
  live(){const m=$('#swM'),g=$('#swG');
-  if(m){m.className='tb sw '+(!S.en?'':(ENG.ready()?'run':'start'));m.style.setProperty('--p',Math.round(clamp(ENG.rpm,0,1)*100)+'%')}
-  if(g){const cap=GN[S.u.g][4],bad=S.gon&&S.gf<=1e-6;g.className='tb sw '+(bad?'bad':GEN.running()?(GEN.sat()<.7?'start':'run'):'');g.style.setProperty('--p',Math.round(clamp(S.gf/cap,0,1)*100)+'%')}},
+  if(m){m.className='tb sw lv '+(!S.en?'':(ENG.ready()?'run':'start'));m.style.setProperty('--p',Math.round(clamp(ENG.rpm,0,1)*100)+'%')}
+  if(g){const cap=GN[S.u.g][4],bad=S.gon&&S.gf<=1e-6;g.className='tb sw lv '+(bad?'bad':GEN.running()?(GEN.sat()<.7?'start':'run'):'');g.style.setProperty('--p',Math.round(clamp(S.gf/cap,0,1)*100)+'%')}},
  info(it){return it('Motor',S.en?(ENG.ready()?'be · terhelés '+Math.round(ENG.ld*100)+'%':'indul…'):'ki')+it('Generátor',(S.gon?(S.gf>1e-6?'be · '+Math.round(GEN.sat()*100)+'% ell.':'üres'):'ki')+' · '+fk(S.gf))}};
 W.PW=PW;
 const st=document.createElement('style');st.textContent=`.tb.sw{position:relative;overflow:hidden;white-space:nowrap}.tb.sw .led{display:inline-block;width:8px;height:8px;border-radius:50%;background:#555;margin-right:4px;box-shadow:inset 0 0 2px #000}

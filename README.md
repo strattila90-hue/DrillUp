@@ -65,6 +65,11 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.24
+- **Soviet-style mechanical instrument panel** on the console (original artwork): sight-glass fuel gauge, steel-rimmed pressure gauge, brass-rimmed thermometer, olive cargo and generator meters, engine tachometer – screwed bezels, red zones, springy needles that tremble with the engine running, blinking warning lamps. Tap the instruments: engine and generator on/off, refuel, Cargo / Data panel.
+- **Toggle levers** with indicator lamps instead of the Engine and Generator buttons.
+- **Launch pad:** a concrete pad with a wellhead and a yellow gantry crane at the base. You can only drill down from here; the crane hooks the machine's tail, pulls it to the pad centre and lifts it into drilling position. You can only surface here too (the ⌂ way home leads here).
+
 ## v5.23
 - **Artwork at the drilling station:** original illustrations drawn from real photos and technical diagrams (`assets/rig/`): a slender red-and-white mast and a yellow X-braced substructure with a white rig-floor cabin; tricone (carbide insert) and PDC diamond bits with 6-frame spinning animation; a colour-coded bottom-hole assembly (bit sub, turbodrill, stabiliser, drill collars, jar, heavy-weight pipe).
 - **📘 Drill string lesson:** the parts of the drill string from top to bottom, the two bit types compared, and what a core is (summarised from University of Szeged outreach material).
