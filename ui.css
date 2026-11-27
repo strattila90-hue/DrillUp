@@ -431,3 +431,16 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 .hbRow{align-items:center}
 .gauges.hudR{top:150px}
 .hbFn{grid-template-columns:1fr .9fr 1.45fr}
+/* ===== v5.27 széles kijelző (laptop): fix méretű vezérlősáv-elemek, középre igazított menü ===== */
+.gauges.hudG{grid-template-columns:28px 70px 76px;height:60px;justify-content:start}
+.gauges.hudG canvas{height:60px}
+.hbSide{max-width:420px}
+.hbFn{max-width:420px}
+@media (min-width:700px){
+ .hbRow{justify-content:center;gap:22px}
+ .hbSide{flex:0 1 420px}
+ .dock.hudB .lcd{max-width:640px;margin:0 auto 6px!important}
+ #mm.v2 .in{max-width:560px;width:100%;margin:0 auto}
+ .gauges.hudR{right:34px}
+}
+@media (min-width:700px){.hbRow{grid-template-columns:auto 420px;justify-content:center}}

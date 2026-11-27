@@ -38,7 +38,7 @@ const BG={sphere,
   x.strokeStyle='#2a2c30';x.lineWidth=.05;for(let k=0;k<4;k++){const f=((sp*.15+k/4)%1);x.beginPath();x.moveTo(-.1+f*.6,-.35*(1-f));x.lineTo(-.1+f*.6,.35*(1-f));x.stroke()}
   x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=.035;x.beginPath();x.moveTo(-.08,-.22);x.lineTo(.36,-.02);x.stroke()},
  // az elülső pajzs (hengeres, gyűrűkkel és szegecsekkel) – a közeli nézethez
- shield(x,hl){const[c1,c2]=HC[hl];let g=x.createLinearGradient(0,-1.65,0,1.65);g.addColorStop(0,c1);g.addColorStop(.2,c1);g.addColorStop(.55,c2);g.addColorStop(1,'#1c1e22');x.fillStyle=g;x.fillRect(-4.7,-1.65,3.1,3.3);
+ shield(x,hl){const[c1,c2]=HC[hl];let g=x.createLinearGradient(0,-1.65,0,1.65);g.addColorStop(0,'#2b2e33');g.addColorStop(.08,c1);g.addColorStop(.17,'#ffffff');g.addColorStop(.26,c1);g.addColorStop(.58,c2);g.addColorStop(.86,'#2a2d33');g.addColorStop(1,'#101114');x.fillStyle=g;x.fillRect(-4.7,-1.65,3.1,3.3);
   x.fillStyle='rgba(255,255,255,.25)';x.fillRect(-4.7,-1.3,3.1,.12);x.fillStyle='rgba(0,0,0,.3)';x.fillRect(-4.7,1.3,3.1,.35);
   for(let k=0;k<=hl+1;k++){x.fillStyle=c1;x.fillRect(-1.9-k*.5,-1.65,.2,3.3);x.fillStyle='rgba(0,0,0,.35)';x.fillRect(-1.7-k*.5,-1.65,.05,3.3)}
   for(let i=0;i<7;i++){x.fillStyle=i%2?'#f0b020':'#222';x.fillRect(-4.7,-1.65+i*.47,.3,.47)}

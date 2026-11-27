@@ -65,6 +65,10 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.27
+- **Laptopon / széles kijelzőn** rendezett felület: a vezérlősáv elemei fix méretűek és középre igazítottak, a főmenü középső oszlopban.
+- **Csillogó, kopott fém jármű:** erős tükröződő sáv, mély árnyék, finom karcok és lassan végigfutó csillanás a gép testén és páncélján.
+
 ## v5.26
 - **L-alakú HUD, kevesebb hely:** a játékkép jóval nagyobb lett. A műszerek doboz nélkül lebegnek a képen (jobb oldalt: nyomás, hőmérséklet, raktár és új fúrófej-kopás óra), alul a vezérlősávban az üzemanyag, a motor és a generátor.
 - **Nincs kettős vezérlés:** a Motor/Gen karok és az Adat/Raktár/Fúrófej fülek helyett a műszerekre koppintva kapcsolsz vagy nyitod meg a panelt.
