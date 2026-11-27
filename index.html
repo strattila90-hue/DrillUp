@@ -51,7 +51,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <nav id="nv"></nav>
 <script>try{new Function("var a={};return a?.b??1")}catch(e){document.addEventListener("DOMContentLoaded",function(){document.body.innerHTML="<div style='padding:30px;color:#e8d9b8;font:18px Georgia,serif'>Ez a böngésző túl régi – frissítsd a Chrome-ot vagy a WebView-t (80+).<br><br>This browser is too old – please update Chrome / WebView (80+).</div>"})}</script>
 <script src="js/compat.js"></script>
-<script src="js/i18n_en.js"></script><script src="js/i18n_en2.js"></script>
+<script src="js/i18n_en.js"></script><script src="js/i18n_en2.js"></script><script src="js/i18n_rig.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/base.js"></script>
 <script src="js/power.js"></script>
@@ -83,9 +83,9 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/fullscreen.js"></script><script src="js/layout.js"></script><script src="js/terrain.js"></script><script src="js/shaft.js"></script><script src="js/stats.js"></script><script src="js/wear.js"></script><script src="js/quests.js"></script><script src="js/paint.js"></script><script src="js/ambient.js"></script>
 <script src="js/music.js"></script><script src="js/tutorial.js"></script><script src="js/errlog.js"></script><script src="js/realism.js"></script><script src="js/industrial.js"></script><script src="js/solar.js"></script><script src="js/perf.js"></script><script src="js/diag.js"></script><script src="js/goals.js"></script><script src="js/gauge.js"></script>
 <script src="js/tunnels.js"></script>
-<script src="js/lamps.js"></script>
+<script src="js/lamps.js"></script><script src="js/rig.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.19';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.20';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -107,17 +107,17 @@ const PT=[[0,0],[35e3,1],[410e3,13.4],[660e3,23.8],[2890e3,135.8],[5150e3,328.9]
 const TT=[[0,15],[35e3,900],[410e3,1500],[660e3,1700],[2890e3,3700],[5150e3,5000],[6371e3,5400]];
 const lerp=(t,d)=>{for(let i=1;i<t.length;i++)if(d<=t[i][0]){const a=t[i-1],b=t[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return t.at(-1)[1]};
 // réteg: név, tól m, ig m, keménység MJ/m³, szín, [ásvány, kg/m, Ft/kg]
-const LY=[['Talaj (humusz, kavics)',0,3,10,'#6b4a2a',[['Kavics',200,15],['Humusz',100,5]]],
-['Üledék (homok, agyag)',3,400,40,'#a88a55',[['Homok',500,8],['Agyag',300,20],['Kőszén',80,45],['Borostyán',.02,4e5]]],
-['Üledékes kőzet (mészkő, homokkő)',400,4e3,90,'#9a9a88',[['Mészkő',400,12],['Kősó',100,60],['Vasérc',60,55],['Rézérc',.8,3500]]],
-['Gránit és gneisz (felső kéreg)',4e3,2e4,150,'#b06a6a',[['Gránitzúzalék',300,25],['Ezüst',.03,3e5],['Arany',.002,3e7],['Ón',.5,9e3],['Wolfram',.1,2e4],['Uránérc',.05,14e3]]],
-['Bazalt és gabbró (alsó kéreg)',2e4,35e3,250,'#4a4f5a',[['Titánérc',5,3e3],['Nikkel',3,6e3],['Kobalt',1,18e3],['Platina',.003,28e6]]],
-['Felső köpeny (peridotit)',35e3,410e3,400,'#3f6f3a',[['Olivin (peridot)',100,500],['Krómit',10,2500],['Gyémánt',.003,4e7],['Platinacsoport-fémek',.01,3e7]]],
-['Átmeneti zóna (ringwoodit)',410e3,660e3,600,'#2f7a8a',[['Ringwoodit',200,1500],['Wadsleyit',150,1200],['Gránát',20,8e3]]],
-['Alsó köpeny (bridgmanit)',660e3,2700e3,800,'#a2502a',[['Bridgmanit',300,4e3],['Ferroperiklász',100,3e3],['Davemaoit',2,1.5e5]]],
-['D″ réteg (köpeny–mag határ)',2700e3,2890e3,900,'#b03a2a',[['Poszt-perovszkit',200,9e3],['Ősi bazaltmaradék',1,4e5]]],
-['Külső mag (folyékony vas-nikkel)',2890e3,5150e3,500,'#e08a20',[['Vas–nikkel ötvözet',800,2e3],['Kén',100,800],['Ozmium',.02,8e6]]],
-['Belső mag (szilárd vas-nikkel)',5150e3,6371e3,1500,'#ffd86a',[['Szilárd vas–nikkel',1500,3500],['Irídium',.3,1.2e6]]]];
+const LY=[['Talaj (humusz, kavics)',0,3,10,'#7f4e1f',[['Kavics',200,15],['Humusz',100,5]]],
+['Üledék (homok, agyag)',3,400,40,'#be964e',[['Homok',500,8],['Agyag',300,20],['Kőszén',80,45],['Borostyán',.02,4e5]]],
+['Üledékes kőzet (mészkő, homokkő)',400,4e3,90,'#a9a98b',[['Mészkő',400,12],['Kősó',100,60],['Vasérc',60,55],['Rézérc',.8,3500]]],
+['Gránit és gneisz (felső kéreg)',4e3,2e4,150,'#c46767',[['Gránitzúzalék',300,25],['Ezüst',.03,3e5],['Arany',.002,3e7],['Ón',.5,9e3],['Wolfram',.1,2e4],['Uránérc',.05,14e3]]],
+['Bazalt és gabbró (alsó kéreg)',2e4,35e3,250,'#485165',[['Titánérc',5,3e3],['Nikkel',3,6e3],['Kobalt',1,18e3],['Platina',.003,28e6]]],
+['Felső köpeny (peridotit)',35e3,410e3,400,'#398231',[['Olivin (peridot)',100,500],['Krómit',10,2500],['Gyémánt',.003,4e7],['Platinacsoport-fémek',.01,3e7]]],
+['Átmeneti zóna (ringwoodit)',410e3,660e3,600,'#1f8da5',[['Ringwoodit',200,1500],['Wadsleyit',150,1200],['Gránát',20,8e3]]],
+['Alsó köpeny (bridgmanit)',660e3,2700e3,800,'#c34c15',[['Bridgmanit',300,4e3],['Ferroperiklász',100,3e3],['Davemaoit',2,1.5e5]]],
+['D″ réteg (köpeny–mag határ)',2700e3,2890e3,900,'#d42a13',[['Poszt-perovszkit',200,9e3],['Ősi bazaltmaradék',1,4e5]]],
+['Külső mag (folyékony vas-nikkel)',2890e3,5150e3,500,'#ff9410',[['Vas–nikkel ötvözet',800,2e3],['Kén',100,800],['Ozmium',.02,8e6]]],
+['Belső mag (szilárd vas-nikkel)',5150e3,6371e3,1500,'#ffde80',[['Szilárd vas–nikkel',1500,3500],['Irídium',.3,1.2e6]]]];
 // leletek: név, tól m, ig m, esély/m, kg, érték Ft, leírás
 const FD=[['Antropocén jelzőréteg',0,1,.1,.2,3e3,'Plutónium-239 és mikroműanyag: az atomkísérletek (1945-től) nyoma.'],
 ['Római ezüstdénár',0,3,.05,.01,8e3,'Kb. i. sz. 2. század.'],['Őskori cserépedény',1,3,.03,2,4.5e4,'Újkőkori település maradványa.'],
@@ -461,13 +461,13 @@ function drawF(ts){if(!isFinite(S.x)||!isFinite(S.depth)){S.x=0;S.depth=0}const 
  const lamp=(px,py,r,i)=>{if(px>-r&&px<w+r&&py>-r&&py<h+r)LT.push({x:px,y:py,r,i})};
  x.fillStyle='#000';x.fillRect(0,0,w,h);
  if(window.ZM)ZM.apply(x,dp,cx,cy,w,h);
- if(Ys>0){let t1=mix('#101a3a','#aedcf5',day);t1=mix(t1,'#f4894a',clamp(1-Math.abs(el-.05)/.25,0,1)*.8);const g=x.createLinearGradient(0,Ys-260,0,Ys);g.addColorStop(0,mix('#050918','#2f6fc0',day));g.addColorStop(1,t1);x.fillStyle=g;x.fillRect(0,0,w,Math.min(h,Ys));
+ if(Ys>0){let t1=mix('#101a3a','#a6e0ff',day);t1=mix(t1,'#f4894a',clamp(1-Math.abs(el-.05)/.25,0,1)*.8);const g=x.createLinearGradient(0,Ys-260,0,Ys);g.addColorStop(0,mix('#050918','#2f7ce0',day));g.addColorStop(1,t1);x.fillStyle=g;x.fillRect(0,0,w,Math.min(h,Ys));
   if(day<.7){x.fillStyle=`rgba(255,255,255,${(1-day)*.9})`;for(let i=0;i<60;i++){const sx=(i*97.3)%w,sy2=(i*53.7)%Math.max(1,Ys-30);if(sy2<Ys-20)x.fillRect(sx,sy2,1.5,1.5)}}
   const u=(hr-6)/12,um=((hr+6)%24)/12;
   if(u>=0&&u<=1){x.fillStyle='#fff4b8';x.beginPath();x.arc(w*(.1+.8*u),Ys-20-Math.sin(u*Math.PI)*150,17,0,7);x.fill()}
   if(um>=0&&um<=1){x.fillStyle='#e8ecf5';x.beginPath();x.arc(w*(.1+.8*um),Ys-20-Math.sin(um*Math.PI)*150,11,0,7);x.fill()}
   x.fillStyle=`rgba(255,255,255,${.12+.4*day})`;for(let i=0;i<4;i++){const q=(((i*170-rx*K*.1)%(w+200))+w+200)%(w+200)-100;x.beginPath();x.ellipse(q,Ys-110-i*22,46,12,0,0,7);x.ellipse(q+25,Ys-118-i*22,28,10,0,0,7);x.fill()}
-  for(const[f,c0,c1,hh]of[[.25,'#0c1630','#5b7794',70],[.5,'#0f2418','#4d7a48',38]]){x.fillStyle=mix(c0,c1,day);x.beginPath();x.moveTo(0,Ys);for(let px=0;px<=w+20;px+=20)x.lineTo(px,Ys-14-hh*(.5+.3*Math.sin((px+rx*K*f)*.012)+.2*Math.sin((px+rx*K*f)*.031)));x.lineTo(w,Ys);x.fill()}EV('world.sky',{x,w,h,cx,Ys,rx,ry,ts,dt,day,hr,K})}
+  for(const[f,c0,c1,hh]of[[.25,'#0c1630','#5b7794',70],[.5,'#0f2418','#4f9a4a',38]]){x.fillStyle=mix(c0,c1,day);x.beginPath();x.moveTo(0,Ys);for(let px=0;px<=w+20;px+=20)x.lineTo(px,Ys-14-hh*(.5+.3*Math.sin((px+rx*K*f)*.012)+.2*Math.sin((px+rx*K*f)*.031)));x.lineTo(w,Ys);x.fill()}EV('world.sky',{x,w,h,cx,Ys,rx,ry,ts,dt,day,hr,K})}
  const hill=!!(window.HILL&&HILL.vis(rx-cx/K,rx+(w-cx)/K)),hp=[];const hillPath=()=>{x.beginPath();x.moveTo(0,h+30);for(let i=0;i<hp.length;i++)x.lineTo(i*6,hp[i]);x.lineTo((hp.length-1)*6,h+30);x.closePath()};
  if(hill){for(let px=0;px<=w+6;px+=6){const m=rx+(px-cx)/K;hp.push(Ys-(HILL.E(m)-HILL.e0)*K)}const ym=Math.max(...hp);if(ym>Ys){x.fillStyle=mix('#0f2418','#4d7a48',day);x.fillRect(0,Ys-1,w,ym-Ys+2)}
   hillPath();{const gd=x.createLinearGradient(0,Ys-140,0,Ys+60);gd.addColorStop(0,mix('#4a3822','#a07a4c',.3+.7*day));gd.addColorStop(1,mix('#2a1d10','#6b4a2a',.4+.6*day));x.fillStyle=gd}x.fill();x.save();x.clip();for(let i=0;i<hp.length;i++){const m=rx+(i*6-cx)/K,zn=HILL.zone(m);if(zn>0){x.fillStyle=`rgba(62,50,46,${zn*.75})`;x.fillRect(i*6,hp[i],6,Math.max(60,Ys-hp[i]+40))}}
@@ -542,14 +542,14 @@ if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){an
  V.lw=lw;V.sk=sk;V.fc=fc;EV('world.front',V);
  // fények
  {const eL=window.VL&&VL.gl?VL.gl(dt):(window.ENG?Math.min(1,ENG.rpm*1.25):1);if(eL>.03){if(window.VL)VL.light({lw,lamp,CN,GL,fc,cA,sA,dr,eL,ts});else{const[a,b]=lw(-6.9,-.75);lamp(a,b,60,.5*eL);const[nx,ny]=lw(.5,0);CN.push({x:nx,y:ny,dx:fc*cA,dy:fc*sA,len:(dr?55:200)*eL,s:.5});lamp(nx,ny,dr?75:90,.9*eL);GL.push({x:nx,y:ny,r:80,c:'255,220,140',i:.25*eL})}}}
- const dsk=(window.Gov&&Gov.q===0)?.5:1,dkw=Math.max(1,cv.width*dsk|0);if(dk&&dk.width!=dkw)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=dkw;dk.height=Math.max(1,cv.height*dsk|0)}
+ const dsk=(window.Gov&&Gov.q<=1)?.5:.75,dkw=Math.max(1,cv.width*dsk|0);if(dk&&dk.width!=dkw)dk=null;if(!dk){dk=document.createElement('canvas');dk.width=dkw;dk.height=Math.max(1,cv.height*dsk|0)}
  const d2=dk.getContext('2d');d2.setTransform(dp*dsk,0,0,dp*dsk,0,0);d2.globalCompositeOperation='source-over';d2.clearRect(0,0,w,h);const ys=clamp(Ys,0,h);
- d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.5+.35*Math.min(1,ry/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
- LT.forEach(l=>{const q=d2.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(0,0,0,${l.i})`);q.addColorStop(1,'rgba(0,0,0,0)');d2.fillStyle=q;d2.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});
+ d2.fillStyle=`rgba(2,3,10,${(1-day)*.74})`;d2.fillRect(0,0,w,ys);d2.fillStyle=`rgba(3,2,2,${.42+.33*Math.min(1,ry/150)})`;d2.fillRect(0,ys,w,h-ys);d2.globalCompositeOperation='destination-out';
+ const blob=(c,l,a,col)=>{const s=RSPR(col);c.globalAlpha=Math.min(1,a);c.drawImage(s,l.x-l.r,l.y-l.r,l.r*2,l.r*2);c.globalAlpha=1};LT.forEach(l=>blob(d2,l,l.i,'0,0,0'));
  const cone=(c,ctx,fill)=>{const e1=[c.dx*Math.cos(c.s)-c.dy*Math.sin(c.s),c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],e2=[c.dx*Math.cos(c.s)+c.dy*Math.sin(c.s),-c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],q=ctx.createLinearGradient(c.x,c.y,c.x+c.dx*c.len,c.y+c.dy*c.len);q.addColorStop(0,fill);q.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=q;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x+e1[0]*c.len,c.y+e1[1]*c.len);ctx.lineTo(c.x+e2[0]*c.len,c.y+e2[1]*c.len);ctx.fill()};
  CN.forEach(c=>cone(c,d2,'rgba(0,0,0,.95)'));x.drawImage(dk,0,0,w,h);
- x.globalCompositeOperation='lighter';LT.forEach(l=>{const q=x.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(255,190,100,${l.i*.2})`);q.addColorStop(1,'rgba(255,190,100,0)');x.fillStyle=q;x.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});
- GL.forEach(l=>{const q=x.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r);q.addColorStop(0,`rgba(${l.c},${l.i})`);q.addColorStop(1,`rgba(${l.c},0)`);x.fillStyle=q;x.fillRect(l.x-l.r,l.y-l.r,l.r*2,l.r*2)});CN.forEach(c=>cone(c,x,'rgba(255,230,160,.22)'));x.globalCompositeOperation='source-over';
+ x.globalCompositeOperation='lighter';LT.forEach(l=>blob(x,l,l.i*.2,'255,190,100'));
+ GL.forEach(l=>blob(x,l,l.i,l.c));CN.forEach(c=>cone(c,x,'rgba(255,230,160,.22)'));x.globalCompositeOperation='source-over';
  const T=window.VOL?VOL.tm(S.x,ry,lerp(TT,ry)):lerp(TT,ry);if(ry>0){x.fillStyle=`rgba(255,70,0,${Math.min(.35,T/6000*.45)})`;x.fillRect(0,0,w,h)}
  if(turbo){const dd2=DV[dir]||[0,0];x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1.5;for(let i=0;i<30;i++){const q=(ts*(.9+i%5*.15)/400+i*.37)%1,px=dd2[0]?(dd2[0]>0?1-q:q)*(w+80)-40:(i*83.7)%w,py=dd2[1]?(dd2[1]>0?1-q:q)*(h+80)-40:(i*47.3)%h;x.beginPath();x.moveTo(px,py);x.lineTo(px+(dd2[0]?40:0),py+(dd2[1]?40:0));x.stroke()}}
  if(window.ZM)ZM.reset(x,dp);
@@ -600,8 +600,10 @@ function hero(c,ts){const dp=DPR(),w=c.clientWidth,h=c.clientHeight;if(w<10||h<1
  const gn=x.createRadialGradient(nx+.4*k,cy,0,nx+.4*k,cy,5*k);gn.addColorStop(0,`rgba(255,150,60,${.3+.15*Math.sin(T*5)})`);gn.addColorStop(1,'rgba(255,100,30,0)');x.fillStyle=gn;x.fillRect(nx-5*k,cy-5*k,10*k,10*k);
  hP.forEach(p=>{if(p.t!='sp')return;x.strokeStyle=`rgba(255,${130+p.l*200|0},50,${Math.min(1,p.l*3)})`;x.lineWidth=1.8;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.vx*dt*2.5,p.y-p.vy*dt*2.5);x.stroke()});x.globalCompositeOperation='source-over';
  const vg=x.createLinearGradient(0,0,0,h);vg.addColorStop(0,'rgba(11,8,6,.9)');vg.addColorStop(.28,'rgba(11,8,6,.1)');vg.addColorStop(.6,'rgba(11,8,6,.25)');vg.addColorStop(1,'rgba(11,8,6,.96)');x.fillStyle=vg;x.fillRect(0,0,w,h)}
+/* előre renderelt radiális fény-sprite színenként (frame-enkénti createRadialGradient helyett) */
+const RSPRC=new Map();function RSPR(col){let s=RSPRC.get(col);if(s)return s;s=document.createElement('canvas');s.width=s.height=128;const c=s.getContext('2d'),q=c.createRadialGradient(64,64,0,64,64,64);q.addColorStop(0,`rgba(${col},1)`);q.addColorStop(1,`rgba(${col},0)`);c.fillStyle=q;c.fillRect(0,0,128,128);if(RSPRC.size>40)RSPRC.clear();RSPRC.set(col,s);return s}
 function heroLoop(ts){requestAnimationFrame(heroLoop);const mc=$('#mc');if(mc){try{hero(mc,ts)}catch(e){DBG.err='menü: '+(e.message||e);try{mc.width=mc.width}catch(_){}}}}
-function draw(ts){requestAnimationFrame(draw);try{if(gts&&ts-gts<200&&window.Gov)Gov.frame(ts-gts);const dtf=gts?Math.min(.05,(ts-gts)/1e3):.016;gts=ts;sim();if(ts-lastSnd>80){lastSnd=ts;snd()}if(!$('#mm'))drawF(ts);EV('frame',dtf)}catch(e){DBG.err=(e.message||e)+' '+((e.stack||'').split('\n')[1]||'').trim().slice(-30);const c=$('#cv');if(c)c.width=c.width}}
+function draw(ts){requestAnimationFrame(draw);try{if(gts&&ts-gts<200&&window.Gov)Gov.frame(ts-gts);const dtf=gts?Math.min(.05,(ts-gts)/1e3):.016;gts=ts;sim();if(ts-lastSnd>80){lastSnd=ts;snd()}if(!$('#mm')&&!(window.RIG&&RIG.isOpen))drawF(ts);EV('frame',dtf)}catch(e){DBG.err=(e.message||e)+' '+((e.stack||'').split('\n')[1]||'').trim().slice(-30);const c=$('#cv');if(c)c.width=c.width}}
 requestAnimationFrame(draw);requestAnimationFrame(heroLoop);
 tick();view();showMM();
 </script></body></html>

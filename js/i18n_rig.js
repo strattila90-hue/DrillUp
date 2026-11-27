@@ -1,0 +1,53 @@
+/* DrillUp Core Quest – angol szótár: SG-3 fúróállomás (js/rig.js). */
+(function(W){'use strict';
+W.I18N_DICT=Object.assign(W.I18N_DICT||{},{
+"🗼 SG-3 fúróállomás":"🗼 SG-3 drilling station","SG-3 fúróállomás":"SG-3 drilling station","nincs felépítve":"not built",
+"⏫ Fejcsere":"⏫ Bit change","Terhelés":"Bit load","Iszap":"Mud","▶ Fúrás":"▶ Drill","⏸ Állj":"⏸ Stop","Legerősebb torony":"Strongest derrick",
+"ЛБТ alumínium (D16T)":"LBT aluminium (D16T)","Acél (G-105)":"Steel (G-105)","Titán (Ti-6Al-4V)":"Titanium (Ti-6Al-4V)",
+"Építési terület":"Construction site","Kola-típusú mélyfúró állomás":"Kola-type superdeep drilling station","építhető · érintsd meg":"buildable · tap it",
+"Mélység":"Depth","Rekord":"Record","Talp-hőmérséklet":"Bottom-hole temp.","Horogterhelés":"Hook load","Max csőterhelés":"Max pipe load","Fúrófej-kopás":"Bit wear",
+"Csőfáradás":"Pipe fatigue","Furadék":"Cuttings","Turbina":"Turbine","Fúrási sebesség":"Rate of penetration",
+"⏸ Áll":"⏸ Stopped","🔩 Új cső kell":"🔩 New pipe needed","🔩 Csőcsatlakoztatás…":"🔩 Making up the connection…",
+"Pecsengai sorozat: fillit, tufa, homokkő":"Pechenga series: phyllite, tuff, sandstone","Réz-nikkel ércöv (pentlandit, kalkopirit)":"Copper-nickel ore zone (pentlandite, chalcopyrite)",
+"Metabazalt és diabáz láva":"Metabasalt and diabase lava","Tufitok és metaüledékek":"Tuffites and metasediments","Archaikum: gránit-gneisz":"Archean: granite-gneiss",
+"Gneisz és amfibolit (forró, képlékeny)":"Gneiss and amphibolite (hot, plastic)","Ismeretlen mélység – a Kola-rekord alatt":"Unknown depth – below the Kola record",
+"Előbb építsd fel a fúróállomást.":"Build the drilling station first.","Várj, a művelet folyamatban.":"Wait, an operation is in progress.","A szakasz még nincs kifúrva.":"The stage is not drilled out yet.",
+"🪨 A fúrófej elkopott – emeld ki a szálat és cseréld (⏫).":"🪨 The bit is worn out – trip out the string and change it (⏫).",
+"🔩 Az első csövet kell felcsavarni a fúrófejjel.":"🔩 Make up the first pipe with the bit.","🔩 A szakasz kész – csavarj fel új csövet.":"🔩 Stage done – make up a new pipe.",
+"Építsd fel az állomást, vegyél csöveket, és csavard fel az elsőt a fúrófejjel.":"Build the station, buy pipes and make up the first one with the bit.",
+"⚠ Beragadt a szál a furadéktól – 35 t túlhúzással kiszabadítva. Növeld az iszapáramot!":"⚠ The string got stuck in cuttings – freed with 35 t overpull. Increase the mud flow!"
+});
+W.I18N_LONG=(W.I18N_LONG||[]).concat([
+ [/🏗 Építés · /,'🏗 Build · '],[/🔩 Felcsavar (\d)× Alu/,'🔩 Make up $1× Alu'],[/🔩 Felcsavar (\d)× Acél/,'🔩 Make up $1× Steel'],[/🔩 Felcsavar (\d)× Titán/,'🔩 Make up $1× Titanium'],
+ [/(\d+) t · (\d+) kg\/cső ·/,'$1 t · $2 kg/pipe ·'],[/Ár csövenként \(12 m\): Alu (.+?) · Acél (.+?) · Titán (.+)$/,'Price per pipe (12 m): Alu $1 · Steel $2 · Titanium $3'],
+ [/🔁 Auto-felcsavarás be/,'🔁 Auto make-up on'],[/🔁 Auto-felcsavarás ki/,'🔁 Auto make-up off'],[/🎥 Auto-zoom be/,'🎥 Auto zoom on'],[/🎥 Auto-zoom ki/,'🎥 Auto zoom off'],
+ [/^(.+) · (\d)\. szint$/,'$1 · level $2'],[/ · a szakaszból hátra /,' · left in stage '],[/⏫ Kiemelés \/ visszaengedés (\d+)%/,'⏫ Tripping out / in $1%'],
+ [/(\d+)% · (\d+)\. cső/,'$1% · pipe $2'],[/ · kell (.+) l\/s/,' · need $1 l/s'],[/ 1\/perc$/,' rpm'],
+ [/^Fejlesztés: (.+) – (.+) Ft\?$/,'Upgrade: $1 – $2 Ft?'],
+ [/🗼 Felépült az SG-3 fúróállomás \((.+)\)\./,'🗼 The SG-3 drilling station is built ($1).'],
+ [/⬆ Új torony: (.+) – horog (\d+) t, (\d) cső\/gyertya\./,'⬆ New derrick: $1 – hook $2 t, $3 pipes/stand.'],
+ [/A (.+) legfeljebb (.+) m-re tervezett – fejleszd a tornyot\./,'The $1 is rated to $2 m at most – upgrade the derrick.'],
+ [/Kevés cső: (\d) db (.+) kell \((\d+) van\)\. Vegyél a raktárba\./,'Not enough pipe: $1 × $2 needed ($3 in stock). Buy some.'],
+ [/A torony nem bírja: horogterhelés (.+) t > (\d+) t\. Könnyebb cső vagy erősebb torony kell\./,'The derrick cannot hold it: hook load $1 t > $2 t. Use lighter pipe or a stronger derrick.'],
+ [/A csőszál túlterhelődne \((\d+)%\) – könnyebb vagy erősebb cső kell\./,'The string would be overloaded ($1%) – use lighter or stronger pipe.'],
+ [/⏫ Kiemelés: (.+) cső jön fel, majd új fúrófejjel vissza\./,'⏫ Tripping out: $1 pipes come up, then back in with a new bit.'],
+ [/💥 Csőtörés (.+) m-en \((.+?)\): halászattal (\d+) cső kijött, (\d+) a talpon maradt\. Oldalfúrás (.+) m-ről – csavarj fel csövet és fúrj újra\./,'💥 Pipe failure at $1 m ($2): fishing recovered $3 pipes, $4 stay on bottom. Sidetrack from $5 m – make up pipe and drill again.'],
+ [/Nincs elég pénz az új fúrófejre \((.+) Ft\)\./,'Not enough money for a new bit ($1 Ft).'],[/⚠ Kihajlás: túl nagy terhelés a BHA-hoz/,'⚠ Buckling: load too high for the BHA'],
+ [/\btúlterhelés\b/,'overload'],[/fáradásos törés/,'fatigue fracture'],[/beragadás, kiszabadítás közben/,'stuck pipe, while pulling free'],
+ [/🔁 Új fúrófej a talpon \(−(.+) Ft\)\. A csöveket átvizsgálták: a fáradás csökkent\./,'🔁 New bit on bottom (−$1 Ft). Pipes inspected: fatigue reduced.'],
+ [/🔩 Szakasz kész \((.+) m\) – csavarj fel új csövet\./,'🔩 Stage done ($1 m) – make up a new pipe.'],
+ [/🧪 Magminta (.+) m-ről: \+(.+) Ft/,'🧪 Core sample from $1 m: +$2 Ft'],
+ [/🏁 Új rekord: (\d+) km! Akadémiai jutalom: \+(.+) Ft/,'🏁 New record: $1 km! Academy reward: +$2 Ft'],
+ [/⛏ Réz-nikkel érc: a Kola-fúrás 1,6–1,8 km-en ipari vastagságú ércet harántolt\./,'⛏ Copper-nickel ore: the Kola well cut economic ore at 1.6–1.8 km.'],
+ [/🧭 A fúrólyuk elhajlik: a kemény és puha rétegek váltakozása oldalra tereli a fúrófejet\./,'🧭 The hole deviates: alternating hard and soft beds push the bit sideways.'],
+ [/💧 Szabad víz a kőzetben: az ásványok kristályvizéből kipréselt víz kering a repedésekben\./,'💧 Free water in the rock: water squeezed out of mineral crystals circulates in the fractures.'],
+ [/🦠 Mikrofosszíliák: 6,7 km-en 24 egysejtű plankton-faj megkövesedett maradványa, szén- és nitrogénburokban\./,'🦠 Microfossils: at 6.7 km, fossils of 24 species of single-celled plankton, encased in carbon and nitrogen.'],
+ [/🪨 Nincs bazalt! A szeizmikus „Conrad-határ” itt nem gránit–bazalt váltás, hanem víztől repedezett metamorf gránit\./,'🪨 No basalt! The seismic "Conrad boundary" here is not a granite–basalt change but water-fractured metamorphic granite.'],
+ [/🏗 Az Uralmas-4E határa: az eredeti berendezés kb\. 7,6 km-ig jutott, a folytatáshoz Uralmas-15000 kellett\./,'🏗 Limit of the Uralmash-4E: the original rig reached about 7.6 km; going on needed the Uralmash-15000.'],
+ [/✨ Arany nyomai: 9,5–10,5 km között kis koncentrációban aranyat mutattak ki a magmintákban\./,'✨ Traces of gold: small amounts of gold were found in cores between 9.5 and 10.5 km.'],
+ [/🫧 Hidrogén: az iszap „forrt” a kőzetből felszabaduló hidrogéntől\./,'🫧 Hydrogen: the mud "boiled" with hydrogen released from the rock.'],
+ [/🌡 180 °C a várt 100 °C helyett: a kőzet képlékennyé vált, a lyuk fala befolyt\./,'🌡 180 °C instead of the expected 100 °C: the rock turned plastic and the walls crept in.'],
+ [/🏆 Kola-rekord: 12 262 m \(1989\) – a valaha fúrt legmélyebb lyuk\. Átmérő a talpon kb\. 23 cm\./,'🏆 Kola record: 12,262 m (1989) – the deepest hole ever drilled. About 23 cm wide at the bottom.'],
+ [/🚀 Az Uralmas-15000 tervezett mélysége: 15 km\. Ezt a valóságban senki nem érte el\./,'🚀 The Uralmash-15000 design depth: 15 km. Nobody ever reached it in reality.']
+]);
+})(typeof window!=='undefined'?window:globalThis);
