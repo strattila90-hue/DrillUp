@@ -22,10 +22,13 @@ android {
         release {
             def ks = System.getenv("ANDROID_KEYSTORE_FILE")
             if (ks) {
+                // a két jelszó ugyanaz lehet: bármelyik Secret elég; a véletlen szóközöket levágjuk
+                def pw = (System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: System.getenv("ANDROID_KEY_PASSWORD") ?: "").trim()
+                def kpw = (System.getenv("ANDROID_KEY_PASSWORD") ?: "").trim() ?: pw
                 storeFile file(ks)
-                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                keyAlias System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword System.getenv("ANDROID_KEY_PASSWORD") ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                storePassword pw
+                keyAlias((System.getenv("ANDROID_KEY_ALIAS") ?: "corequest").trim())
+                keyPassword kpw
             }
         }
     }

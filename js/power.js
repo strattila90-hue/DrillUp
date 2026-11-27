@@ -60,7 +60,7 @@ W.GEN=GEN;
 
 // ================= KEZELŐFELÜLET =================
 const PW={t:0,
- dock(){return `<button id="swM" class="tb sw" style="font-size:11px;padding:8px 0" onclick="PW.toggleEng()"><i class="led"></i>⚙ Motor</button><button id="swG" class="tb sw" style="font-size:11px;padding:8px 0" onclick="PW.toggleGen()"><i class="led"></i>⚡ Gen.</button>`},
+ dock(){return `<button id="swM" class="tb sw" onclick="PW.toggleEng()"><i class="led"></i>${W.ICN?ICN('engine'):'⚙'}<span>Motor</span></button><button id="swG" class="tb sw" onclick="PW.toggleGen()"><i class="led"></i>${W.ICN?ICN('bolt'):'⚡'}<span>Gen.</span></button>`},
  toggleEng(){aInit();if(S.en){ENG.stop()}else if(!ENG.start(1))toast('⛽ Nincs üzemanyag a motor indításához.');PW.live()},
  toggleGen(){GEN.toggle()},
  live(){const m=$('#swM'),g=$('#swG');

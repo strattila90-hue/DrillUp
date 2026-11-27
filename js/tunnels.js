@@ -77,7 +77,7 @@ const NET={hw:HW,piston:PIS,sw:0,sv:0,fd:0,falling:false,vz:0,bk:0,bkIn:0,bkT:0,
 W.NET=NET;
 // ---------- fék ----------
 const BK={held:false,
- btn(){return `<button id="bBK" class="pb brk sm" style="--lc:#ffb020;width:100%" onpointerdown="BK.down(event)" aria-label="Zuhanófék"><b>🛑</b><span class="bl">ZUHANÓFÉK</span></button>`},
+ btn(){return `<button id="bBK" class="pb brk sm" style="--lc:#ffb020;width:100%" onpointerdown="BK.down(event)" aria-label="Zuhanófék"><b>${W.ICN?ICN('brake'):'🛑'}</b><span class="bl">ZUHANÓFÉK</span></button>`},
  down(e){if(e){e.preventDefault();e.stopPropagation()}aInit();BK.held=true;NET.bkIn=1;if(W.clk)clk(300);if(navigator.vibrate)navigator.vibrate(20)},
  up(){if(!BK.held)return;BK.held=false;NET.bkIn=0}};
 W.BK=BK;

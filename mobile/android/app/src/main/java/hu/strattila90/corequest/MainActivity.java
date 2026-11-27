@@ -7,6 +7,7 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(ApkUpdater.class); // az app (APK) önálló frissítése
         super.onCreate(savedInstanceState);
         // fúrás közben ne aludjon el a kijelző (a WebView-ban nincs Wake Lock API)
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

@@ -77,6 +77,11 @@ jobs:
           fi
           # állandó nevű másolat: https://github.com/strattila90-hue/DrillUp/releases/latest/download/CoreQuest.apk
           cp ../../dist/CoreQuest-$VERSION_NAME-b$BUILD_NUMBER.apk ../../dist/CoreQuest.apk
+      - name: Frissítési szabály (policy-w<minWeb>-a<minApk>.txt – a nevét az app a kiadás-listából olvassa)
+        run: |
+          P=$(node -e "const p=require('./mobile/update-policy.json');process.stdout.write('w'+(p.minWeb|0)+'-a'+(p.minApk|0))")
+          echo "DrillUp frissítési szabály: $P (build $BUILD_NUMBER)" > dist/policy-$P.txt
+          ls dist
       - uses: actions/upload-artifact@v4
         with: { name: android, path: dist/* }
       - if: env.DO_RELEASE == 'true'

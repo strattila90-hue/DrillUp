@@ -47,6 +47,6 @@ const Gov={mode:'a',q:2,ema:16.7,lowT:0,highT:0,cool:0,
   if(Gov.lowT>2500&&Gov.q>0){Gov.q--;Gov.lowT=0;Gov.ema=16.7;Gov.cool=6e4}
   else if(Gov.highT>12000&&Gov.q<2&&Gov.cool<=0){Gov.q++;Gov.highT=0}},
  parts(){return [90,160,260][Gov.q]},rate(){return [.4,.7,1][Gov.q]},dust(){return Gov.q>0},
- dpr(d){return Math.min(d,[1,1.5,2][Gov.q])}};
+ dpr(d){return Math.min(d,[1,1.25,1.6][Gov.q])}};
 W.Gov=Gov;
 })(typeof window!=='undefined'?window:globalThis);

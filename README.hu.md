@@ -65,6 +65,12 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.21
+- **Új főmenü**: embléma, „Út a magig” sáv a Föld héjaival és a rekord-jelölővel, pénz és gép egy kártyán, nagy indító gomb, 4 csempe (Beállítások, Frissítés, Megosztás, Telepítés), alul Adatvédelem · GitHub · Új játék.
+- **Saját rajzolású ikonok** az emojik helyett (felső sáv, alsó navigáció, kezelőpult fülei, irány-pad, Állj/Zuhanófék, Szonda, lebegő gombok): minden eszközön egyformák és élesek.
+- A lebegő vászon-gombok automatikusan sorba rendeződnek (a 🗼 gomb többé nem takarja a kijelzők gombját); az Állj gomb felirata „ÁLLJ”.
+- Kisebb erőforrás-használat: a menü háttere ~30 fps-sel és kisebb felbontással rajzolódik (a menü CPU-igénye kb. a felére esett), a menü-ciklus játék közben nem fut; mérsékeltebb felbontás-plafon (1 / 1,25 / 1,6×) – fúrás közben egyenletesebb képkockák.
+
 ## v5.20
 - **Új: SG-3 orosz mélyfúró állomás** (a Kola-szupermély fúrás mintájára) a felszíni bázison (🗼 gomb vagy koppintás a toronyra). Szakaszos fúrás: minden szakasz egy gyertya (1–3 × 12 m cső), utána új csövet kell felcsavarni – a csöveket meg kell venni (alumínium ЛБТ, acél, titán). 5 toronyszint (БУ-75 → Уралмаш-15000, 15 km).
 - Valós fizika egyszerűsítve: csőszál-súly iszapban (felhajtóerő), horogterhelés, a hőmérséklettel gyengülő alumínium, fáradás, kihajlás, turbinás fúrás, furadék és beragadás, fúrófej-kopás és kiemelés. Túlterhelésnél **csőtörés**: a törés alatti szál a lyukban marad, onnan újra kell fúrni (oldalfúrás).

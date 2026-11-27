@@ -1,0 +1,5 @@
+{
+  "_": "Frissítési szabály a mobil apphoz. A CI ebből policy-w<minWeb>-a<minApk>.txt fájlt tesz minden kiadásba (az app a fájl nevét olvassa). minWeb: ennél régebbi játékcsomaggal az app kötelezően frissít indulás előtt. minApk: ennél régebbi app (APK versionCode) kötelező telepítést kér. 0 = nincs kényszer.",
+  "minWeb": 0,
+  "minApk": 0
+}
