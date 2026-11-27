@@ -54,7 +54,7 @@ const BG={sphere,
   x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=.03;[-11.0,-9.4,-5.95].forEach(px=>{x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,1.5);x.stroke()});x.strokeStyle='rgba(255,255,255,.13)';[-10.97,-9.37,-5.92].forEach(px=>{x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,1.5);x.stroke()});
   // színsáv a vázon (a páncél színével) és felirat
   x.fillStyle=c1;x.fillRect(-12.15,-1.43,6.5,.1);x.fillStyle='rgba(0,0,0,.3)';x.fillRect(-12.15,-1.33,6.5,.03);
-  x.save();x.font='bold .42px Georgia';x.fillStyle='rgba(255,255,255,.78)';x.fillText('DU-01',-11.6,-.62);x.font='.2px Georgia';x.fillStyle='rgba(255,255,255,.45)';x.fillText('DRILL UP',-11.6,-.36);x.restore();
+  x.save();x.font='bold .3px Georgia';x.fillStyle='rgba(255,255,255,.82)';x.fillText('M.E.D.V.E.',-11.75,-.62);x.font='.2px Georgia';x.fillStyle='rgba(255,255,255,.45)';x.fillText('DRILL UP',-11.6,-.36);x.restore();
   // ellenőrző nyílás zsanérral és fogantyúval
   x.fillStyle='rgba(0,0,0,.18)';x.fillRect(-10.75,-.12,1.2,.78);x.strokeStyle='#2a2c30';x.lineWidth=.04;x.strokeRect(-10.75,-.12,1.2,.78);x.fillStyle='#9aa0a6';x.fillRect(-9.82,.18,.18,.07);x.fillRect(-10.7,-.02,.06,.15);x.fillRect(-10.7,.42,.06,.15);
   // antenna, jelzőfény (forgó) és riasztó
@@ -133,7 +133,7 @@ BG.shell=function(x,o){const s=Math.max(0,Math.min(1,o.shell||0));if(s<=.002)ret
  x.fillStyle='rgba(8,10,14,'+(.55*sT)+')';x.fillRect(X0,YT,X1-X0,YM-YT);x.fillStyle='rgba(255,255,255,.13)';x.fillRect(X0+.4,YT+.08,X1-X0-.8,.09);x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YT+.1);x.lineTo(px,YM);x.stroke()}x.fillStyle='rgba(255,255,255,.15)';for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1])x.fillRect(px+.03,YT+.1,.02,YM-YT-.1);
  x.fillStyle='#d8dde4';for(let q=X0+.3;q<X1-.2;q+=.42){x.beginPath();x.arc(q,YT+.2,.035,0,7);x.arc(q,YM-.1,.035,0,7);x.fill()}
  x.fillStyle='#0b1014';for(const[sx,sw]of[[-9.0,.8],[-7.95,.8],[-6.9,.8]]){x.fillRect(sx,-.98,sw,.12)}x.fillStyle=(o.lit?'rgba(255,214,140,.7)':'rgba(120,190,230,.45)');for(const[sx,sw]of[[-9.0,.8],[-7.95,.8],[-6.9,.8]])x.fillRect(sx+.04,-.95,sw-.08,.05);
- x.save();x.font='bold .3px Georgia';x.fillStyle='rgba(255,255,255,.55)';x.fillText('DU-01',-12.2,-1.62);x.restore();
+ x.save();x.font='bold .24px Georgia';x.fillStyle='rgba(255,255,255,.6)';x.fillText('M.E.D.V.E.',-12.2,-1.62);x.restore();
  // sárga-fekete figyelmeztető csík a kupola alsó élén
  x.save();x.beginPath();x.rect(X0,YM-.17,X1-X0,.17);x.clip();x.fillStyle='#e8b020';x.fillRect(X0,YM-.17,X1-X0,.17);x.fillStyle='#1a1a1c';for(let q=X0-.2;q<X1;q+=.36){x.beginPath();x.moveTo(q,YM);x.lineTo(q+.18,YM);x.lineTo(q+.36,YM-.17);x.lineTo(q+.18,YM-.17);x.fill()}x.restore();x.restore();
  x.save();x.translate(0,YB);x.scale(1+.05*sB,cB);x.translate(0,-YB);plate(YM,YB,false);x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=.035;for(const px of[-11.3,-9.95,-8.6,-7.25,-6.1]){x.beginPath();x.moveTo(px,YM);x.lineTo(px,YB);x.stroke()}
