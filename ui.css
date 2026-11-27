@@ -369,3 +369,11 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 .tb.sw.lv .lvr::before{content:'';position:absolute;left:3px;top:6px;width:8px;height:10px;border-radius:2px;background:#1c1e21;box-shadow:inset 0 1px 2px #000}
 .tb.sw.lv .lvr::after{content:'';position:absolute;left:5px;top:-1px;width:4px;height:14px;border-radius:2px;background:linear-gradient(90deg,#8a8f95,#f1f3f5,#7a7f85);transform-origin:50% 100%;transform:translateY(10px) rotate(155deg);transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
 .tb.sw.lv.run .lvr::after,.tb.sw.lv.start .lvr::after,.tb.sw.lv.bad .lvr::after{transform:translateY(0) rotate(0)}
+/* ===== v5.25 L-alakú vezérlés: irány-kereszt középen ÁLLJ, jobbra-lent L alakban a funkciógombok ===== */
+.dpad.dpL{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,44px);gap:6px}
+.dpL .dpU{grid-area:1/2}.dpL .dpH{grid-area:1/4/2/6}.dpL .dpLf{grid-area:2/1}.dpL .dpS{grid-area:2/2}.dpL .dpR{grid-area:2/3}.dpL .dpP{grid-area:2/4/3/6}.dpL .dpD{grid-area:3/2}.dpL .dpB{grid-area:3/3/4/6}
+.dpL>div>button{width:100%;height:100%}
+.dpL .pb.stop{flex-direction:column!important;gap:0}.dpL .pb.stop .bl{font-size:10px;letter-spacing:1px}.dpL .pb.stop b .icn{width:16px;height:16px}
+.dpL .pb{height:44px}.dpL .pb b .icn{width:26px;height:26px}
+.dpL .dpH .pb,.dpL .dpP .pb{flex-direction:row;gap:8px}.dpL .dpH .pb small,.dpL .dpP .pb .spl{display:inline;font-size:12px;font-weight:700;opacity:.9}
+.dpL::before{content:'';grid-area:1/1/4/4;border-radius:12px;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.05),rgba(0,0,0,.25) 70%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}

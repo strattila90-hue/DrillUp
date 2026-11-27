@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.25
+- **New control layout:** ▲▼◀▶ as a real direction cross with STOP in the centre (one move from any direction); the function buttons wrap around it in an L: Surface and Probe on the right, a wide Emergency brake along the bottom.
+
 ## v5.24
 - **Soviet-style mechanical instrument panel** on the console (original artwork): sight-glass fuel gauge, steel-rimmed pressure gauge, brass-rimmed thermometer, olive cargo and generator meters, engine tachometer – screwed bezels, red zones, springy needles that tremble with the engine running, blinking warning lamps. Tap the instruments: engine and generator on/off, refuel, Cargo / Data panel.
 - **Toggle levers** with indicator lamps instead of the Engine and Generator buttons.
