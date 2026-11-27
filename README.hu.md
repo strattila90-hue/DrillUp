@@ -65,6 +65,12 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.29 – M.E.D.V.E. ipari komplexum (2. szakasz) és új Műhely
+- **Műhely újratervezve:** al-fülek (Gépészet · Karbantartás · Fúrófejek); bronzkeretes, szegecselt műszaki rajz meleg borostyán vonalakkal – csak a kiválasztott modul világít, a jelölők rendezetten fent (1–3) és lent (4–6); 3×2 modulrács; fejlesztő kártya szegmentált sávval és Most/Következő összevető táblával.
+- **Személyzeti épület:** öltöző, étkező, pihenő, irodák, parkoló. Szakemberek felvétele: Gépész (javítás −20%), Üzemanyag-mester (üzemanyag −10%), Geológus (SG-3 magminták +25%).
+- **Energetikai központ:** generátorház kéményekkel (járó generátornál sűrűbb füst), trafóudvar, gőzkifúvás. Kártya: generátor be/ki, trafó-fejlesztés, bázisvilágítás.
+- A bázis (tankolás, fejlesztés, felvétel) mostantól az egész ipari telepre kiterjed.
+
 ## v5.28 – M.E.D.V.E. ipari komplexum (1. szakasz)
 - **Parallax háttér:** havas hegyvonulat, ipari sziluettek füstölgő kéményekkel és légiakadály-fényekkel, erdősáv – a napszakkal együtt változnak.
 - **Összefüggő kültér:** betonút sárga jelöléssel, iparvasút talpfákkal, csőhíd, reflektoroszlopok (éjjel valódi fénnyel), konténerudvar rakodórámpával, drótkerítés.
