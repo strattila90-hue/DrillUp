@@ -138,18 +138,18 @@ function whDyn(x,V,sx,Y0,K){const ts=V.ts,night=V.day<.55,m=v=>v*K,X=v=>sx+v*K,Y
  if(night){V.lamp(X(20),Y(-6),m(10),.7);V.lamp(X(5.6),Y(-2),m(5),.5)}}
 function outdoor(x,V){const K=V.K||10,Ys=V.Ys,X=v=>V.SX(v),ts=V.ts,night=V.day<.55;
  // betonút a komplexum előtt
- const a=X(64),b=X(150);if(b<-20||a>V.w+20)return;x.fillStyle='#6d7176';x.fillRect(a,Ys-K*.12,b-a,K*.5);x.fillStyle='#8c9096';x.fillRect(a,Ys-K*.12,b-a,K*.1);
- x.fillStyle='#f2b705';for(let v=64;v<150;v+=3){const p=X(v);if(p>-10&&p<V.w+10)x.fillRect(p,Ys+K*.12,K*1.4,K*.06)}
+ const a=X(64),b=X(200);if(b<-20||a>V.w+20)return;x.fillStyle='#6d7176';x.fillRect(a,Ys-K*.12,b-a,K*.5);x.fillStyle='#8c9096';x.fillRect(a,Ys-K*.12,b-a,K*.1);
+ x.fillStyle='#f2b705';for(let v=64;v<200;v+=3){const p=X(v);if(p>-10&&p<V.w+10)x.fillRect(p,Ys+K*.12,K*1.4,K*.06)}
  // iparvasút a raktár előtt (sín + talpfák)
  const r0=X(86),r1=X(148);x.fillStyle='#3a2e24';for(let v=86;v<148;v+=.9){const p=X(v);if(p>-10&&p<V.w+10)x.fillRect(p,Ys+K*.28,K*.45,K*.18)}x.fillStyle='#9aa3ad';x.fillRect(r0,Ys+K*.22,r1-r0,K*.09);
  // csőhíd az irányítóközpont és a raktár között
  const p0=X(CC.x+CC.w+1.6),p1=X(WH.x);if(p1>p0){x.fillStyle='#4b5057';x.fillRect(p0,Ys-K*8.2,p1-p0,K*.25);for(const[o,col]of[[-.55,'#c9562a'],[-.95,'#2f6fb0'],[-1.3,'#9aa1aa']]){x.fillStyle=col;x.fillRect(p0,Ys-K*(8.2-o*-1),p1-p0,K*.28)}
   for(const v of[CC.x+CC.w+2.2,WH.x-.6]){x.fillStyle='#3a3f46';x.fillRect(X(v)-K*.15,Ys-K*8,K*.3,K*8)}}
  // reflektoroszlopok
- for(const v of[64.5,89,145]){const p=X(v);if(p<-40||p>V.w+40)continue;x.fillStyle='#2e3033';x.fillRect(p-K*.12,Ys-K*12,K*.24,K*12);x.fillRect(p-K*.9,Ys-K*12.2,K*1.8,K*.35);
+ for(const v of[64.5,89,159.6,185]){const p=X(v);if(p<-40||p>V.w+40)continue;x.fillStyle='#2e3033';x.fillRect(p-K*.12,Ys-K*12,K*.24,K*12);x.fillRect(p-K*.9,Ys-K*12.2,K*1.8,K*.35);
   for(let i=0;i<3;i++){x.fillStyle=night?'#fff3c0':'#9aa3ad';x.fillRect(p-K*.8+i*K*.6,Ys-K*12.6,K*.45,K*.4)}if(night){V.lamp(p,Ys-K*12,K*16,.85);V.GL.push({x:p,y:Ys-K*12.4,r:K*3,c:'255,235,170',i:.35})}}
  // biztonsági kerítés (dróthálós szakaszok) az udvar mögött
- const f0=X(YARD.x+17),f1=X(160);if(f1>f0){x.strokeStyle='rgba(150,160,170,.7)';x.lineWidth=1;x.beginPath();for(let v=YARD.x+17;v<160;v+=.6){const p=X(v);x.moveTo(p,Ys);x.lineTo(p+K*.6,Ys-K*2.2);x.moveTo(p+K*.6,Ys);x.lineTo(p,Ys-K*2.2)}x.stroke();x.fillStyle='#5d6670';for(let v=YARD.x+17;v<=160;v+=3)x.fillRect(X(v)-1,Ys-K*2.4,2,K*2.4);x.fillRect(f0,Ys-K*2.4,f1-f0,2)}}
+ const f0=X(187),f1=X(204);if(f1>f0){x.strokeStyle='rgba(150,160,170,.7)';x.lineWidth=1;x.beginPath();for(let v=187;v<204;v+=.6){const p=X(v);x.moveTo(p,Ys);x.lineTo(p+K*.6,Ys-K*2.2);x.moveTo(p+K*.6,Ys);x.lineTo(p,Ys-K*2.2)}x.stroke();x.fillStyle='#5d6670';for(let v=187;v<=204;v+=3)x.fillRect(X(v)-1,Ys-K*2.4,2,K*2.4);x.fillRect(f0,Ys-K*2.4,f1-f0,2)}}
 
 CX.world=function(V){if(typeof S==='undefined'||typeof document==='undefined'||!document.createElement)return;const x=V.x,Ys=V.Ys,K=V.K||10;CX.hit=[];if(!(Ys>-300&&Ys<V.h+200))return;
  outdoor(x,V);
@@ -163,7 +163,7 @@ function card(id){if(typeof document==='undefined'||!document.getElementById)ret
  let h='';if(id==='cc'){const q=W.QS&&QS.html?QS.html():'';h=`<div class="srh"><b>🛰 Irányítóközpont</b><button class="srx" aria-label="Bezár" onclick="document.getElementById('cxCard').style.display='none'">✕</button></div><div class="mu">Küldetések és feladatok: a napi és heti kihívások állása. Teljesítéskor a jutalom automatikusan jár.</div><div class="cxq">${q}</div>`}
  else{h=`<div class="srh"><b>📦 Alkatrészraktár</b><button class="srx" aria-label="Bezár" onclick="document.getElementById('cxCard').style.display='none'">✕</button></div><div class="mu">Alkatrészek és nyersanyagok: a rakomány, a készletek és az eladás.</div><div class="row" style="margin-top:8px"><button class="b" onclick="document.getElementById('cxCard').style.display='none';tab=2;view()">📦 Raktár megnyitása</button></div>`}
  c.innerHTML=h;c.style.display='block';try{beep(560,.05,.05,'triangle')}catch(e){}}
-CX.card=card;W.CX=CX;
+CX.card=card;CX.lib={R,hazard,rivets,sprite,blit,OL,mixC};W.CX=CX;
 if(W.on){on('world.sky',V=>{try{para(V)}catch(e){if(W.DBG)DBG.err='complex-sky: '+(e.message||e)}});on('world.back',V=>{try{CX.world(V)}catch(e){if(W.DBG)DBG.err='complex: '+(e.message||e)}})}
 if(typeof document!=='undefined'&&document.addEventListener){let dn=null;document.addEventListener('pointerdown',e=>{dn=e.target&&e.target.id==='cv'?{x:e.clientX,y:e.clientY,t:Date.now()}:null},true);
  document.addEventListener('pointerup',e=>{if(!dn||!e.target||e.target.id!=='cv')return;const d=dn;dn=null;if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>9||Date.now()-d.t>600)return;if(W.ZM&&(ZM.t>1||ZM.z>1.02))return;

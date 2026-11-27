@@ -447,3 +447,5 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 #cxCard{display:none;position:fixed;left:50%;transform:translateX(-50%);top:64px;width:min(92vw,400px);max-height:70vh;overflow-y:auto;z-index:60;box-sizing:border-box;padding:10px 12px;border-radius:12px;background:linear-gradient(#2a2420,#171310);border:1px solid #6b5636;box-shadow:0 8px 28px rgba(0,0,0,.6);color:#f0e6d2;font:13px Georgia,serif}
 #cxCard .srh{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:15px}#cxCard .srx{margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#d62f27;color:#fff;border:2px solid #fff;font-size:15px;cursor:pointer}
 #cxCard .mu{opacity:.82}#cxCard .cxq{margin-top:6px}body.rgOn #cxCard{display:none!important}
+#cxCard .cxr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid rgba(255,220,170,.1)}
+#cxCard .cxr span{display:flex;flex-direction:column}#cxCard .cxr small{opacity:.7;font-size:11.5px}#cxCard .cxr .b{margin:0;padding:8px 10px;font-size:12.5px;white-space:nowrap}#cxCard .cxr em{font-style:normal}

@@ -112,7 +112,7 @@ const RIG={PT,RIGS,GZ,MS,BITS,L,temp,zone,hotF,hist:[],ht:0,isOpen:false,ph:'idl
   RIG.rop=R[5]*Math.pow(g.wob/10,.9)*Math.pow(rpm/300,.55)/Z[3]*B.r(Z[3])*(1-.75*g.bw/100)*(g.cu>.6?.5:1);
   const d0=g.d;g.d=Math.min(end,g.d+RIG.rop*dt);
   // magminta 100 m-enként, mérföldkövek
-  if(g.d>g.best&&Math.floor(g.d/100)>Math.floor(Math.max(d0,g.best)/100)){g.core++;g.cs=(g.cs+GZ.indexOf(zone(g.d))).slice(-16);const v=coreVal(g.d);S.cash+=v;RIG.lastMsg='🧪 Magminta '+nf(Math.floor(g.d/100)*100,0)+' m-ről: +'+nf(v,0)+' Ft'}
+  if(g.d>g.best&&Math.floor(g.d/100)>Math.floor(Math.max(d0,g.best)/100)){g.core++;g.cs=(g.cs+GZ.indexOf(zone(g.d))).slice(-16);const v=Math.round(coreVal(g.d)*(W.CREW?CREW.core():1));S.cash+=v;RIG.lastMsg='🧪 Magminta '+nf(Math.floor(g.d/100)*100,0)+' m-ről: +'+nf(v,0)+' Ft'}
   if(g.d>g.best){if(Math.floor(g.d/1e3)>Math.floor(g.best/1e3)){const km=Math.floor(g.d/1e3),b=1e5*km*km;S.cash+=b;RIG.msg('🏁 Új rekord: '+km+' km! Akadémiai jutalom: +'+nf(b,0)+' Ft')}g.best=g.d}
   while(g.ms<MS.length&&g.d>=MS[g.ms][0]){const b=5e4*(g.ms+1)*(g.ms+1);S.cash+=b;RIG.msg(MS[g.ms][1]+' (+'+nf(b,0)+' Ft)');g.ms++}
   if(g.bw>=100){RIG.ph='idle';RIG.msg('🪨 A fúrófej elkopott – emeld ki a szálat és cseréld (⏫).');return}

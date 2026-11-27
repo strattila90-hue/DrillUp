@@ -65,6 +65,12 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.29 – M.E.D.V.E. industrial complex (phase 2) and a new Workshop
+- **Workshop redesigned:** sub-tabs (Engineering · Maintenance · Drill bits); a bronze-framed, riveted technical drawing in warm amber lines – only the selected module glows, markers neatly at the top (1–3) and bottom (4–6); a 3×2 module grid; an upgrade card with a segmented bar and a Now/Next comparison table.
+- **Staff building:** locker room, canteen, rest room, offices, car park. Hire specialists: Mechanic (repair −20%), Fuel master (fuel −10%), Geologist (SG-3 cores +25%).
+- **Energy centre:** generator hall with chimneys (thicker smoke when the generator runs), transformer yard, steam vents. Card: generator on/off, substation upgrade, base lighting.
+- The base (refuel, upgrade, hire) now covers the whole industrial site.
+
 ## v5.28 – M.E.D.V.E. industrial complex (phase 1)
 - **Parallax backdrop:** snowy mountain range, industrial skyline with smoking chimneys and aviation lights, a forest belt – all following the time of day.
 - **Connected outdoor site:** concrete road with yellow markings, industrial railway, pipe bridge, floodlight masts (real light at night), container yard with loading ramp, mesh fence.
