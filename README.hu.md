@@ -65,6 +65,11 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.24
+- **Orosz típusú mechanikus műszerfal** a kezelőpulton (saját rajz): üvegcsöves üzemanyag-szintjelző, acélperemes nyomásmérő, sárgaréz peremű hőmérő, olívzöld raktár- és generátorműszer, motor-fordulatmérő – csavarozott peremek, piros zónák, rugózó mutatók, járó motornál enyhe remegés, villogó jelzőlámpák. A műszerek érintésre kapcsolnak: motor és generátor be/ki, tankolás, Raktár / Adatok panel.
+- A Motor és a Generátor gomb helyett **billenőkar** jelzőlámpával.
+- **Indítóállás:** a bázison betonplatform kútfejjel és sárga portáldaruval. Lefelé fúrni csak innen lehet; a daru horga megfogja a gép farkát, a platform közepére húzza és fúrási helyzetbe emeli. A felszínre is csak itt lehet kijönni (a ⌂ hazaút ide vezet).
+
 ## v5.23
 - **Képek a fúróállomáson:** valódi fotók és szakmai ábrák alapján rajzolt saját illusztrációk (`assets/rig/`): karcsú, piros-fehér árboc és sárga, X-merevítéses alépítmény fehér fúrókabinnal; háromgörgős (keményfém betétes) és PDC-gyémánt fúrófej 6 fázisú forgásanimációval; színkódolt fúrószerelvény (fejcsatlakozó, turbina, stabilizátor, nehézrudak, ütőszerszám, nehéz fúrócső).
 - **📘 Fúrószál tananyag:** a fúrószál részei felülről lefelé, a két fúrófej összevetése és a fúrómag magyarázata (az SZTE Földtani és Őslénytani Tanszékének ismeretterjesztő anyaga alapján, saját összefoglalóban).
