@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script><script src="js/complex.js"></script><script src="js/complex2.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.30';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.31';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -303,7 +303,7 @@ if('serviceWorker'in navigator&&!window.Capacitor)navigator.serviceWorker.regist
 // ---- jelenet: 1 m = 10 px, a gép ~12 m hosszú (Ikarus-méret) ----
 const K=10,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=n=>((Math.sin(n*127.1)*43758.5)%1+1)%1;
 const mix=(a,b,t)=>{const p=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),A=p(a),B=p(b);return'#'+A.map((v,i)=>('0'+Math.round(v+(B[i]-v)*t).toString(16)).slice(-2)).join('')};
-const HC=[['#9aa1aa','#5d636b'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
+const HC=[['#c3d6ea','#3f5873'],['#a9bccd','#6b8095'],['#55585f','#2c2e34'],['#c7eef2','#7fb6c2'],['#eef6ff','#8fb0d0'],['#c9a2ff','#6a3fb0']];
 let ph=0,pt=0,pr=[],ang=0,face=1,sp=0,dk=null,lastD='R',sk=3.2,yaw=0,hf=1,rate=0,pv=0,exX=0,exY=0,trkM=0,grip=1,pStroke=0,pDep=0,pGrip=1,hydAct=0,gState=1,beepT=0,clkT=0,depSt=0,gE=0,dep=0,hs=0,lastDT=0,lastSnd=0,gts=0,rx=0,ry=0,pSX=0,pSY=0,vsp=0;
 const DBG={fps:60,err:''},MV={ok:true,a2:1,u3:0,fb:0};addEventListener('error',e=>{DBG.err=(e.message||'')+' '+((e.filename||'').split('/').pop())+':'+e.lineno});addEventListener('unhandledrejection',e=>{DBG.err=String(e.reason)});
 const tg=s=>{aInit();navigator.vibrate&&navigator.vibrate(S.st==s?[12,40,12]:18);clk(S.st==s?330:560);go(S.st==s?'idle':s)};
@@ -320,7 +320,7 @@ const HT=['#b8bcc2','#8a98a8','#f4f8ff','#a6e4ff','#c9fff0','#f0d0ff'],HDC=[['#d
 // ---- élethű lánctalp: egyedi láncszemek, hajtókerék, feszítőkerék, futógörgők, visszatartó görgők ----
 /* kontúros (cel-shading) gép: saját rétegre rajzol, a sziluettből 8 irányú, kb. 2 px-es sötét körvonal készül.
    A réteg a gép tényleges (eszköz-képpontos) befoglaló téglalapjához igazodik; túl nagy méretnél közvetlenül rajzol. */
-let olC=null,olS=null;
+let olC=null,olS=null,olL=null;
 function OUTL(x,draw){if(window.Gov&&Gov.q===0){draw(x);return}let m;try{m=x.getTransform()}catch(e){m=null}if(!m||typeof document==='undefined'||!document.createElement){draw(x);return}
  const pts=[[-14.2,-5.2],[3.2,-5.2],[-14.2,3.4],[3.2,3.4]].map(([a,b])=>[m.a*a+m.c*b+m.e,m.b*a+m.d*b+m.f]),T=Math.max(1.4,Math.min(3.2,Math.hypot(m.a,m.b)/(K||10)*.75));
  const bx=Math.floor(Math.min(...pts.map(q=>q[0])))-T-2,by=Math.floor(Math.min(...pts.map(q=>q[1])))-T-2,bw=Math.ceil(Math.max(...pts.map(q=>q[0])))+T+2-bx,bh=Math.ceil(Math.max(...pts.map(q=>q[1])))+T+2-by;
@@ -328,7 +328,15 @@ function OUTL(x,draw){if(window.Gov&&Gov.q===0){draw(x);return}let m;try{m=x.get
  if(!olC){olC=document.createElement('canvas');olS=document.createElement('canvas')}if(olC.width<bw||olC.height<bh||olC.width>bw*2+64||olC.height>bh*2+64){olC.width=olS.width=bw;olC.height=olS.height=bh}
  const c=olC.getContext('2d'),s=olS.getContext('2d');if(!c||!s||!c.setTransform){draw(x);return}
  c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,bw,bh);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.setTransform(m.a,m.b,m.c,m.d,m.e-bx,m.f-by);draw(c);
+ // térfogat-fény: a gép saját tengelyéhez igazított függőleges fény–árnyék, a gép alakjára maszkolva, „overlay” keveréssel (acélos, domború hatás)
+ if(!olL)olL=document.createElement('canvas');if(olL.width!==olC.width||olL.height!==olC.height){olL.width=olC.width;olL.height=olC.height}
+ const l=olL.getContext('2d');if(l&&l.setTransform){l.setTransform(1,0,0,1,0,0);l.globalCompositeOperation='source-over';l.clearRect(0,0,bw,bh);l.setTransform(m.a,m.b,m.c,m.d,m.e-bx,m.f-by);
+  const g=l.createLinearGradient(0,-3.2,0,2.4);g.addColorStop(0,'#d9e6f4');g.addColorStop(.16,'#e8f1fb');g.addColorStop(.3,'#a9bfd8');g.addColorStop(.42,'#8ea6c2');g.addColorStop(.55,'#6a7f99');g.addColorStop(.82,'#1b2636');g.addColorStop(.93,'#0c121c');g.addColorStop(1,'#5f86b5');
+  l.fillStyle=g;l.fillRect(-15,-6,19,10);l.setTransform(1,0,0,1,0,0);l.globalCompositeOperation='destination-in';l.drawImage(olC,0,0);
+  c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='overlay';c.globalAlpha=.78;c.drawImage(olL,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over'}
  s.setTransform(1,0,0,1,0,0);s.globalCompositeOperation='source-over';s.clearRect(0,0,bw,bh);s.drawImage(olC,0,0);s.globalCompositeOperation='source-in';s.fillStyle='#0b0d10';s.fillRect(0,0,bw,bh);s.globalCompositeOperation='source-over';
+ // talajárnyék (csak vízszintes gépnél, a felszínen): lágy ellipszis a lánctalp alatt
+ if(Math.abs(m.b)<Math.abs(m.a)*.08&&typeof S!=='undefined'&&S.depth<1){x.save();x.setTransform(m.a,m.b,m.c,m.d,m.e,m.f);const sg=x.createRadialGradient(-6,2.15,.2,-6,2.15,7.5);sg.addColorStop(0,'rgba(0,0,0,.55)');sg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=sg;x.save();x.translate(-6,2.15);x.scale(1,.12);x.beginPath();x.arc(0,0,7.5,0,7);x.restore();x.fill();x.restore()}
  x.save();x.setTransform(1,0,0,1,0,0);for(let k=0;k<8;k++){const q=k*Math.PI/4;x.drawImage(olS,0,0,bw,bh,bx+Math.cos(q)*T,by+Math.sin(q)*T,bw,bh)}
  x.drawImage(olC,0,0,bw,bh,bx,by,bw,bh);x.restore()}
 function trackDraw(x,o){const{dep,trk,pv}=o,xr=-10.9,xf=-1.9,r=.45,cyT=1.55,L2=xf-xr,Pm=2*L2+2*Math.PI*r,N=48,sp=Pm/N,rr=(a,b,c,d,q)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,q);else x.rect(a,b,c,d)};
