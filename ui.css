@@ -444,3 +444,6 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
  .gauges.hudR{right:34px}
 }
 @media (min-width:700px){.hbRow{grid-template-columns:auto 420px;justify-content:center}}
+#cxCard{display:none;position:fixed;left:50%;transform:translateX(-50%);top:64px;width:min(92vw,400px);max-height:70vh;overflow-y:auto;z-index:60;box-sizing:border-box;padding:10px 12px;border-radius:12px;background:linear-gradient(#2a2420,#171310);border:1px solid #6b5636;box-shadow:0 8px 28px rgba(0,0,0,.6);color:#f0e6d2;font:13px Georgia,serif}
+#cxCard .srh{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:15px}#cxCard .srx{margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#d62f27;color:#fff;border:2px solid #fff;font-size:15px;cursor:pointer}
+#cxCard .mu{opacity:.82}#cxCard .cxq{margin-top:6px}body.rgOn #cxCard{display:none!important}

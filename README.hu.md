@@ -65,6 +65,13 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.28 – M.E.D.V.E. ipari komplexum (1. szakasz)
+- **Parallax háttér:** havas hegyvonulat, ipari sziluettek füstölgő kéményekkel és légiakadály-fényekkel, erdősáv – a napszakkal együtt változnak.
+- **Összefüggő kültér:** betonút sárga jelöléssel, iparvasút talpfákkal, csőhíd, reflektoroszlopok (éjjel valódi fénnyel), konténerudvar rakodórámpával, drótkerítés.
+- **Irányítóközpont:** háromszintes épület, irányítóterem élő monitorfallal és kezelőkkel, üvegezett megfigyelőszint, forgó radar, antennaárboc villogóval, ventilátorok. Koppintásra: küldetések (napi és heti kihívások).
+- **Alkatrészraktár:** fűrészfogas tető, gördülőkapu, belső tér magas polcrendszerrel, mozgó futódaruval és targoncával. Koppintásra: Raktár.
+- A jármű neve a gépen: **M.E.D.V.E.**
+
 ## v5.27
 - **Laptopon / széles kijelzőn** rendezett felület: a vezérlősáv elemei fix méretűek és középre igazítottak, a főmenü középső oszlopban.
 - **Csillogó, kopott fém jármű:** erős tükröződő sáv, mély árnyék, finom karcok és lassan végigfutó csillanás a gép testén és páncélján.

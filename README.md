@@ -65,6 +65,13 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.28 – M.E.D.V.E. industrial complex (phase 1)
+- **Parallax backdrop:** snowy mountain range, industrial skyline with smoking chimneys and aviation lights, a forest belt – all following the time of day.
+- **Connected outdoor site:** concrete road with yellow markings, industrial railway, pipe bridge, floodlight masts (real light at night), container yard with loading ramp, mesh fence.
+- **Control centre:** three storeys, a control room with a live monitor wall and operators, glazed observation deck, rotating radar, antenna mast with beacon, fans. Tap: missions (daily and weekly challenges).
+- **Parts warehouse:** sawtooth roof, roller door, interior with high racking, a moving overhead crane and forklift. Tap: the Hold.
+- The machine's name on the hull: **M.E.D.V.E.**
+
 ## v5.27
 - **Laptop / wide screens:** a tidy layout – fixed-size, centred control strip and a centred main menu.
 - **Shiny worn-metal machine:** strong specular band, deep shading, fine scratches and a slow glint sweeping across the body and armour.
