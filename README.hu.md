@@ -65,6 +65,11 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.26
+- **L-alakú HUD, kevesebb hely:** a játékkép jóval nagyobb lett. A műszerek doboz nélkül lebegnek a képen (jobb oldalt: nyomás, hőmérséklet, raktár és új fúrófej-kopás óra), alul a vezérlősávban az üzemanyag, a motor és a generátor.
+- **Nincs kettős vezérlés:** a Motor/Gen karok és az Adat/Raktár/Fúrófej fülek helyett a műszerekre koppintva kapcsolsz vagy nyitod meg a panelt.
+- **Joystick** a négy iránygomb és az ÁLLJ helyett: húzd az irányba; elengedve megáll, végállásba tolva ott marad és a gép megy tovább (arany gyűrű jelzi); koppintás = állj.
+
 ## v5.25
 - **Új vezérlő-elrendezés:** a ▲▼◀▶ valódi irány-keresztben, középen az ÁLLJ (minden irányból egy mozdulatra); a funkciógombok L alakban veszik körül: jobbra a Felszín és a Szonda, alul a széles Zuhanófék.
 
