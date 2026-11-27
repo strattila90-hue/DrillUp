@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.30
+- **A M.E.D.V.E. jármű a referenciakép stílusában:** vastag sötét kontúr az egész gép körül (cel-shading), hosszabb, nehezebb lánctalp 48 láncszemmel, 6 futógörgővel és 3 tartógörgővel, „M” embléma a narancs tartályon.
+
 ## v5.29 – M.E.D.V.E. ipari komplexum (2. szakasz) és új Műhely
 - **Műhely újratervezve:** al-fülek (Gépészet · Karbantartás · Fúrófejek); bronzkeretes, szegecselt műszaki rajz meleg borostyán vonalakkal – csak a kiválasztott modul világít, a jelölők rendezetten fent (1–3) és lent (4–6); 3×2 modulrács; fejlesztő kártya szegmentált sávval és Most/Következő összevető táblával.
 - **Személyzeti épület:** öltöző, étkező, pihenő, irodák, parkoló. Szakemberek felvétele: Gépész (javítás −20%), Üzemanyag-mester (üzemanyag −10%), Geológus (SG-3 magminták +25%).

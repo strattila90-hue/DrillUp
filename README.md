@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.30
+- **The M.E.D.V.E. machine in the reference style:** a bold dark outline around the whole machine (cel-shading), a longer, heavier track with 48 links, 6 road wheels and 3 return rollers, an “M” emblem on the orange tank.
+
 ## v5.29 – M.E.D.V.E. industrial complex (phase 2) and a new Workshop
 - **Workshop redesigned:** sub-tabs (Engineering · Maintenance · Drill bits); a bronze-framed, riveted technical drawing in warm amber lines – only the selected module glows, markers neatly at the top (1–3) and bottom (4–6); a 3×2 module grid; an upgrade card with a segmented bar and a Now/Next comparison table.
 - **Staff building:** locker room, canteen, rest room, offices, car park. Hire specialists: Mechanic (repair −20%), Fuel master (fuel −10%), Geologist (SG-3 cores +25%).
