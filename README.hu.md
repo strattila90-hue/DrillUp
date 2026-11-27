@@ -65,6 +65,10 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.23
+- **Képek a fúróállomáson:** valódi fotók és szakmai ábrák alapján rajzolt saját illusztrációk (`assets/rig/`): karcsú, piros-fehér árboc és sárga, X-merevítéses alépítmény fehér fúrókabinnal; háromgörgős (keményfém betétes) és PDC-gyémánt fúrófej 6 fázisú forgásanimációval; színkódolt fúrószerelvény (fejcsatlakozó, turbina, stabilizátor, nehézrudak, ütőszerszám, nehéz fúrócső).
+- **📘 Fúrószál tananyag:** a fúrószál részei felülről lefelé, a két fúrófej összevetése és a fúrómag magyarázata (az SZTE Földtani és Őslénytani Tanszékének ismeretterjesztő anyaga alapján, saját összefoglalóban).
+
 ## v5.22
 - **SG-3 fúróállomás – élethű modell:** alépítmény és fúrópadló, kitörésgátló (BOP), csigasor és futócsiga drótkötéllel, a fúrással együtt forgó csörlődob, felső hajtás (top drive) iszaptömlővel, toronypihenő-pódium (kiemeléskor itt sorakoznak a gyertyák), rázószita és gőzölgő iszapmedence, dízel-áramfejlesztő füsttel, triplex iszapszivattyú mozgó dugattyúkkal, reflektorok, sarki hóesés.
 - **Föld alatt:** kőzettípusonként saját mintázat, részletes fúrószerelvény (nehézrudak, stabilizátor, forgó turbina, iszapsugarak), a forró mélységben vörösen izzó kőzet.
