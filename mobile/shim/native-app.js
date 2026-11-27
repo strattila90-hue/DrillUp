@@ -26,12 +26,13 @@ const android=()=>{try{return C.getPlatform()==='android'}catch(e){return false}
 async function newest(){
  const r=await fetch('https://api.github.com/repos/'+REPO+'/releases/latest',{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
  if(!r.ok)throw new Error('HTTP '+r.status);
- const rel=await r.json();let best=null,apk='',minWeb=0,minApk=0;
+ const rel=await r.json();let best=null,apk='',minWeb=0,minApk=0;const sums={};
  for(const a of rel.assets||[]){const n=a.name||'';let m;
   if(m=/^web-b(\d+)\.zip$/.exec(n)){if(!best||+m[1]>best.n)best={n:+m[1],url:a.browser_download_url}}
   else if(n==='CoreQuest.apk')apk=a.browser_download_url;
+  else if(m=/^websum-b(\d+)-([0-9a-f]{64})\.txt$/.exec(n))sums[m[1]]=m[2];
   else if(m=/^policy-w(\d+)-a(\d+)\.txt$/.exec(n)){minWeb=+m[1];minApk=+m[2]}}
- return best&&Object.assign(best,{apk,minWeb,minApk});
+ return best&&Object.assign(best,{apk,minWeb,minApk,sum:sums[best.n]||''});
 }
 // az app (APK) saját sorszáma; régi app (a bővítmény előtti) → 0
 async function nativeCode(){if(!APK||!android())return 0;try{return +(await APK.info()).versionCode||0}catch(e){return 0}}
@@ -50,12 +51,13 @@ let busy=false,pending=null;
 // a csomag letöltése; ha ez a verzió már le van töltve (pl. az automatikus frissítés már behozta), azt használja – a frissítő a dupla letöltést elutasítja
 async function getBundle(best){const v='b'+best.n;
  try{const l=await UPD.list();const ex=((l&&l.bundles)||[]).find(b=>b.version===v&&b.status!=='error'&&b.status!=='deleted');if(ex)return ex}catch(e){}
- try{return await UPD.download({url:best.url,version:v})}
+ if(!best.sum)throw new Error(t('a kiadásban nincs ellenőrzőösszeg','the release has no checksum'));
+ try{return await UPD.download({url:best.url,version:v,checksum:best.sum})}
  catch(e){try{const l=await UPD.list();const ex=((l&&l.bundles)||[]).find(b=>b.version===v);if(ex)return ex}catch(_){}throw e}}
 async function applyWeb(best){try{if(typeof W.save==='function')W.save()}catch(e){}const b=await getBundle(best);await UPD.set({id:b.id})}
 // érthető hibaüzenet a valódi okkal
 function why(e){const m=String(e&&(e.message||e.code||e)||'');if(/403|rate/i.test(m))return t('a GitHub átmenetileg korlátozza a lekérdezéseket – próbáld pár perc múlva','GitHub is rate-limiting requests – try again in a few minutes');
- if(/HTTP 404/.test(m))return t('nincs kiadás','no release found');if(!navigator.onLine)return t('nincs internetkapcsolat','no internet connection');return t('hiba: ','error: ')+m.slice(0,80)}
+ if(/HTTP 404/.test(m))return t('nincs kiadás','no release found');if(!navigator.onLine)return t('nincs internetkapcsolat','no internet connection');return t('hiba: ','error: ')+m.replace(/https?:\/\/\S+/g,'').slice(0,120)}
 
 // --- app (APK): letöltés + Android telepítő; régi appban (bővítmény nélkül) a böngésző tölti le ---
 NA.apk=async(url,forced)=>{
@@ -92,7 +94,8 @@ NA.update=async()=>{
   const nc=await nativeCode();
   if(nc&&best.apk&&nc<best.n&&typeof W.NAT==='object'&&W.NAT.ask)W.NAT.ask(t('A játék a legfrissebb. Az app (APK) is frissíthető (b'+nc+' → b'+best.n+'). Telepíted?','The game is up to date. The app (APK) can be updated too (b'+nc+' → b'+best.n+'). Install it?'),t('Telepítés','Install'),()=>NA.apk(best.apk));
   else say(t('✔ Ez a legfrissebb verzió.','✔ You have the latest version.'));
- }catch(e){say('⚠ '+t('A frissítés nem sikerült','Update failed')+' – '+why(e))}
+ }catch(e){const w=why(e);say('⚠ '+t('A frissítés nem sikerült','Update failed')+' – '+w);
+  try{if(android()&&typeof W.NAT==='object'&&W.NAT.ask)W.NAT.ask(t('A gyors frissítés nem sikerült ('+w+'). Letöltöd a teljes appot (APK)? A mentésed megmarad.','The quick update failed ('+w+'). Download the full app (APK)? Your save is kept.'),t('Letöltés','Download'),()=>NA.apk())}catch(_){}}
  finally{busy=false}
 };
 
