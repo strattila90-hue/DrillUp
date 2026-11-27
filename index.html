@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.26';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.27';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -362,7 +362,11 @@ function trackDraw(x,o){const{dep,trk,pv}=o,xr=-10.4,xf=-2.2,r=.45,cyT=1.55,L2=x
  x.fillStyle='#a6aab1';for(let k=0;k<5;k++){const aa=trk/.46+k*1.257;x.beginPath();x.arc(xf+.26*Math.cos(aa),cyT+.26*Math.sin(aa),.025,0,7);x.fill()}
  x.restore()}
 function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=o,trk=o.trk!=null?o.trk:ph*3,gr=o.grip!=null?o.grip:1,hyd=o.hyd||0,alarm=o.alarm,tier=S.u.d,hl=S.u.h,[c1,c2]=window.PNT?PNT.hc(HC[hl]):HC[hl],hdc=HDC[ht],ext=dep*.62*gr,rr=(a,b,c,d,r)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,r);else x.rect(a,b,c,d)};
- const cyl=(x0,x1,r,cA,cB)=>{const g=x.createLinearGradient(0,-r,0,r);g.addColorStop(0,cA);g.addColorStop(.2,cA);g.addColorStop(.55,cB);g.addColorStop(1,'#1c1e22');x.fillStyle=g;x.fillRect(x0,-r,x1-x0,2*r);x.fillStyle='rgba(255,255,255,.22)';x.fillRect(x0,-r*.8,x1-x0,r*.1);x.fillStyle='rgba(0,0,0,.3)';x.fillRect(x0,r*.78,x1-x0,r*.22)};
+ // csillogó, kopott fém: erős tükröződő sáv fent, mély árnyék lent, karcok, lassan végigfutó csillanás
+ const cyl=(x0,x1,r,cA,cB)=>{const g=x.createLinearGradient(0,-r,0,r);g.addColorStop(0,'#2b2e33');g.addColorStop(.08,cA);g.addColorStop(.17,'#ffffff');g.addColorStop(.26,cA);g.addColorStop(.58,cB);g.addColorStop(.86,'#2a2d33');g.addColorStop(1,'#101114');x.fillStyle=g;x.fillRect(x0,-r,x1-x0,2*r);
+  x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=.03;x.beginPath();for(let i=0;i<9;i++){const sx=x0+((i*2.17)%1)*(x1-x0),sy=-r*.6+((i*1.37)%1)*r*1.1;x.moveTo(sx,sy);x.lineTo(sx+.5+((i*.7)%.4),sy+.05)}x.stroke();
+  x.fillStyle='rgba(0,0,0,.28)';x.fillRect(x0,r*.8,x1-x0,r*.2);
+  const L=x1-x0,gx=x0+(((ts||0)/2600)%1.8-.4)*L;if(gx>x0-1.5&&gx<x1+1.5){const gg=x.createLinearGradient(gx-1.4,0,gx+1.4,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.5,'rgba(255,255,255,.32)');gg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gg;const a0=Math.max(x0,gx-1.4),a1=Math.min(x1,gx+1.4);if(a1>a0)x.fillRect(a0,-r*.95,a1-a0,r*1.7)}};
  // hátsó test: hengeres, karimákkal, szegecsekkel, kábeltálcával, korláttal
  cyl(-12.2,-5.6,1.5,c1,c2);x.fillStyle='#26282c';[-12.2,-9.6,-5.7].forEach(px=>x.fillRect(px-.08,-1.58,.16,3.16));
  x.fillStyle='rgba(255,255,255,.3)';for(let i=0;i<14;i++){x.fillRect(-12+i*.46,-1.38,.07,.07);x.fillRect(-12+i*.46,1.31,.07,.07)}

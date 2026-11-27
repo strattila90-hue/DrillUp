@@ -65,6 +65,10 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.27
+- **Laptop / wide screens:** a tidy layout – fixed-size, centred control strip and a centred main menu.
+- **Shiny worn-metal machine:** strong specular band, deep shading, fine scratches and a slow glint sweeping across the body and armour.
+
 ## v5.26
 - **L-shaped HUD, less space:** a much bigger game view. The instruments float on the view without boxes (right: pressure, temperature, cargo and a new bit-wear gauge); fuel, engine and generator sit in the bottom control strip.
 - **No duplicate controls:** instead of the Engine/Gen levers and the Data/Hold/Bit tabs, tap the instruments to switch or open the panel.
