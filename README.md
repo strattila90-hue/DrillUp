@@ -65,6 +65,11 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.34
+- **No more background flicker:** night stars no longer jump while the machine moves vertically, and the horizon silhouettes (mountains, industry, forest) are no longer rebuilt at a new height every frame.
+- **Realistic rock grinding** (`js/grind.js`): a dark crushed band along the drill head's cone, fine shaded cuttings flowing from the tip to the flanks and back along the walls, hairline cracks growing into the intact rock, spalling flakes, layer-coloured dust.
+- **Glowing metal and sparks:** the drill head glows from the tip with heat (dark red → orange → yellowish white), friction glow on the cutting edges, curved glowing sparks thrown off the cutters in hard rock or when overheating (instead of the earlier random streaks).
+
 ## v5.33
 - **Every machine part hand-drawn** in the reference style (`assets/veh/`): an 8-frame animated drill head with six cutting flutes, the front shield with its gauge window, headlights, the rear gear, engine modules (diesel with exhaust smoke, gas turbine with a spinning intake, reactor with a pulsing glow), and an illustrated track: links with grousers, a toothed drive sprocket, an idler with a tension spring, return rollers and 6 road wheels on swing arms with coil springs and dampers. A damaged track still uses the old drawing.
 
