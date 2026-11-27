@@ -48,6 +48,9 @@ jobs:
         run: |
           mkdir -p dist
           (cd mobile/www && zip -qr ../../dist/web-b$BUILD_NUMBER.zip .)
+          # a frissítő (capgo 8) SHA-256 ellenőrzőösszeget követel: a fájl nevében adjuk át (az app a kiadás-listából olvassa)
+          SUM=$(sha256sum dist/web-b$BUILD_NUMBER.zip | cut -d' ' -f1)
+          echo "$SUM" > dist/websum-b$BUILD_NUMBER-$SUM.txt
       - name: Aláíró kulcs (ha van GitHub Secret)
         env:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
