@@ -65,6 +65,12 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.20
+- **New: SG-3 Russian superdeep drilling station** (modelled on the Kola Superdeep Borehole) at the surface base (🗼 button or tap the derrick). Drilling in stages: each stage is one stand (1–3 × 12 m pipes), then a new pipe must be made up – pipes have to be bought (aluminium LBT, steel, titanium). 5 derrick levels (BU-75 → Uralmash-15000, 15 km).
+- Simplified real physics: buoyant string weight in mud, hook load, aluminium weakening with heat, fatigue, buckling, turbodrilling, cuttings and stuck pipe, bit wear and tripping. Overload causes a **pipe failure**: the string below stays in the hole and you sidetrack and drill again.
+- Button controls (drill, make-up, bit change, weight on bit, mud flow, zoom), **automatic zoom onto the bit while drilling**, layer-coloured cross-section, real scientific milestones (microfossils, "no basalt", 180 °C, 12,262 m).
+- Smoother rendering: lights come from pre-rendered sprites (no per-frame gradients), lower-resolution darkness layer; more vivid layer and sky colours.
+
 ## v5.19
 - Main menu: a discreet "⭐ Star on GitHub" link.
 

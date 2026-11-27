@@ -65,6 +65,12 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.20
+- **Új: SG-3 orosz mélyfúró állomás** (a Kola-szupermély fúrás mintájára) a felszíni bázison (🗼 gomb vagy koppintás a toronyra). Szakaszos fúrás: minden szakasz egy gyertya (1–3 × 12 m cső), utána új csövet kell felcsavarni – a csöveket meg kell venni (alumínium ЛБТ, acél, titán). 5 toronyszint (БУ-75 → Уралмаш-15000, 15 km).
+- Valós fizika egyszerűsítve: csőszál-súly iszapban (felhajtóerő), horogterhelés, a hőmérséklettel gyengülő alumínium, fáradás, kihajlás, turbinás fúrás, furadék és beragadás, fúrófej-kopás és kiemelés. Túlterhelésnél **csőtörés**: a törés alatti szál a lyukban marad, onnan újra kell fúrni (oldalfúrás).
+- Vezérlés gombokkal (fúrás, felcsavarás, fejcsere, terhelés, iszapáram, zoom), **automatikus rákozelítés a fúrófejre fúrás közben**, rétegenként színezett keresztmetszet, valós tudományos mérföldkövek (mikrofosszíliák, „nincs bazalt”, 180 °C, 12 262 m).
+- Gyorsabb, akadásmentesebb rajz: a fények előre renderelt sprite-okból jönnek (nincs képkockánkénti gradiens), kisebb felbontású sötétítő réteg; élénkebb rétegszínek és ég.
+
 ## v5.19
 - Főmenü: diszkrét „⭐ Csillag a GitHubon” link.
 

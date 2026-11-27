@@ -275,3 +275,27 @@ input:checked+.msw{background:linear-gradient(#f0a030,#c97a10);border-color:#ffc
 #stoCard:not(.open) .stb{display:none}
 #stoCard .sth{cursor:pointer}
 #stoCard:not(.open) .sth{margin-bottom:0}
+/* SG-3 fúróállomás */
+#rgBtn{position:absolute;left:52px;bottom:34px;z-index:6;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(180,40,30,.7);color:#fff;font-size:18px;padding:0;cursor:pointer;display:none}
+#rgOv{position:fixed;inset:0;z-index:70;display:none;flex-direction:column;background:#0b0812;color:#f3ead8;font:13px Georgia,serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#rgOv .rgTop{display:flex;align-items:center;gap:8px;padding:6px 10px;background:linear-gradient(90deg,#b8261b,#d9452c 60%,#1d4f9a);font-size:15px}
+#rgOv .rgTop span{opacity:.9;font-size:12px;margin-left:auto}
+#rgOv .rgX{background:rgba(0,0,0,.25);border:0;color:#fff;font-size:18px;border-radius:8px;width:36px;height:32px;cursor:pointer}
+#rgc{flex:1;min-height:200px;width:100%;display:block;touch-action:none}
+#rgOv .rgCtl{display:flex;gap:6px;padding:6px 8px 0;align-items:center}
+#rgOv .rgCtl .b{flex:1;margin:0;padding:10px 6px;font-size:14px}
+#rgOv .rgB{background:linear-gradient(#4a4f5c,#2b2e36);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:9px 10px;font:700 14px Georgia,serif;cursor:pointer;min-width:40px}
+#rgOv .rgB:active{transform:translateY(1px)}#rgOv .rgB:disabled,#rgOv .b:disabled{opacity:.45}
+#rgOv .rgB.on{background:linear-gradient(#2fbf96,#1a7c60)}
+#rgOv .rgSl{font-size:12px}#rgOv .rgSl b{min-width:44px;text-align:center}#rgOv .rgSl span{opacity:.8}
+#rgOv .rgShop{display:flex;flex-direction:column;gap:4px;padding:6px 8px 0}
+#rgOv .rgP{display:flex;gap:4px;align-items:stretch}
+#rgOv .rgPn{flex:1;text-align:left;background:rgba(255,255,255,.06);color:#f3ead8;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:4px 8px;font:700 12px Georgia,serif;cursor:pointer;display:flex;flex-direction:column}
+#rgOv .rgPn i{display:inline-block;width:22px;height:5px;border-radius:3px;background:var(--pc);margin-bottom:2px}
+#rgOv .rgPn small{font-weight:400;opacity:.8;font-size:11px}
+#rgOv .rgP.on .rgPn{border-color:var(--pc);box-shadow:0 0 0 1px var(--pc) inset;background:rgba(255,255,255,.12)}
+#rgOv .rgP .rgB{padding:4px 8px;font-size:12px}
+#rgOv .rgShop .mu{font-size:11px;opacity:.7}
+#rgOv .rgFoot{display:flex;flex-wrap:wrap;gap:6px;padding:6px 8px 8px}#rgOv .rgFoot .b{flex:1 1 100%;margin:0;padding:9px}#rgOv .rgFoot .rgB{flex:1;font-size:12px}
+body.cin #rgBtn{display:none!important}
+body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
