@@ -65,6 +65,11 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.34
+- **Megszűnt a háttér villogása:** az éjszakai csillagok nem ugrálnak függőleges mozgás közben, és a horizont sziluettjei (hegyek, ipar, erdő) nem rajzolódnak újra minden képkockán más magasságban.
+- **Élethű kőzetzúzás** (`js/grind.js`): sötét zúzott sáv a fúrófej kúpja mentén, apró, árnyalt forgács, amely a csúcstól oldalra, majd a fal mentén hátrafelé áramlik, az ép kőzetbe növő hajszálrepedések, leváló kőzetlapok, rétegszínű por.
+- **Izzó fém és szikrák:** a fúrófej a hő szerint a csúcs felől izzik (sötétvörös → narancs → sárgás fehér), súrlódási izzás a vágóéleken, kemény kőzetben vagy túlhevüléskor ívelt, izzó szikrák pattannak a vágóélekről (a korábbi véletlenszerű csíkok helyett).
+
 ## v5.33
 - **A gép összes alkatrésze kézzel rajzolva** a referenciakép stílusában (`assets/veh/`): 8 fázisú, animált fúrófej hat vágóéllel, elülső pajzs műszerablakkal, fényszórók, hátsó fogaskerék, motormodulok (dízel kipufogófüsttel, gázturbina forgó szívótorokkal, reaktor pulzáló izzással), illusztrált lánctalp: markolóbordás lánctagok, fogas hajtókerék, vezetőkerék feszítőrugóval, tartógörgők és 6 futógörgő lengőkaron, tekercsrugóval és lengéscsillapítóval. Sérült lánctalpnál a régi rajz marad.
 

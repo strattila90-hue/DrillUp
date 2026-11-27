@@ -94,10 +94,10 @@ function tile(layer,day,hgt){const db=Math.round(day*8)/8,key=layer+'|'+db+'|'+h
    if(i%3===1){c.fillRect(bx-20,G*.15,4,G*.85);c.fillRect(bx-60,G*.15,70,3)}}}
  CX.tiles[key]=t;return t}
 function para(V){const x=V.x,w=V.w,Ys=V.Ys,K=V.K||10,day=V.day;if(Ys<40)return;
- const layers=[['mt',.08,Math.min(170,Ys*.7)],['ind',.22,Math.min(110,Ys*.45)],['fo',.38,Math.min(60,Ys*.3)]];
- for(const[l,f,hgt]of layers){if(hgt<12)continue;const t=tile(l,day,Math.round(hgt));let off=-((V.rx*K*f)%t.tw);if(off>0)off-=t.tw;for(let ox=off;ox<w;ox+=t.tw)x.drawImage(t,ox,Ys-t.th,t.tw,t.th)}
+ const layers=[['mt',.08,170],['ind',.22,110],['fo',.38,60]];
+ for(const[l,f,hgt]of layers){const t=tile(l,day,Math.round(hgt));let off=-((V.rx*K*f)%t.tw);if(off>0)off-=t.tw;for(let ox=off;ox<w;ox+=t.tw)x.drawImage(t,ox,Ys-t.th,t.tw,t.th)}
  // ipari füst és légiakadály-fények a sziluett kéményein
- const f=.22,hI=Math.min(110,Ys*.45),tw=1200,base=-((V.rx*K*f)%tw);
+ const f=.22,hI=110,tw=1200,base=-((V.rx*K*f)%tw);
  for(let ox=base-tw;ox<w+tw;ox+=tw)for(let i=0;i<6;i++){const cxp=ox+40+i*200+134,cy=Ys-hI+hI*.2;if(cxp<-40||cxp>w+40)continue;
   for(let k=0;k<4;k++){const ph=((V.ts/5200)+k/4+i*.13)%1;x.fillStyle=`rgba(${day>.5?'200,200,205':'90,92,100'},${(.35*(1-ph)).toFixed(3)})`;x.beginPath();x.arc(cxp+ph*26,cy-ph*34,3+ph*11,0,7);x.fill()}
   if(Math.floor(V.ts/700+i)%2===0){x.fillStyle='#ff3b2f';x.fillRect(cxp+3,cy-2,2.4,2.4)}}}

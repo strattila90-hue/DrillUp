@@ -9,11 +9,17 @@ const IMG={},CACHE=new Map();
 const ART={body:{f:'body',x0:-13.9,y0:-2.9,w:8.45,h:4.22},boiler:{f:'boiler',x0:-12.45,y0:-4.6,w:3.2,h:3.15}};
 function im(n){if(typeof Image==='undefined')return null;let i=IMG[n];if(!i){i=IMG[n]=new Image();i.src='assets/veh/'+n+'.svg'}return i.complete&&i.naturalWidth?i:null}
 function spr(f,w,h,scale){const i=im(f);if(!i||typeof document==='undefined')return null;const pw=Math.max(8,Math.round(w*scale/8)*8),ph=Math.max(8,Math.round(pw*h/w)),k=f+'|'+pw;
- let c=CACHE.get(k);if(c)return c;c=document.createElement('canvas');c.width=pw;c.height=ph;const g=c.getContext('2d');if(!g)return null;g.drawImage(i,0,0,pw,ph);if(CACHE.size>48)CACHE.clear();CACHE.set(k,c);return c}
+ let c=CACHE.get(k);if(c)return c;c=document.createElement('canvas');c.width=pw;c.height=ph;const g=c.getContext('2d');if(!g)return null;g.drawImage(i,0,0,pw,ph);if(CACHE.size>140)CACHE.clear();CACHE.set(k,c);return c}
 function scl(x){try{const m=x.getTransform();return Math.hypot(m.a,m.b)||40}catch(e){return 40}}
 function draw(x,a){const c=spr(a.f,a.w,a.h,Math.min(160,Math.max(8,scl(x))));if(!c)return false;x.drawImage(c,a.x0,a.y0,a.w,a.h);return true}
 // forgatott alkatrész: a kép (box: -b..b) középpontja (cx,cy), méret 2·R méterben
 function rot(x,f,cx,cy,R,ang){const c=spr(f,2*R,2*R,Math.min(160,Math.max(8,scl(x))));if(!c)return false;x.save();x.translate(cx,cy);if(ang)x.rotate(ang);x.drawImage(c,-R,-R,2*R,2*R);x.restore();return true}
+const cl=(v,a,b)=>v<a?a:v>b?b:v;
+function hot(a,scale,hb){const b=spr(a.f,a.w,a.h,scale);if(!b)return null;const k=a.f+'|'+b.width+'|h'+hb;let c=CACHE.get(k);if(c)return c;
+ c=document.createElement('canvas');c.width=b.width;c.height=b.height;const g=c.getContext('2d');if(!g)return b;g.drawImage(b,0,0);g.globalCompositeOperation='source-atop';
+ const u=hb/8,tx=(.55-a.x0)/a.w*c.width,ty=c.height/2,R=c.width*(.35+u*.5),gr=g.createRadialGradient(tx,ty,0,tx,ty,R);
+ gr.addColorStop(0,`rgba(255,${90+u*150|0},${20+u*120|0},${(.35+u*.5).toFixed(3)})`);gr.addColorStop(.45,`rgba(230,${50+u*70|0},10,${(.22+u*.3).toFixed(3)})`);gr.addColorStop(1,'rgba(140,20,0,0)');
+ g.fillStyle=gr;g.fillRect(0,0,c.width,c.height);CACHE.set(k,c);return c}
 const COMP=['wheel','sprocket','roller','link','gear','light','shield','diesel','turbine','reactor','head0','head1','head2','head3','head4','head5','head6','head7'];
 const OL='#1a1712';
 const VART={
@@ -26,7 +32,9 @@ const VART={
  shield(x){return draw(x,{f:'shield',x0:-4.8,y0:-1.8,w:3.35,h:3.6})},
  light(x,ox,oy){return draw(x,{f:'light',x0:ox-.05,y0:oy-.05,w:.9,h:.85})},
  // fúrófej: 8 előre rajzolt fázis egy 60°-os (6 vágóél) periódusra
- head(x,o){const P=Math.PI/3,ph=(((o.sp||0)%P)+P)%P,f=Math.floor(ph/P*8)%8;if(!draw(x,{f:'head'+f,x0:-1.75,y0:-2,w:2.45,h:4}))return false;
+ head(x,o){const P=Math.PI/3,ph=(((o.sp||0)%P)+P)%P,f=Math.floor(ph/P*8)%8,a={f:'head'+f,x0:-1.75,y0:-2,w:2.45,h:4};
+  // izzó fém: a hő szerint a csúcs felől sötétvörös → narancs → sárgás fehér (feketetest-sugárzás), csak a fej festett pixelein
+  const hb=Math.round(cl((o.heat||0)-.3,0,.9)/.9*8);const c=hb>0?hot(a,Math.min(160,Math.max(8,scl(x))),hb):spr(a.f,a.w,a.h,Math.min(160,Math.max(8,scl(x))));if(!c)return false;x.drawImage(c,a.x0,a.y0,a.w,a.h);
   const ht=o.ht||0;if(ht>0&&typeof HDC!=='undefined'&&HDC[ht]){x.save();x.globalAlpha=.16;x.globalCompositeOperation='source-atop';x.fillStyle=HDC[ht][0]||HDC[ht];x.beginPath();x.ellipse(-1.6,0,1.6,1.85,0,-Math.PI/2,Math.PI/2);x.fill();x.restore()}
   return true},
  gear(x,sp){return rot(x,'gear',-11.4,.8,.75*.85,sp*.3)},

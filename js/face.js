@@ -25,7 +25,7 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
  active(){return S.mode==='drill'&&S.st!=='idle'&&!(W.NET&&NET.falling)},
  hard(){const i=LY.indexOf(layer(S.depth));return clamp((HR[i]||1)/1200,0,1)},
  // a világban: a fúrófej előtti kőzet – a fej felületéről induló repedések, szilánkok, por, zúzott szemcsék, szikra (a gép előtt, a törmelék-réteg fölött)
- world(V){if(!V.dr||!V.lw||!FACE.active())return;const x=V.x,K=V.K,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,N=[5,8,11][q]||8,[nx,ny]=V.lw(.3,0),[ax,ay]=V.lw(1.3,0);
+ world(V){if(W.GRD||!V.dr||!V.lw||!FACE.active())return;const x=V.x,K=V.K,T=V.ts/1e3,hard=FACE.hard(),q=W.Gov?Gov.q:2,N=[5,8,11][q]||8,[nx,ny]=V.lw(.3,0),[ax,ay]=V.lw(1.3,0);
   let ux=ax-nx,uy=ay-ny;const l=Math.hypot(ux,uy)||1;ux/=l;uy/=l;const hc=layer(S.depth)[4],P=(a,b)=>[nx+(ux*a-uy*b)*K,ny+(uy*a+ux*b)*K];x.save();x.lineCap='round';x.lineJoin='round';
   for(let i=0;i<N;i++){const c=FACE.cyc(i,T,hard),oy=(hash(c.seed+9)-.5)*2.5,oa=.25-.9*(oy/1.4)*(oy/1.4),sp=1.6-hard*.5,a0=(hash(c.seed)-.5)*sp+oy*.32,len=(.7+hash(c.seed+2)*1.4)*(.7+hard*.8),C=crackOf(c.seed,a0,len),fade=c.p>.82?1-(c.p-.82)/.18:1;
    const tr=(a,b)=>P(a+oa,b+oy);x.globalAlpha=clamp(fade,0,1);draw(x,C,Math.min(1,c.p*1.4),tr,1.3+(1-hard)*1.1,'rgba(255,236,205,.3)');
