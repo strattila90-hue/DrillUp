@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.35
+- **Fix:** the machine kept driving (and burning fuel) under the main menu – after reopening the game it could travel tens of metres by itself. Opening the main menu now stops the machine.
+
 ## v5.34
 - **No more background flicker:** night stars no longer jump while the machine moves vertically, and the horizon silhouettes (mountains, industry, forest) are no longer rebuilt at a new height every frame.
 - **Realistic rock grinding** (`js/grind.js`): a dark crushed band along the drill head's cone, fine shaded cuttings flowing from the tip to the flanks and back along the walls, hairline cracks growing into the intact rock, spalling flakes, layer-coloured dust.

@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script><script src="js/complex.js"></script><script src="js/complex2.js"></script><script src="js/vart.js"></script><script src="js/grind.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.34';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.35';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -268,7 +268,7 @@ function mmMain(){const has=S.max>0||S.cash!=25e4,pct=Math.min(100,S.max/R*100),
 <button class="mb pri big mgo" onclick="hideMM()">${I('play')}<span>${has?'FOLYTATÁS':'INDULÁS'}</span></button>
 <div class="mtiles"><button class="mt" onclick="showMM('set')">${I('gear')}<span>Beállítások</span></button><button class="mt" onclick="upd()">${I('refresh')}<span>Frissítés</span><small>v${VER}${window.NAPP&&NAPP.build?'·'+NAPP.build:''}</small></button><button class="mt" onclick="share()">${I('share')}<span>Megosztás</span></button>${inst}</div>
 <div class="mlinks"><a href="privacy.html" target="_blank" rel="noopener">${I('lock')}<span>Adatvédelem</span></a><button id="starGH" onclick="window.open('https://github.com/strattila90-hue/DrillUp','_blank','noopener')">${I('star')}<span>GitHub</span></button><button class="mdel" onclick="NAT.ask('Biztosan törlöd a mentést? Ez nem vonható vissza.','Törlés',()=>{S=init();hideMM();view()})">${I('trash')}<span>Új játék</span></button></div>`}
-function showMM(sub){let m=$('#mm');if(!m){m=document.createElement('div');m.id='mm';document.body.appendChild(m)}m.className=sub=='set'?'':'v2';
+function showMM(sub){try{if(typeof S!=='undefined'&&S.st&&S.st!=='idle'&&!(window.NET&&NET.falling))go('idle')}catch(e){}let m=$('#mm');if(!m){m=document.createElement('div');m.id='mm';document.body.appendChild(m)}m.className=sub=='set'?'':'v2';
  m.innerHTML='<canvas id="mc"></canvas><div class="in">'+(sub=='set'?`${window.MNU?MNU.set(setBody()):'<div class="top"><div class="ttl" style="font-size:32px">Beállítások</div></div><div class="sp"></div>'+setBody()}`:mmMain())+'</div>'}
 function hideMM(){const m=$('#mm');if(m)m.remove()}
 const vs=[vDrill,vShop,vStore,()=>window.DEP?DEP.html():vMarket(),()=>(window.REL?REL.html():'')+vLog()+(window.VOL?VOL.html():''),vMenu],names=['Fúrás','Műhely','Raktár','Depó','Tudás','Menü'],NICN=['drill','wrench','box','train','book','menu'];
