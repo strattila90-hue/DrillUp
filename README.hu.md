@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.33
+- **A gép összes alkatrésze kézzel rajzolva** a referenciakép stílusában (`assets/veh/`): 8 fázisú, animált fúrófej hat vágóéllel, elülső pajzs műszerablakkal, fényszórók, hátsó fogaskerék, motormodulok (dízel kipufogófüsttel, gázturbina forgó szívótorokkal, reaktor pulzáló izzással), illusztrált lánctalp: markolóbordás lánctagok, fogas hajtókerék, vezetőkerék feszítőrugóval, tartógörgők és 6 futógörgő lengőkaron, tekercsrugóval és lengéscsillapítóval. Sérült lánctalpnál a régi rajz marad.
+
 ## v5.32
 - **Kézzel rajzolt M.E.D.V.E. jármű** a referenciakép alapján (`assets/veh/`): kontúros, festett fényű hajótest szegecssorokkal, ablakkeretek (bennük a legénység), M.E.D.V.E. tábla, sárga-fekete panel, szellőzőrács, hátsó daru lánccal és horoggal, piros lámpák, poroltó, tetőkorlát, műszer; gőzgépnél narancs kazán „M” emblémával és füstölgő kéménnyel. A lánctalp, a fúrófej, a fogaskerék, a füst és a fények animáltak maradtak; a magasabb motorszintek saját modulja megmaradt. A v5.31 fény-árnyék réteg kikerült.
 
