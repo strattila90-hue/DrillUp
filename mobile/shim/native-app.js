@@ -47,7 +47,15 @@ const wmsg=m=>{const e=document.getElementById('updMsg');if(e)e.textContent=m};
 
 // --- játékcsomag: letöltés és azonnali indítás ---
 let busy=false,pending=null;
-async function applyWeb(best){try{if(typeof W.save==='function')W.save()}catch(e){}const b=await UPD.download({url:best.url,version:'b'+best.n});await UPD.set({id:b.id})}
+// a csomag letöltése; ha ez a verzió már le van töltve (pl. az automatikus frissítés már behozta), azt használja – a frissítő a dupla letöltést elutasítja
+async function getBundle(best){const v='b'+best.n;
+ try{const l=await UPD.list();const ex=((l&&l.bundles)||[]).find(b=>b.version===v&&b.status!=='error'&&b.status!=='deleted');if(ex)return ex}catch(e){}
+ try{return await UPD.download({url:best.url,version:v})}
+ catch(e){try{const l=await UPD.list();const ex=((l&&l.bundles)||[]).find(b=>b.version===v);if(ex)return ex}catch(_){}throw e}}
+async function applyWeb(best){try{if(typeof W.save==='function')W.save()}catch(e){}const b=await getBundle(best);await UPD.set({id:b.id})}
+// érthető hibaüzenet a valódi okkal
+function why(e){const m=String(e&&(e.message||e.code||e)||'');if(/403|rate/i.test(m))return t('a GitHub átmenetileg korlátozza a lekérdezéseket – próbáld pár perc múlva','GitHub is rate-limiting requests – try again in a few minutes');
+ if(/HTTP 404/.test(m))return t('nincs kiadás','no release found');if(!navigator.onLine)return t('nincs internetkapcsolat','no internet connection');return t('hiba: ','error: ')+m.slice(0,80)}
 
 // --- app (APK): letöltés + Android telepítő; régi appban (bővítmény nélkül) a böngésző tölti le ---
 NA.apk=async(url,forced)=>{
@@ -84,7 +92,7 @@ NA.update=async()=>{
   const nc=await nativeCode();
   if(nc&&best.apk&&nc<best.n&&typeof W.NAT==='object'&&W.NAT.ask)W.NAT.ask(t('A játék a legfrissebb. Az app (APK) is frissíthető (b'+nc+' → b'+best.n+'). Telepíted?','The game is up to date. The app (APK) can be updated too (b'+nc+' → b'+best.n+'). Install it?'),t('Telepítés','Install'),()=>NA.apk(best.apk));
   else say(t('✔ Ez a legfrissebb verzió.','✔ You have the latest version.'));
- }catch(e){say(t('⚠ A frissítés nem sikerült – van internet?','⚠ Update failed – are you online?'))}
+ }catch(e){say('⚠ '+t('A frissítés nem sikerült','Update failed')+' – '+why(e))}
  finally{busy=false}
 };
 
@@ -100,7 +108,7 @@ async function autoUpd(force){
   const best=await newest();if(!best)return;
   if(await enforce(best))return;
   if(best.n<=NA.build||(pending&&pending.n>=best.n))return;
-  const b=await UPD.download({url:best.url,version:'b'+best.n});
+  const b=await getBundle(best);
   await UPD.next({id:b.id});pending={n:best.n,id:b.id};
   say(t('⬇ Új verzió letöltve – amint az app a háttérbe kerül, frissül (vagy Menü → Frissítés most).','⬇ New version downloaded – it applies as soon as the app goes to the background (or Menu → Update now).'));
  }catch(e){}
