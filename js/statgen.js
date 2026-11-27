@@ -32,7 +32,7 @@ const SPG={RES:.015,RATE:.0006,res:null,told:0,glow:0,
   if(SPG.res&&S.st==='idle'&&S.fuel>=SPG.goal()-1e-6){const s=SPG.res;SPG.res=null;SPG.resuming=1;try{go(s)}catch(e){}SPG.resuming=0}
   if(SPG.res&&S.st!=='idle')SPG.res=null},
  // eszköz a gép tetején (gép-lokális méter: a előre, b lefelé)
- draw(V){if(!V.lw)return;const x=V.x,K=V.K||10,T=(V.ts||0)/1e3,a0=-3.3,b0=-1.6,P=(a,b)=>V.lw(a,b),on=SPG.glow;
+ draw(V){if(!V.lw)return;const x=V.x,K=V.K||10,T=(V.ts||0)/1e3,a0=-12.75,b0=-1.62,P=(a,b)=>V.lw(a,b),on=SPG.glow;
   const r=Math.max(2,K*.34),[cx,cy]=P(a0,b0-.5);
   x.save();
   // talp + henger
