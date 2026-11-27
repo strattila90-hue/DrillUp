@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.25
+- **Új vezérlő-elrendezés:** a ▲▼◀▶ valódi irány-keresztben, középen az ÁLLJ (minden irányból egy mozdulatra); a funkciógombok L alakban veszik körül: jobbra a Felszín és a Szonda, alul a széles Zuhanófék.
+
 ## v5.24
 - **Orosz típusú mechanikus műszerfal** a kezelőpulton (saját rajz): üvegcsöves üzemanyag-szintjelző, acélperemes nyomásmérő, sárgaréz peremű hőmérő, olívzöld raktár- és generátorműszer, motor-fordulatmérő – csavarozott peremek, piros zónák, rugózó mutatók, járó motornál enyhe remegés, villogó jelzőlámpák. A műszerek érintésre kapcsolnak: motor és generátor be/ki, tankolás, Raktár / Adatok panel.
 - A Motor és a Generátor gomb helyett **billenőkar** jelzőlámpával.
