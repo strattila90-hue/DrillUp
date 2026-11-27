@@ -68,3 +68,9 @@ npm run assets          # ikonok/indítókép újragenerálása az assets/ mapp�
 - A kijelző játék közben nem alszik el (Android: `FLAG_KEEP_SCREEN_ON`, iOS: `isIdleTimerDisabled`).
 - Csak álló tájolás; az Android vissza-gomb a játék menüjét nyitja (a `js/native.js` kezeli).
 - A mentés az app saját tárolójában van, külön a böngészőétől: átvitelhez Exportálás / Importálás.
+
+## Frissítés (v5.21-től)
+- **Automatikus:** az app induláskor és visszatéréskor (legfeljebb 30 percenként) megnézi a legújabb GitHub-kiadást. Az új játékcsomagot (`web-bN.zip`) a háttérben letölti, és amikor az app a háttérbe kerül, csendben átvált rá. A mentés megmarad.
+- **Kényszerített:** a `mobile/update-policy.json` két számot tartalmaz. Ennél régebbi játékcsomag (`minWeb`) vagy app (`minApk`, APK versionCode = build-sorszám) nem indul frissítés nélkül. A CI ebből `policy-w<minWeb>-a<minApk>.txt` fájlt tesz a kiadásba, az app ennek a nevét olvassa. 0 = nincs kényszer.
+- **Az app (APK) önálló frissítése:** az `ApkUpdater` natív bővítmény letölti az új `CoreQuest.apk`-t, és megnyitja az Android telepítőjét. Első alkalommal engedélyezni kell: „Telepítés ismeretlen forrásból”. A Frissítés gomb felajánlja, ha a játék már friss, de az app régebbi.
+- **Aláírás (fontos az APK-frissítéshez):** az Android csak akkor telepíti az új APK-t a régire, ha ugyanazzal a kulccsal van aláírva. Ehhez egyszer add meg a GitHub Secrets-ben: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. A workflow ekkor release-kulccsal ír alá. Secret nélkül minden build más debug-kulcsot kap, és az APK-frissítés „nincs telepítve” hibával áll meg. A játékcsomag (web) frissítése ettől függetlenül működik. A kulcsot soha ne tedd a repóba.

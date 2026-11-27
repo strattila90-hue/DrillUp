@@ -51,6 +51,6 @@ function rail(){if(typeof document==='undefined'||!document.getElementById||!W.g
  for(const[id,ic]of RAIL){const b=document.getElementById(id);if(!b)continue;
   if(b.dataset.ic!==ic){b.dataset.ic=ic;b.innerHTML=ICN(ic)}
   const vis=getComputedStyle(b).display!=='none';if(!vis)continue;const l=(8+i*46)+'px';if(b.style.left!==l)b.style.left=l;i++}}
-if(W.on)on('frame',()=>{const t=Date.now();if(t-lastT<250)return;lastT=t;try{rail()}catch(e){}});
+if(W.on)on('frame',()=>{const t=Date.now();if(t-lastT<100)return;lastT=t;try{rail()}catch(e){}});
 W.ICNrail=rail;
 })(typeof window!=='undefined'?window:globalThis);

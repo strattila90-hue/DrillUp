@@ -304,7 +304,8 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 .pb b .icn{width:26px;height:26px;stroke-width:2.6;vertical-align:middle}
 .pb.stop b .icn{width:22px;height:22px}
 #bBK b .icn,#bSP b .icn{width:22px;height:22px;stroke-width:2.2}
-#cinBtn,#pnBtn,#rgBtn,#lgBtn,#lecBtn{display:flex;align-items:center;justify-content:center;transition:left .2s ease}
+#cinBtn,#pnBtn,#lgBtn,#lecBtn{display:flex;align-items:center;justify-content:center}
+#rgBtn .icn{display:block;margin:auto}
 #cinBtn .icn,#pnBtn .icn,#rgBtn .icn,#lgBtn .icn,#lecBtn .icn{width:20px;height:20px}
 #top .brand{font-size:15px;white-space:nowrap;display:flex;align-items:center;gap:7px}
 #top .brand-ic{width:18px;height:18px;color:#ffb02e}
@@ -345,3 +346,5 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 .pb.stop .bl{font:800 14px Georgia,serif;letter-spacing:1.5px;color:#ffe3dc;text-shadow:0 1px 0 #000}
 .dock .tb .icn{width:20px;height:20px}
 .rpmw .icn,#rpmL .icn{width:14px;height:14px}
+#mm.v2{overflow-y:auto}
+@media (max-height:560px){#mm.v2{padding-top:calc(env(safe-area-inset-top) + 10px)}#mm.v2 .in{height:auto;min-height:100%}#mm.v2 .sp{min-height:60px}#mm.v2 .mgo{padding:10px;font-size:18px}#mm.v2 .mt{min-height:48px}#mm.v2 .ttl{font-size:36px}}
