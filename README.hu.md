@@ -65,6 +65,11 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.22
+- **SG-3 fúróállomás – élethű modell:** alépítmény és fúrópadló, kitörésgátló (BOP), csigasor és futócsiga drótkötéllel, a fúrással együtt forgó csörlődob, felső hajtás (top drive) iszaptömlővel, toronypihenő-pódium (kiemeléskor itt sorakoznak a gyertyák), rázószita és gőzölgő iszapmedence, dízel-áramfejlesztő füsttel, triplex iszapszivattyú mozgó dugattyúkkal, reflektorok, sarki hóesés.
+- **Föld alatt:** kőzettípusonként saját mintázat, részletes fúrószerelvény (nehézrudak, stabilizátor, forgó turbina, iszapsugarak), a forró mélységben vörösen izzó kőzet.
+- **Új játékelemek:** fúrófej-választás (háromgörgős vagy PDC-gyémánt: a PDC puha kőzetben gyorsabb, keményben és forróságban gyorsan kopik), magláda a begyűjtött magmintákkal, mélység–idő görbe.
+
 ## v5.21
 - **Új főmenü**: embléma, „Út a magig” sáv a Föld héjaival és a rekord-jelölővel, pénz és gép egy kártyán, nagy indító gomb, 4 csempe (Beállítások, Frissítés, Megosztás, Telepítés), alul Adatvédelem · GitHub · Új játék.
 - **Saját rajzolású ikonok** az emojik helyett (felső sáv, alsó navigáció, kezelőpult fülei, irány-pad, Állj/Zuhanófék, Szonda, lebegő gombok): minden eszközön egyformák és élesek.

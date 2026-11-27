@@ -65,6 +65,11 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.22
+- **SG-3 drilling station – lifelike model:** substructure and rig floor, blowout preventer (BOP), crown and travelling block with drill line, drawworks drum turning with the drilling, top drive with mud hose, monkey board (stands rack up there while tripping), shale shaker and steaming mud pit, diesel generator with smoke, triplex mud pump with moving pistons, floodlights, polar snowfall.
+- **Underground:** a pattern for every rock type, detailed bottom-hole assembly (drill collars, stabiliser, turning turbodrill, mud jets), rock glowing red in the hot depths.
+- **New gameplay:** bit choice (tricone or PDC diamond: PDC is faster in soft rock but wears quickly in hard, hot rock), a core tray with the collected cores, a depth–time curve.
+
 ## v5.21
 - **New main menu**: emblem, "Path to the core" bar with the Earth's shells and a record marker, money and machine on one card, big start button, 4 tiles (Settings, Update, Share, Install), and Privacy · GitHub · New game at the bottom.
 - **Custom-drawn icons** instead of emoji (top bar, bottom navigation, console tabs, direction pad, Stop/Emergency brake, Probe, floating buttons): identical and crisp on every device.

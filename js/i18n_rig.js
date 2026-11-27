@@ -11,13 +11,14 @@ W.I18N_DICT=Object.assign(W.I18N_DICT||{},{
 "Pecsengai sorozat: fillit, tufa, homokkő":"Pechenga series: phyllite, tuff, sandstone","Réz-nikkel ércöv (pentlandit, kalkopirit)":"Copper-nickel ore zone (pentlandite, chalcopyrite)",
 "Metabazalt és diabáz láva":"Metabasalt and diabase lava","Tufitok és metaüledékek":"Tuffites and metasediments","Archaikum: gránit-gneisz":"Archean: granite-gneiss",
 "Gneisz és amfibolit (forró, képlékeny)":"Gneiss and amphibolite (hot, plastic)","Ismeretlen mélység – a Kola-rekord alatt":"Unknown depth – below the Kola record",
-"ÁLLJ":"STOP","Út a magig":"Path to the core","6 371 km":"6,371 km","Telepítve":"Installed","Előbb építsd fel a fúróállomást.":"Build the drilling station first.","Várj, a művelet folyamatban.":"Wait, an operation is in progress.","A szakasz még nincs kifúrva.":"The stage is not drilled out yet.",
+"ÁLLJ":"STOP","Háromgörgős marófogas":"Tricone mill-tooth","PDC gyémánt":"PDC diamond","Magláda":"Core tray","mélység–idő görbe fúráskor":"depth–time curve while drilling","ДИЗЕЛЬ":"DIESEL","НАСОС":"PUMP","Út a magig":"Path to the core","6 371 km":"6,371 km","Telepítve":"Installed","Előbb építsd fel a fúróállomást.":"Build the drilling station first.","Várj, a művelet folyamatban.":"Wait, an operation is in progress.","A szakasz még nincs kifúrva.":"The stage is not drilled out yet.",
 "🪨 A fúrófej elkopott – emeld ki a szálat és cseréld (⏫).":"🪨 The bit is worn out – trip out the string and change it (⏫).",
 "🔩 Az első csövet kell felcsavarni a fúrófejjel.":"🔩 Make up the first pipe with the bit.","🔩 A szakasz kész – csavarj fel új csövet.":"🔩 Stage done – make up a new pipe.",
 "Építsd fel az állomást, vegyél csöveket, és csavard fel az elsőt a fúrófejjel.":"Build the station, buy pipes and make up the first one with the bit.",
 "⚠ Beragadt a szál a furadéktól – 35 t túlhúzással kiszabadítva. Növeld az iszapáramot!":"⚠ The string got stuck in cuttings – freed with 35 t overpull. Increase the mud flow!"
 });
 W.I18N_LONG=(W.I18N_LONG||[]).concat([
+ [/⛏ Fej: Háromgörgős( \(cserénél\))?/,(m,a)=>'⛏ Bit: Tricone'+(a?' (at change)':'')],[/⛏ Fej: PDC( \(cserénél\))?/,(m,a)=>'⛏ Bit: PDC'+(a?' (at change)':'')],[/^Kopás · Háromgörgős$/,'Wear · Tricone'],[/^Kopás · PDC$/,'Wear · PDC'],[/^(\d+) minta$/,'$1 cores'],[/🔁 Új fúrófej a talpon: (.+?) \(−(.+) Ft\)\. A csöveket átvizsgálták: a fáradás csökkent\./,'🔁 New bit on bottom: $1 (−$2 Ft). Pipes inspected: fatigue reduced.'],
  [/🏗 Építés · /,'🏗 Build · '],[/🔩 Felcsavar (\d)× Alu/,'🔩 Make up $1× Alu'],[/🔩 Felcsavar (\d)× Acél/,'🔩 Make up $1× Steel'],[/🔩 Felcsavar (\d)× Titán/,'🔩 Make up $1× Titanium'],
  [/(\d+) t · (\d+) kg\/cső ·/,'$1 t · $2 kg/pipe ·'],[/Ár csövenként \(12 m\): Alu (.+?) · Acél (.+?) · Titán (.+)$/,'Price per pipe (12 m): Alu $1 · Steel $2 · Titanium $3'],
  [/🔁 Auto-felcsavarás be/,'🔁 Auto make-up on'],[/🔁 Auto-felcsavarás ki/,'🔁 Auto make-up off'],[/🎥 Auto-zoom be/,'🎥 Auto zoom on'],[/🎥 Auto-zoom ki/,'🎥 Auto zoom off'],
