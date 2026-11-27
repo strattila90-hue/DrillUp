@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script><script src="js/complex.js"></script><script src="js/complex2.js"></script><script src="js/vart.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.32';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.33';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -334,7 +334,7 @@ function OUTL(x,draw){if(window.Gov&&Gov.q===0){draw(x);return}let m;try{m=x.get
  if(Math.abs(m.b)<Math.abs(m.a)*.08&&typeof S!=='undefined'&&S.depth<1){x.save();x.setTransform(m.a,m.b,m.c,m.d,m.e,m.f);const sg=x.createRadialGradient(-6,2.15,.2,-6,2.15,7.5);sg.addColorStop(0,'rgba(0,0,0,.55)');sg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=sg;x.save();x.translate(-6,2.15);x.scale(1,.12);x.beginPath();x.arc(0,0,7.5,0,7);x.restore();x.fill();x.restore()}
  x.save();x.setTransform(1,0,0,1,0,0);for(let k=0;k<8;k++){const q=k*Math.PI/4;x.drawImage(olS,0,0,bw,bh,bx+Math.cos(q)*T,by+Math.sin(q)*T,bw,bh)}
  x.drawImage(olC,0,0,bw,bh,bx,by,bw,bh);x.restore()}
-function trackDraw(x,o){const{dep,trk,pv}=o,xr=-10.9,xf=-1.9,r=.45,cyT=1.55,L2=xf-xr,Pm=2*L2+2*Math.PI*r,N=48,sp=Pm/N,rr=(a,b,c,d,q)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,q);else x.rect(a,b,c,d)};
+function trackDraw(x,o){if(window.VART&&VART.ok2()&&VART.track(x,o))return;const{dep,trk,pv}=o,xr=-10.9,xf=-1.9,r=.45,cyT=1.55,L2=xf-xr,Pm=2*L2+2*Math.PI*r,N=48,sp=Pm/N,rr=(a,b,c,d,q)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,c,d,q);else x.rect(a,b,c,d)};
  const pos=s0=>{let s=((s0%Pm)+Pm)%Pm;if(s<L2)return[xr+s,cyT-r,0];s-=L2;if(s<Math.PI*r){const a=-Math.PI/2+s/r;return[xf+r*Math.cos(a),cyT+r*Math.sin(a),a+Math.PI/2]}s-=Math.PI*r;if(s<L2)return[xf-s,cyT+r,Math.PI];s-=L2;const a=Math.PI/2+s/r;return[xr+r*Math.cos(a),cyT+r*Math.sin(a),a+Math.PI/2]};
  x.save();x.beginPath();x.rect(-13,-9+10.5*clamp(dep*4,0,1),16,12);x.clip();x.translate(0,-dep*1.0);
  const toff=!!(window.DMG&&DMG.trk()),sag=s=>(toff?.3:.05)*Math.sin(Math.PI*s/L2),mv=Math.min(1,Math.abs(pv));
@@ -384,7 +384,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
   x.fillStyle='rgba(0,0,0,.28)';x.fillRect(x0,r*.8,x1-x0,r*.2);
   const L=x1-x0,gx=x0+(((ts||0)/2600)%1.8-.4)*L;if(gx>x0-1.5&&gx<x1+1.5){const gg=x.createLinearGradient(gx-1.4,0,gx+1.4,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.5,'rgba(255,255,255,.32)');gg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gg;const a0=Math.max(x0,gx-1.4),a1=Math.min(x1,gx+1.4);if(a1>a0)x.fillRect(a0,-r*.95,a1-a0,r*1.7)}};
  // hátsó test: hengeres, karimákkal, szegecsekkel, kábeltálcával, korláttal
- const ART=!!(window.VART&&VART.ok());if(ART)VART.body(x,{ts,act,hyd,lit2});else{
+ const ART=!!(window.VART&&VART.ok()),ART2=ART&&VART.ok2();if(ART)VART.body(x,{ts,act,hyd,lit2});else{
  cyl(-12.2,-5.6,1.5,c1,c2);x.fillStyle='#26282c';[-12.2,-9.6,-5.7].forEach(px=>x.fillRect(px-.08,-1.58,.16,3.16));
  x.fillStyle='rgba(255,255,255,.3)';for(let i=0;i<14;i++){x.fillRect(-12+i*.46,-1.38,.07,.07);x.fillRect(-12+i*.46,1.31,.07,.07)}
  x.fillStyle='#111';x.fillRect(-12,-1.62,6.4,.1);x.strokeStyle='#d0d4d8';x.lineWidth=.05;x.beginPath();x.moveTo(-9.2,-1.95);x.lineTo(-6,-1.95);x.stroke();[-9.2,-8.1,-7,-6].forEach(px=>{x.beginPath();x.moveTo(px,-1.5);x.lineTo(px,-1.95);x.stroke()});
@@ -406,19 +406,19 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  x.fillStyle='rgba(255,255,255,.6)';[-1.15,-.45,.45,1.15].forEach(yy=>x.fillRect(-5.6,yy-.045,.9+stroke,.03));
  [[-1.3,-.8],[1.3,.8]].forEach(([y0,y1],i)=>{x.beginPath();x.moveTo(-5.95,y0);x.bezierCurveTo(-5.4,y0+(i?.5:-.5),-5.2+stroke,y1+(i?-.5:.5),-4.75+stroke,y1);x.strokeStyle='#161618';x.lineWidth=.09;x.stroke();x.setLineDash([.1,.25]);x.lineDashOffset=-ts/200;x.strokeStyle=`rgba(255,170,40,${.12+.5*hyd})`;x.lineWidth=.04;x.stroke();x.setLineDash([])});
  // elülső pajzs + fúrófej (a löket előre tolja)
- x.save();x.translate(stroke,0);cyl(-4.7,-1.6,1.65,c1,c2);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);for(let k=0;k<=hl+1;k++){x.fillStyle=c1;x.fillRect(-1.9-k*.5,-1.65,.2,3.3)}
+ x.save();x.translate(stroke,0);if(ART2)VART.shield(x);else{cyl(-4.7,-1.6,1.65,c1,c2);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);for(let k=0;k<=hl+1;k++){x.fillStyle=c1;x.fillRect(-1.9-k*.5,-1.65,.2,3.3)}
  for(let i=0;i<7;i++){x.fillStyle=i%2?'#f0b020':'#222';x.fillRect(-4.7,-1.65+i*.47,.3,.47)}for(let i=0;i<8;i++){const a=sp*.5+i*.785;if(Math.cos(a)>0){x.fillStyle='#c8ccd2';x.beginPath();x.arc(-4.4,1.35*Math.sin(a),.06,0,7);x.fill()}}
- x.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<6;i++){x.fillRect(-4.2+i*.45,-1.52,.07,.07);x.fillRect(-4.2+i*.45,1.45,.07,.07)}
+ x.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<6;i++){x.fillRect(-4.2+i*.45,-1.52,.07,.07);x.fillRect(-4.2+i*.45,1.45,.07,.07)}}
  if(window.BG&&BG.shell&&window.MX)BG.shell(x,{ts,hl,shell:MX.sh(),lit:lit2});if(window.BG)BG.shieldFx(x,{ts,act,hl});if(window.STM&&STM.mach)STM.mach(x,{ts,ph,act});if(window.HGL&&o.glow>0)HGL.hull(x,{ts,g:o.glow});
  if(S.hp<75){x.strokeStyle='#111';x.lineWidth=.05;for(let i=0;i<Math.ceil((100-S.hp)/10);i++){const b=-1.8-rnd(i+3)*2.6;x.beginPath();x.moveTo(b,-1.65);x.lineTo(b+.3,-.7);x.lineTo(b-.1,-.2);x.stroke()}}
  x.fillStyle='#0b0b0d';rr(-4.2,-1.2,1.2,2.4,.1);x.fill();const cf=clamp((window.DEP?DEP.used():cargoKg())/cap(),0,1),ff=clamp(S.fuel/tank(),0,1);
  x.fillStyle='#2a0d0d';x.fillRect(-4,-1.05,.3,2.1);x.fillStyle='#e5333a';x.fillRect(-4,1.05-2.1*cf,.3,2.1*cf);x.fillStyle='#2a1c08';x.fillRect(-3.5,-1.05,.3,2.1);x.fillStyle='#f0a030';x.fillRect(-3.5,1.05-2.1*ff,.3,2.1*ff);x.fillStyle='rgba(255,255,255,.25)';x.fillRect(-4,-1.05,.05,2.1);
- [-1.65,1.0].forEach(py=>{x.fillStyle='#222';x.fillRect(-2.3,py,.7,.65);x.fillStyle='#fff7c0';x.beginPath();x.arc(-1.9,py+.32,.17,0,7);x.fill()});
- let g;if(window.BG)BG.head(x,{sp,heat,ht,ts});else headBasic(x,{sp,heat,ht,ts});
+ [-1.65,1.0].forEach(py=>{if(ART2)return VART.light(x,-2.38,py-.05);x.fillStyle='#222';x.fillRect(-2.3,py,.7,.65);x.fillStyle='#fff7c0';x.beginPath();x.arc(-1.9,py+.32,.17,0,7);x.fill()});
+ let g;if(ART2&&VART.head(x,{sp,heat,ht,ts}));else if(window.BG)BG.head(x,{sp,heat,ht,ts});else headBasic(x,{sp,heat,ht,ts});
  if(heat>.05){x.save();x.globalCompositeOperation='lighter';const gl=x.createRadialGradient(-.4,0,.1,-.4,0,2.4);gl.addColorStop(0,`rgba(255,${200-heat*90|0},80,${Math.min(.9,heat*.8)})`);gl.addColorStop(1,'rgba(255,60,0,0)');x.fillStyle=gl;x.beginPath();x.ellipse(-1.6,0,1.6,1.85,0,-Math.PI/2,Math.PI/2);x.fill();x.restore();const[a,b]=lw(-.3,0);GL.push({x:a,y:b,r:100+heat*60,c:'255,120,40',i:Math.min(.6,heat*.5)});lamp(a,b,110,Math.min(.9,heat))}
  x.restore();
  // meghajtás-modul (hátul)
- if(ART&&tier<2)VART.boiler(x,{ts,sk});else if(tier<2){g=x.createLinearGradient(0,-2.1,0,-.9);g.addColorStop(0,'#e0925a');g.addColorStop(1,'#7a4318');x.fillStyle=g;rr(-11.8,-2.1,2.4,1.1,.5);x.fill();x.fillStyle='#e0b050';[-11.2,-10.2].forEach(px=>x.fillRect(px,-2.1,.12,1.1));
+ if(ART&&tier<2)VART.boiler(x,{ts,sk});else if(ART2&&VART.engine(x,{tier,ts,sp,lw,GL,lamp}));else if(tier<2){g=x.createLinearGradient(0,-2.1,0,-.9);g.addColorStop(0,'#e0925a');g.addColorStop(1,'#7a4318');x.fillStyle=g;rr(-11.8,-2.1,2.4,1.1,.5);x.fill();x.fillStyle='#e0b050';[-11.2,-10.2].forEach(px=>x.fillRect(px,-2.1,.12,1.1));
   x.fillStyle='#f1ece2';x.beginPath();x.arc(-10.9,-1.55,.24,0,7);x.fill();x.strokeStyle='#7a3d10';x.lineWidth=.04;x.stroke();x.fillStyle='#b8431a';x.font='bold .3px Georgia';x.textAlign='center';x.fillText('M',-10.9,-1.44);x.textAlign='left';x.fillStyle='#fff';x.beginPath();x.arc(-10.3,-1.55,.2,0,7);x.fill();x.strokeStyle='#c00';x.lineWidth=.04;x.beginPath();x.moveTo(-10.3,-1.55);x.lineTo(-10.3+.15*Math.cos(ts/500),-1.55+.15*Math.sin(ts/500));x.stroke();
   x.fillStyle='#2c2c2c';x.fillRect(-11.5,-2.1-sk,.7,sk+.1);x.fillRect(-11.65,-2.1-sk,1,.25);x.fillStyle=`rgba(255,122,26,${.6+.3*Math.sin(ts/90)})`;x.fillRect(-12.2,.2,.45,.6)}
  else if(tier<4){x.fillStyle='#3d4a40';rr(-11.8,-2,2.5,1.2,.1);x.fill();x.strokeStyle='#222';x.lineWidth=.05;for(let i=0;i<10;i++){x.beginPath();x.moveTo(-11.7+i*.24,-1.95);x.lineTo(-11.7+i*.24,-.85);x.stroke()}
@@ -426,7 +426,7 @@ function mach(x,o){const{ts,ph,sp,sk,dr,act,lit2,lw,GL,lamp,dep,heat,ht,stroke}=
  else{g=x.createLinearGradient(0,-2.2,0,-.9);g.addColorStop(0,'#f2f4f6');g.addColorStop(1,'#8f959c');x.fillStyle=g;rr(-11.9,-2.2,2.7,1.3,.65);x.fill();if(tier>4){x.strokeStyle=tier==6?'#c9a2ff':'#6fc1ff';x.lineWidth=.1;[-11.3,-10.5,-9.7].forEach(px=>{x.beginPath();x.ellipse(px,-1.55,.12,.62,0,0,7);x.stroke()})}
   x.fillStyle='#f5c518';x.beginPath();x.arc(-10.55,-1.55,.34,0,7);x.fill();x.fillStyle='#111';for(let k=0;k<3;k++){x.beginPath();x.moveTo(-10.55,-1.55);x.arc(-10.55,-1.55,.3,-.5+k*2.09,.5+k*2.09);x.fill()}
   const[a,b]=lw(-10.55,-1.55);GL.push({x:a,y:b,r:70,c:'90,200,255',i:.3+.15*Math.sin(ts/400)});lamp(a,b,55,.5)}
- x.save();x.translate(-11.4,.8);x.rotate(sp*.3);x.fillStyle='#b9bec4';for(let i=0;i<10;i++){x.rotate(Math.PI/5);x.fillRect(-.07,-.62,.14,.22)}x.beginPath();x.arc(0,0,.48,0,7);x.fill();x.fillStyle='#333';x.beginPath();x.arc(0,0,.16,0,7);x.fill();x.restore();
+ if(ART2)VART.gear(x,sp);else{x.save();x.translate(-11.4,.8);x.rotate(sp*.3);x.fillStyle='#b9bec4';for(let i=0;i<10;i++){x.rotate(Math.PI/5);x.fillRect(-.07,-.62,.14,.22)}x.beginPath();x.arc(0,0,.48,0,7);x.fill();x.fillStyle='#333';x.beginPath();x.arc(0,0,.16,0,7);x.fill();x.restore();}
  x.fillStyle=act&&Math.sin(ts/120)>0?'#ff9a1a':'#6a3b0c';x.beginPath();x.arc(-6.8,-1.6,.22,0,7);x.fill();
  if(window.PNT)PNT.mach(x);if(window.VL)VL.mach(x,{lit:lit2,ts});if(window.DMG)DMG.mach(x,{ts});if(window.SP)SP.mach(x,{ts});
  if(window.IND)(window.SAFE?SAFE(x,()=>IND.finish(x,o),'industrial'):IND.finish(x,o))

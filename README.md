@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.33
+- **Every machine part hand-drawn** in the reference style (`assets/veh/`): an 8-frame animated drill head with six cutting flutes, the front shield with its gauge window, headlights, the rear gear, engine modules (diesel with exhaust smoke, gas turbine with a spinning intake, reactor with a pulsing glow), and an illustrated track: links with grousers, a toothed drive sprocket, an idler with a tension spring, return rollers and 6 road wheels on swing arms with coil springs and dampers. A damaged track still uses the old drawing.
+
 ## v5.32
 - **Hand-drawn M.E.D.V.E. machine** based on the reference image (`assets/veh/`): an outlined, paint-lit hull with rivet rows, window frames (with the crew inside), the M.E.D.V.E. plate, a yellow-black panel, a vent grille, a rear crane with chain and hook, red lamps, an extinguisher, a roof rail, a gauge; with the steam engine an orange boiler with an “M” emblem and a smoking chimney. Track, drill head, gear, smoke and lights stay animated; higher engine tiers keep their own module. The v5.31 light-and-shade layer was removed.
 
