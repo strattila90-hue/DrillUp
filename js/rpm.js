@@ -11,7 +11,7 @@ window.RPM=(()=>{
  const wm=()=>Math.pow(k(),1.4)*(1+ov()*14);
  let warned=0;
  const set=v=>{S.rp=Math.round(cl(+v||DEF,MIN,MAX));ens();upd()};
- const ui=()=>`<div class="rpm" id="rpmBox" style="display:flex;align-items:center;gap:8px;margin:0 0 7px;font-size:11px"><span>⚙ Fordulat</span><input id="rpmIn" type="range" min="${MIN}" max="${MAX}" step="2" value="${ens()}" style="flex:1;min-width:0;height:22px" oninput="RPM.set(this.value)" onpointerdown="event.stopPropagation()"><b id="rpmV" style="min-width:64px;text-align:right">${ens()} rpm</b></div>`;
+ const ui=()=>`<div class="rpm" id="rpmBox" style="display:flex;align-items:center;gap:8px;margin:0 0 7px;font-size:11px"><span>${window.ICN?ICN('gear'):'⚙'} Fordulat</span><input id="rpmIn" type="range" min="${MIN}" max="${MAX}" step="2" value="${ens()}" style="flex:1;min-width:0;height:22px" oninput="RPM.set(this.value)" onpointerdown="event.stopPropagation()"><b id="rpmV" style="min-width:64px;text-align:right">${ens()} rpm</b></div>`;
  const upd=()=>{if(typeof document==='undefined'||typeof document.getElementById!=='function')return;const i=document.getElementById('rpmIn'),v=document.getElementById('rpmV');if(!i||!v)return;const r=ens(),L=lim(),o=ov();if(+i.value!==r)i.value=r;
   const ac=o>0?'#e33':(r>L-12?'#e90':'#4a9');if(i._a!==ac){i._a=ac;i.style.accentColor=ac}
   const tx=r+' rpm'+(o>0?' ⚠':'');if(v._t!==tx){v._t=tx;v.textContent=tx}const cc=o>0?'#ff5a4a':'';if(v._c!==cc){v._c=cc;v.style.color=cc}};

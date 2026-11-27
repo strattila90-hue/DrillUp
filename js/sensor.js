@@ -9,7 +9,7 @@ const sm=u=>{u=cl(u,0,1);return u*u*(3-2*u)};
 const SP={A:null,fin:null,P:[],bt:0,
  n(){try{return GEO.ens().sz.stock|0}catch(e){return 0}},
  busy(){return !!SP.A},
- btn(){const n=SP.n();return`<button id="bSP" class="pb sm${n?'':' dim'}" style="--lc:#3ee08a" onpointerdown="SP.deploy(event)" aria-label="Szeizmikus szonda kihelyezése"><b>📍</b><span class="spl">Szonda</span><u id="spN">${n}</u></button>`},
+ btn(){const n=SP.n();return`<button id="bSP" class="pb sm${n?'':' dim'}" style="--lc:#3ee08a" onpointerdown="SP.deploy(event)" aria-label="Szeizmikus szonda kihelyezése"><b>${W.ICN?ICN('pin'):'📍'}</b><span class="spl">Szonda</span><u id="spN">${n}</u></button>`},
  upd(){const e=document.getElementById&&document.getElementById('spN');if(e){const n=String(SP.n());if(e.textContent!==n)e.textContent=n;const b=document.getElementById('bSP');if(b)b.classList.toggle('dim',!SP.n())}},
  deploy(e){if(e){e.preventDefault&&e.preventDefault();e.stopPropagation&&e.stopPropagation()}
   if(SP.A)return;if(W.DMG&&DMG.busy())return;

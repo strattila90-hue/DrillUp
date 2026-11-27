@@ -65,6 +65,12 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.21
+- **New main menu**: emblem, "Path to the core" bar with the Earth's shells and a record marker, money and machine on one card, big start button, 4 tiles (Settings, Update, Share, Install), and Privacy · GitHub · New game at the bottom.
+- **Custom-drawn icons** instead of emoji (top bar, bottom navigation, console tabs, direction pad, Stop/Emergency brake, Probe, floating buttons): identical and crisp on every device.
+- Floating canvas buttons line up automatically (the 🗼 button no longer covers the displays button); the Stop button is labelled "STOP".
+- Lower resource use: the menu background renders at ~30 fps and lower resolution (menu CPU roughly halved), the menu loop no longer runs during play; gentler resolution cap (1 / 1.25 / 1.6×) – steadier frames while drilling.
+
 ## v5.20
 - **New: SG-3 Russian superdeep drilling station** (modelled on the Kola Superdeep Borehole) at the surface base (🗼 button or tap the derrick). Drilling in stages: each stage is one stand (1–3 × 12 m pipes), then a new pipe must be made up – pipes have to be bought (aluminium LBT, steel, titanium). 5 derrick levels (BU-75 → Uralmash-15000, 15 km).
 - Simplified real physics: buoyant string weight in mud, hook load, aluminium weakening with heat, fatigue, buckling, turbodrilling, cuttings and stuck pipe, bit wear and tripping. Overload causes a **pipe failure**: the string below stays in the hole and you sidetrack and drill again.
