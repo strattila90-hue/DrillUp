@@ -60,7 +60,7 @@ function svg(){const tier=S.u.d,hl=S.u.h,ex=hl+2,tk=Math.max(0,Math.min(1,S.fuel
  {const p=BP.parts.find(q=>q.k===BP.sel)||BP.parts[0];s+=`<text x="352" y="226" class="tsel" text-anchor="end">${p.s.toUpperCase()} · ${(S.u[p.k]||0)+1}/${p.t().length}</text>`}
  return s+'</svg>'}
 function svc(){const b=base(),d=calc(),dis=b?'':'disabled';let h=b?'':'<div class="card bad">A fejlesztés és a szerviz csak a bázison (a felszínen) érhető el.</div>';
- h+=`<div class="card">⛽ <b>Tankolás</b> (${d.f.n}, ${ft(d.f.p)}/kg)<br><span class="mu">${fk(S.fuel)} / ${fk(tank())}</span><div class="row"><button class="b g" ${dis} onclick="fill(.25)">+25%</button><button class="b" ${dis} onclick="fill(1)">Tele</button></div></div>`;
+ h+=`<div class="card">⛽ <b>Tankolás</b> (${d.f.n}, ${ft(d.f.p*(W.SRF?SRF.disc('fu'):1))}/kg)<br><span class="mu">${fk(S.fuel)} / ${fk(tank())}</span><div class="row"><button class="b g" ${dis} onclick="fill(.25)">+25%</button><button class="b" ${dis} onclick="fill(1)">Tele</button></div></div>`;
  if(W.GEN){const g=GN[S.u.g],f=F[g[3]];h+=`<div class="card">⚡ <b>Generátor tankolás</b> (${f.n}, ${ft(f.p)}/kg)<br><span class="mu">${fk(S.gf)} / ${fk(g[4])}</span><div class="row"><button class="b g" ${dis} onclick="GEN.fill(.25)">+25%</button><button class="b" ${dis} onclick="GEN.fill(1)">Tele</button></div></div>`}
  return h+`<div class="card">🔧 <b>Páncél</b>: ${nf(S.hp,1)}%<br><button class="b" ${b&&S.hp<100?'':'disabled'} onclick="repair()">Javítás – ${ft((100-S.hp)*2e3*Math.pow(8,S.u.h)*(window.SRF?SRF.disc("ws"):1))}</button></div>`}
 const pips=(i,mx)=>{let o='';for(let n=0;n<=mx;n++)o+=`<s class="${n<=i?'on':''}${n===i?' cur':''}"></s>`;return o};

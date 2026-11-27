@@ -65,6 +65,12 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.36
+- **Static dust-particle generator**: when every fuel source is gone (tank, cargo, money), a device on the roof collects a tiny amount of fuel from airborne dust (up to 1.5% of the tank). The machine can no longer be lost or soft-locked; it resumes on its own after charging.
+- Refuelling: “Full” no longer drains fuel with a negative balance; the Workshop shows the discounted price; feedback when refuelling, tank full or no money; the reserve-limit message shows the full reserve.
+- Small screens (320–400 px): no clipped Surface / Probe / Brake labels, generator gauge and RPM slider fit, right gauge column no longer slides under the control panel.
+- Sharper rendering on high-DPI phones (resolution cap 1.4× / 2×).
+
 ## v5.35
 - **Fix:** the machine kept driving (and burning fuel) under the main menu – after reopening the game it could travel tens of metres by itself. Opening the main menu now stops the machine.
 
