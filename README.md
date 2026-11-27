@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.31
+- **Steel, three-dimensional machine:** a light-and-shade layer masked to the machine (top highlight, steel-blue middle, deep shadow below, cool bounce light on the lower edge) – 2D with a 3D feel; a bluish steel base colour instead of grey; a soft ground shadow under the track.
+
 ## v5.30
 - **The M.E.D.V.E. machine in the reference style:** a bold dark outline around the whole machine (cel-shading), a longer, heavier track with 48 links, 6 road wheels and 3 return rollers, an “M” emblem on the orange tank.
 

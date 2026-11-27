@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.31
+- **Acélos, térhatású jármű:** a gép alakjára maszkolt fény–árnyék réteg (felül csúcsfény, középen acélkék, alul mély árnyék, az alsó élen hideg visszavert fény) – 2D, de 3D hatású; kékes acél alapszín a szürke helyett; lágy talajárnyék a lánctalp alatt.
+
 ## v5.30
 - **A M.E.D.V.E. jármű a referenciakép stílusában:** vastag sötét kontúr az egész gép körül (cel-shading), hosszabb, nehezebb lánctalp 48 láncszemmel, 6 futógörgővel és 3 tartógörgővel, „M” embléma a narancs tartályon.
 
