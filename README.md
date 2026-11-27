@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.32
+- **Hand-drawn M.E.D.V.E. machine** based on the reference image (`assets/veh/`): an outlined, paint-lit hull with rivet rows, window frames (with the crew inside), the M.E.D.V.E. plate, a yellow-black panel, a vent grille, a rear crane with chain and hook, red lamps, an extinguisher, a roof rail, a gauge; with the steam engine an orange boiler with an “M” emblem and a smoking chimney. Track, drill head, gear, smoke and lights stay animated; higher engine tiers keep their own module. The v5.31 light-and-shade layer was removed.
+
 ## v5.31
 - **Steel, three-dimensional machine:** a light-and-shade layer masked to the machine (top highlight, steel-blue middle, deep shadow below, cool bounce light on the lower edge) – 2D with a 3D feel; a bluish steel base colour instead of grey; a soft ground shadow under the track.
 

@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.32
+- **Kézzel rajzolt M.E.D.V.E. jármű** a referenciakép alapján (`assets/veh/`): kontúros, festett fényű hajótest szegecssorokkal, ablakkeretek (bennük a legénység), M.E.D.V.E. tábla, sárga-fekete panel, szellőzőrács, hátsó daru lánccal és horoggal, piros lámpák, poroltó, tetőkorlát, műszer; gőzgépnél narancs kazán „M” emblémával és füstölgő kéménnyel. A lánctalp, a fúrófej, a fogaskerék, a füst és a fények animáltak maradtak; a magasabb motorszintek saját modulja megmaradt. A v5.31 fény-árnyék réteg kikerült.
+
 ## v5.31
 - **Acélos, térhatású jármű:** a gép alakjára maszkolt fény–árnyék réteg (felül csúcsfény, középen acélkék, alul mély árnyék, az alsó élen hideg visszavert fény) – 2D, de 3D hatású; kékes acél alapszín a szürke helyett; lágy talajárnyék a lánctalp alatt.
 
