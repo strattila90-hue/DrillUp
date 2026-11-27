@@ -87,8 +87,12 @@ function draw(cv,d,ts){const w=cv.clientWidth,h=cv.clientHeight;if(w<10||h<10)re
  else{const cx=w/2,tw=Math.max(8,w*.34),t0=h*.1,t1=h*.76,lv=t1-(t1-t0)*cl(v,0,1),g=x.createLinearGradient(cx-tw*.45,0,cx+tw*.45,0);g.addColorStop(0,'#7a3d06');g.addColorStop(.5,'#ffb43a');g.addColorStop(1,'#7a3d06');
   x.fillStyle=g;x.fillRect(cx-tw*.4,lv,tw*.8,t1-lv);x.fillStyle='rgba(255,240,200,.7)';x.fillRect(cx-tw*.4,lv,tw*.8,1.2);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(cx-tw*.25,t0+2,1.5,t1-t0-4);
   lamp(x,cx,h*.81,Math.max(2,w*.08),red&&blink,'rgb(255,60,40)')}}
-let last=0;
-if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const ts=performance.now();if(ts-last<30)return;last=ts;
+let last=0,lastFit=0;
+// a jobb oldali műszeroszlop: ami nem fér ki a játékkép aljáig (a vezérlőpult fölé), azt elrejti – kis kijelzőn nem lóg a pult alá
+function fitR(){const g=document.querySelector('.gauges.hudR');if(!g)return;const pw=g.parentElement&&g.parentElement.getBoundingClientRect();if(!pw)return;
+ let lim=Math.min(pw.bottom,W.innerHeight||1e9);const dk=document.querySelector('.dock');if(dk){const r=dk.getBoundingClientRect();if(r.height>0&&r.top>pw.top+40)lim=Math.min(lim,r.top)}
+ const cs=[...g.children];cs.forEach(c=>{if(c.style.display)c.style.display=''});for(const c of cs){if(c.getBoundingClientRect().bottom>lim-4)c.style.display='none'}}
+if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const ts=performance.now();if(ts-last<30)return;last=ts;if(ts-lastFit>500){lastFit=ts;try{fitR()}catch(e){}}
  try{document.querySelectorAll('.gauges canvas').forEach(cv=>{if(!cv.offsetParent)return;const d=DEF.find(q=>q.k===cv.dataset.k);if(d)draw(cv,d,ts)})}catch(e){if(W.DBG)DBG.err='gauges: '+(e.message||e)}});
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('click',e=>{const c=e.target&&e.target.closest&&e.target.closest('.gauges canvas');if(!c)return;const d=DEF.find(q=>q.k===c.dataset.k);if(d&&d.tap){try{d.tap()}catch(_){}try{beep(300,.04,.05,'square')}catch(_){}}});
 })(typeof window!=='undefined'?window:globalThis);

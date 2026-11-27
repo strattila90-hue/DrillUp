@@ -65,6 +65,12 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.36
+- **Statikus porszemcse-generátor**: ha minden üzemanyag elfogyott (tank, raktár, pénz), a gép tetején lévő eszköz a levegő porából nagyon kevés üzemanyagot gyűjt (a tank 1,5%-áig). A gép így nem vész el a mélyben, és a bázison pénz nélkül sem ragad be: feltöltés után magától továbbindul.
+- Tankolás: negatív egyenlegnél a „Tele” gomb már nem veszi el az üzemanyagot; a Műhelyben a kedvezményes ár látszik; visszajelzés tankoláskor, tele tanknál és pénzhiánynál; a tartalék-határ üzenete a teljes tartalékot mutatja.
+- Kis kijelzők (320–400 px): nem vágódnak le a Felszín / Szonda / Zuhanófék feliratok, nem lóg ki a generátor-műszer és a fordulat-csúszka, a jobb oldali műszeroszlop nem csúszik a vezérlőpult alá.
+- Élesebb kép nagy felbontású telefonokon (felbontás-sapka 1,4× / 2×).
+
 ## v5.35
 - **Javítás:** a gép a főmenü alatt tovább haladt (és fogyasztott) – a játék újranyitása után magától akár több tíz métert is megtett. A főmenü megnyitásakor a gép most megáll.
 
