@@ -65,6 +65,12 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.37
+- **Shield (TBM) layout:** the cutterhead is now the widest part, followed by the shield, thrust rams and a cylindrical hull narrower than the head. Boiler, tank, crane and stack are gone from the roof, so the machine fits its own bore. The hull holds the cabin, engine bay, grippers and a screw conveyor that dumps cuttings from the tail chute; tracks retract underground.
+- **On the surface everything unfolds:** engine-bay doors open, the engine rises on a scissor lift and “breathes”, an instrument mast extends (rotating radar, live gauge, anemometer, beacon), shield plates lift to show the spinning drive gears.
+- **While drilling** the shield's side brake hydraulics press rhythmically against the wall.
+- **Control panel:** floats over the scene without a background; the text info strip is gone; new gauge for the dust generator charge (blinks blue when working).
+
 ## v5.36
 - **Static dust-particle generator**: when every fuel source is gone (tank, cargo, money), a device on the roof collects a tiny amount of fuel from airborne dust (up to 1.5% of the tank). The machine can no longer be lost or soft-locked; it resumes on its own after charging.
 - Refuelling: “Full” no longer drains fuel with a negative balance; the Workshop shows the discounted price; feedback when refuelling, tank full or no money; the reserve-limit message shows the full reserve.

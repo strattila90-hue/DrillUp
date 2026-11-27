@@ -65,6 +65,12 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.37
+- **Pajzsos (TBM) felépítés:** elöl a legnagyobb átmérőjű vágófej, mögötte a pajzs, a tolóhengerek és a fejnél kisebb hengeres hajótest. A tetőről lekerült a kazán, a tartály, a daru és a kémény, így a gép belefér a saját furatába. A hajótestben van a kabin, a motortér, a támasztótalpak és a törmelékszállító csiga, amely a farok garatából üríti ki a kőzetet; a lánctalp a föld alatt behúzódik.
+- **A felszínen minden kinyílik:** a motortér ajtói felnyílnak, a motor ollós emelőn kiemelkedik és „lélegzik”, kitolódik a műszerárboc (forgó radar, élő műszer, szélmérő, jelzőfény), a pajzslemezek felemelkednek, alattuk forog a hajtómű.
+- **Fúrás közben** a pajzs oldalsó fékező hidraulikája ütemesen a falnak feszül.
+- **Kezelőpult:** háttér nélkül a játékkép fölött lebeg, a szöveges info-sáv megszűnt; új műszer: a porszemcse-generátor töltöttsége (kéken villog, ha dolgozik).
+
 ## v5.36
 - **Statikus porszemcse-generátor**: ha minden üzemanyag elfogyott (tank, raktár, pénz), a gép tetején lévő eszköz a levegő porából nagyon kevés üzemanyagot gyűjt (a tank 1,5%-áig). A gép így nem vész el a mélyben, és a bázison pénz nélkül sem ragad be: feltöltés után magától továbbindul.
 - Tankolás: negatív egyenlegnél a „Tele” gomb már nem veszi el az üzemanyagot; a Műhelyben a kedvezményes ár látszik; visszajelzés tankoláskor, tele tanknál és pénzhiánynál; a tartalék-határ üzenete a teljes tartalékot mutatja.

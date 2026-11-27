@@ -466,3 +466,16 @@ body.rgOn #tutBox,body.rgOn #toast,body.rgOn #srfCard{display:none!important}
 }
 @media (max-width:340px){.hbFn .pb b .icn,.hbFn .pb b svg{display:none}}
 @media (max-width:340px){#top .brand{font-size:14px;gap:4px}#top .brand .icn{width:18px;height:18px}}
+/* ===== v5.37 kezelőpult háttér nélkül, a játékkép fölött; szöveges info-sáv nélkül; porgenerátor-műszer ===== */
+#v.dr{position:relative}
+.dock.hudB{position:absolute;left:0;right:0;bottom:0;z-index:6;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none;padding:6px 8px 8px;pointer-events:none}
+.dock.hudB>*{pointer-events:auto}
+.dock.hudB .hbRow{pointer-events:none}.dock.hudB .hbRow>*{pointer-events:auto}
+.dock.hudB .lcd,.hudB #lcd{display:none!important}
+.dock.hudB #rpmBox,.dock.hudB #rpmBox *{text-shadow:0 1px 2px #000,0 0 4px #000}
+.dock.hudB .joy{filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
+.gauges.hudG{grid-template-columns:24px 24px 70px 76px}
+@media (max-width:400px){.gauges.hudG{grid-template-columns:18px 18px minmax(0,1fr) minmax(0,1.1fr)}}
+#stage #cinBtn,#stage #pnBtn,#stage #rgBtn,#stage #lgBtn,#stage #lecBtn{bottom:calc(var(--hb,0px) + 34px)!important}
+#stage .stmb{bottom:calc(var(--hb,0px) + 34px)!important}
+#stoCard,#srfCard,#awCard{bottom:calc(var(--dk,150px) + 84px)!important}

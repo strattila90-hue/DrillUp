@@ -6,7 +6,7 @@
 'use strict';
 W.MODS=W.MODS||[];W.MODS.push('vart');
 const IMG={},CACHE=new Map();
-const ART={body:{f:'body',x0:-13.9,y0:-2.9,w:8.45,h:4.22},boiler:{f:'boiler',x0:-12.45,y0:-4.6,w:3.2,h:3.15}};
+const ART={hull:{f:'hull',x0:-13.65,y0:-1.85,w:8.2,h:3.7},body:{f:'body',x0:-13.9,y0:-2.9,w:8.45,h:4.22},boiler:{f:'boiler',x0:-12.45,y0:-4.6,w:3.2,h:3.15}};
 function im(n){if(typeof Image==='undefined')return null;let i=IMG[n];if(!i){i=IMG[n]=new Image();i.src='assets/veh/'+n+'.svg'}return i.complete&&i.naturalWidth?i:null}
 function spr(f,w,h,scale){const i=im(f);if(!i||typeof document==='undefined')return null;const pw=Math.max(8,Math.round(w*scale/8)*8),ph=Math.max(8,Math.round(pw*h/w)),k=f+'|'+pw;
  let c=CACHE.get(k);if(c)return c;c=document.createElement('canvas');c.width=pw;c.height=ph;const g=c.getContext('2d');if(!g)return null;g.drawImage(i,0,0,pw,ph);if(CACHE.size>140)CACHE.clear();CACHE.set(k,c);return c}
@@ -29,6 +29,11 @@ const VART={
   if(o.lit2){x.fillStyle='rgba(255,214,140,.32)';for(let i=0;i<3;i++)x.fillRect(-9.1+i*1.05,-1.2,.95,.9)}
   if(W.BG&&BG.crew)BG.crew(x,{ts:o.ts,act:o.act,hyd:o.hyd,lit2:o.lit2})},
  ok2(){for(const n of COMP)if(!im(n))return false;return true},
+ ok3(){return VART.ok2()&&!!im('hull')&&!!im('boiler')},
+ // pajzsos (TBM) hajótest: hengeres, a fúrófejnél kisebb átmérő; a kabin ablakaiban a legénység
+ hull(x,o){if(!draw(x,ART.hull))return false;
+  if(o.lit2){x.fillStyle='rgba(255,214,140,.32)';for(let i=0;i<3;i++)x.fillRect(-9.1+i*1.05,-1.2,.95,.9)}
+  if(W.BG&&BG.crew)BG.crew(x,{ts:o.ts,act:o.act,hyd:o.hyd,lit2:o.lit2});return true},
  shield(x){return draw(x,{f:'shield',x0:-4.8,y0:-1.8,w:3.35,h:3.6})},
  light(x,ox,oy){return draw(x,{f:'light',x0:ox-.05,y0:oy-.05,w:.9,h:.85})},
  // fúrófej: 8 előre rajzolt fázis egy 60°-os (6 vágóél) periódusra

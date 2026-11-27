@@ -12,14 +12,15 @@ const safe=f=>{try{const v=f();return isFinite(v)?v:0}catch(e){return 0}};
 // műszerek: típus, felirat, értékfüggvény (0..1), skála-feliratok, piros zóna kezdete (0..1), kijelzett érték szövege
 const DEF=[
  {k:'fuel',t:'tube',lab:'ÜZEMANYAG',v:()=>safe(()=>S.fuel/Math.max(1e-9,tank())),warnLow:.15},
+ {k:'spg',t:'tube',lab:'PORGEN.',c:['#0b3350','#7fd8ff'],v:()=>safe(()=>W.SPG?cl(S.fuel/SPG.goal(),0,1)*(SPG.glow>.05||SPG.need()?1:0):0),lamp:()=>safe(()=>W.SPG&&SPG.glow>.05?1:0),tap:()=>{try{const p=W.SPG?Math.round(cl(S.fuel/SPG.goal(),0,1)*100):0;toast(W.SPG&&SPG.need()?'🌀 Porszemcse-generátor: tölt, '+p+'% – utána a gép magától indul.':'🌀 Porszemcse-generátor: pihen (csak akkor dolgozik, ha minden üzemanyag elfogyott).')}catch(e){}}},
  {k:'pres',t:'round',rim:'steel',lab:'NYOMÁS',unit:'MPa',v:()=>safe(()=>lg(lerp(PT,Math.max(0,S.depth))*1000,360000)),sc:['0','10','1k','100k'],sp:[0,lg(10,360000),lg(1000,360000),lg(1e5,360000)],red:.82},
  {k:'temp',t:'round',rim:'brass',lab:'HŐMÉRSÉKLET',unit:'°C',v:()=>safe(()=>{const d=Math.max(0,S.depth);const T=W.VOL?VOL.tm(S.x,d,lerp(TT,d)):lerp(TT,d);return Math.sqrt(Math.max(0,T)/6000)}),sc:['0','200','1500','6000'],sp:[0,Math.sqrt(200/6000),Math.sqrt(1500/6000),1],red:.78},
  {k:'cargo',t:'olive',lab:'RAKTÁR',v:()=>safe(()=>{const c=W.DEP&&DEP.room?1-DEP.room()/Math.max(1,cap()):cargoKg()/Math.max(1,cap());return c}),red:.88},
  {k:'eng',t:'round',rim:'steel',lab:'MOTOR',unit:'×1000/p',v:()=>safe(()=>W.ENG?ENG.rpm/1.25:0),sc:['0','1','2','3'],red:.84,tap:()=>W.PW&&PW.toggleEng()},
  {k:'bit',t:'olive',lab:'FÚRÓFEJ',v:()=>safe(()=>(S.hw||0)/100),red:.8,tap:()=>{try{shT('head')}catch(e){}}},
  {k:'gen',t:'olive',lab:'GENERÁTOR',v:()=>safe(()=>W.GEN&&GEN.running()?cl(GEN.lf,0,1):0),red:.9,lamp:()=>safe(()=>W.GEN&&GEN.running()?1:0),tap:()=>W.PW&&PW.toggleGen()}];
-DEF[0].tap=()=>{try{if(typeof base==='function'&&base())fill(1);else toast('⛽ Tankolni a bázison lehet (⌂).')}catch(e){}};
-DEF[3].tap=()=>{try{shT('store')}catch(e){}};DEF[1].tap=DEF[2].tap=()=>{try{shT('info')}catch(e){}};
+const K=k=>DEF.find(d=>d.k===k);K('fuel').tap=()=>{try{if(typeof base==='function'&&base())fill(1);else toast('⛽ Tankolni a bázison lehet (⌂).')}catch(e){}};
+K('cargo').tap=()=>{try{shT('store')}catch(e){}};K('pres').tap=K('temp').tap=()=>{try{shT('info')}catch(e){}};
 const GAU={DEF,val:{},vel:{},faces:{},key:'',
  ui(keys,cls){const L=keys?keys.map(k=>DEF.find(d=>d.k===k)).filter(Boolean):DEF;return`<div class="gauges ${cls||''}">`+L.map(d=>`<canvas class="gi gi-${d.t}" data-k="${d.k}" role="button" aria-label="${d.lab}"></canvas>`).join('')+'</div>'}};
 W.GAU=GAU;
@@ -84,13 +85,15 @@ function draw(cv,d,ts){const w=cv.clientWidth,h=cv.clientHeight;if(w<10||h<10)re
   lamp(x,cx,cy+r*.72,Math.max(2,r*.1),red&&blink,'rgb(255,60,40)')}
  else if(d.t==='olive'){const cx=w/2,bh=h*.86,R=Math.min(w*.4,bh*.42),cy=2+bh*.5;needle(x,cx,cy,Math.PI+Math.PI*cl(v,0,1),R*.86,'#141210',Math.max(1.1,R*.07));
   lamp(x,cx,cy+R*.55,Math.max(2,R*.12),d.lamp?d.lamp()>0:red&&blink,d.lamp?'rgb(70,230,90)':'rgb(255,60,40)');if(d.lamp&&red&&blink)lamp(x,cx+R*.45,cy+R*.55,Math.max(2,R*.1),true,'rgb(255,60,40)')}
- else{const cx=w/2,tw=Math.max(8,w*.34),t0=h*.1,t1=h*.76,lv=t1-(t1-t0)*cl(v,0,1),g=x.createLinearGradient(cx-tw*.45,0,cx+tw*.45,0);g.addColorStop(0,'#7a3d06');g.addColorStop(.5,'#ffb43a');g.addColorStop(1,'#7a3d06');
+ else{const cx=w/2,tw=Math.max(8,w*.34),t0=h*.1,t1=h*.76,lv=t1-(t1-t0)*cl(v,0,1),g=x.createLinearGradient(cx-tw*.45,0,cx+tw*.45,0),c0=d.c?d.c[0]:'#7a3d06',c1=d.c?d.c[1]:'#ffb43a';g.addColorStop(0,c0);g.addColorStop(.5,c1);g.addColorStop(1,c0);
   x.fillStyle=g;x.fillRect(cx-tw*.4,lv,tw*.8,t1-lv);x.fillStyle='rgba(255,240,200,.7)';x.fillRect(cx-tw*.4,lv,tw*.8,1.2);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(cx-tw*.25,t0+2,1.5,t1-t0-4);
-  lamp(x,cx,h*.81,Math.max(2,w*.08),red&&blink,'rgb(255,60,40)')}}
+  if(d.lamp)lamp(x,cx,h*.81,Math.max(2,w*.08),d.lamp()>0&&(blink||ts%700<500),'rgb(90,190,255)');else lamp(x,cx,h*.81,Math.max(2,w*.08),red&&blink,'rgb(255,60,40)')}}
 let last=0,lastFit=0;
 // a jobb oldali műszeroszlop: ami nem fér ki a játékkép aljáig (a vezérlőpult fölé), azt elrejti – kis kijelzőn nem lóg a pult alá
 function fitR(){const g=document.querySelector('.gauges.hudR');if(!g)return;const pw=g.parentElement&&g.parentElement.getBoundingClientRect();if(!pw)return;
  let lim=Math.min(pw.bottom,W.innerHeight||1e9);const dk=document.querySelector('.dock');if(dk){const r=dk.getBoundingClientRect();if(r.height>0&&r.top>pw.top+40)lim=Math.min(lim,r.top)}
+ try{const cv=document.getElementById('cv');if(cv&&dk&&getComputedStyle(dk).position==='absolute'){const a=cv.getBoundingClientRect(),r=dk.getBoundingClientRect();W.HUDB=Math.max(0,Math.round(a.bottom-r.top))}else W.HUDB=0}catch(e){}
+ try{const st=document.getElementById('stage');if(st&&st._hb!==W.HUDB){st._hb=W.HUDB;st.style.setProperty('--hb',(W.HUDB||0)+'px')}}catch(e){}
  const cs=[...g.children];cs.forEach(c=>{if(c.style.display)c.style.display=''});for(const c of cs){if(c.getBoundingClientRect().bottom>lim-4)c.style.display='none'}}
 if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const ts=performance.now();if(ts-last<30)return;last=ts;if(ts-lastFit>500){lastFit=ts;try{fitR()}catch(e){}}
  try{document.querySelectorAll('.gauges canvas').forEach(cv=>{if(!cv.offsetParent)return;const d=DEF.find(q=>q.k===cv.dataset.k);if(d)draw(cv,d,ts)})}catch(e){if(W.DBG)DBG.err='gauges: '+(e.message||e)}});
