@@ -65,6 +65,11 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.26
+- **L-shaped HUD, less space:** a much bigger game view. The instruments float on the view without boxes (right: pressure, temperature, cargo and a new bit-wear gauge); fuel, engine and generator sit in the bottom control strip.
+- **No duplicate controls:** instead of the Engine/Gen levers and the Data/Hold/Bit tabs, tap the instruments to switch or open the panel.
+- **Joystick** instead of the four direction buttons and STOP: drag towards a direction; release to stop, push to the end stop and it latches and keeps going (gold ring); tap = stop.
+
 ## v5.25
 - **New control layout:** ▲▼◀▶ as a real direction cross with STOP in the centre (one move from any direction); the function buttons wrap around it in an L: Surface and Probe on the right, a wide Emergency brake along the bottom.
 

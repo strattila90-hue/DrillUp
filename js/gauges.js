@@ -16,11 +16,12 @@ const DEF=[
  {k:'temp',t:'round',rim:'brass',lab:'HŐMÉRSÉKLET',unit:'°C',v:()=>safe(()=>{const d=Math.max(0,S.depth);const T=W.VOL?VOL.tm(S.x,d,lerp(TT,d)):lerp(TT,d);return Math.sqrt(Math.max(0,T)/6000)}),sc:['0','200','1500','6000'],sp:[0,Math.sqrt(200/6000),Math.sqrt(1500/6000),1],red:.78},
  {k:'cargo',t:'olive',lab:'RAKTÁR',v:()=>safe(()=>{const c=W.DEP&&DEP.room?1-DEP.room()/Math.max(1,cap()):cargoKg()/Math.max(1,cap());return c}),red:.88},
  {k:'eng',t:'round',rim:'steel',lab:'MOTOR',unit:'×1000/p',v:()=>safe(()=>W.ENG?ENG.rpm/1.25:0),sc:['0','1','2','3'],red:.84,tap:()=>W.PW&&PW.toggleEng()},
+ {k:'bit',t:'olive',lab:'FÚRÓFEJ',v:()=>safe(()=>(S.hw||0)/100),red:.8,tap:()=>{try{shT('head')}catch(e){}}},
  {k:'gen',t:'olive',lab:'GENERÁTOR',v:()=>safe(()=>W.GEN&&GEN.running()?cl(GEN.lf,0,1):0),red:.9,lamp:()=>safe(()=>W.GEN&&GEN.running()?1:0),tap:()=>W.PW&&PW.toggleGen()}];
 DEF[0].tap=()=>{try{if(typeof base==='function'&&base())fill(1);else toast('⛽ Tankolni a bázison lehet (⌂).')}catch(e){}};
 DEF[3].tap=()=>{try{shT('store')}catch(e){}};DEF[1].tap=DEF[2].tap=()=>{try{shT('info')}catch(e){}};
 const GAU={DEF,val:{},vel:{},faces:{},key:'',
- ui(){return'<div class="gauges" id="gauges">'+DEF.map(d=>`<canvas class="gi gi-${d.t}" data-k="${d.k}" aria-label="${d.lab}"></canvas>`).join('')+'</div>'}};
+ ui(keys,cls){const L=keys?keys.map(k=>DEF.find(d=>d.k===k)).filter(Boolean):DEF;return`<div class="gauges ${cls||''}">`+L.map(d=>`<canvas class="gi gi-${d.t}" data-k="${d.k}" role="button" aria-label="${d.lab}"></canvas>`).join('')+'</div>'}};
 W.GAU=GAU;
 
 // ---------- számlapok (előre rajzolva) ----------
@@ -87,7 +88,7 @@ function draw(cv,d,ts){const w=cv.clientWidth,h=cv.clientHeight;if(w<10||h<10)re
   x.fillStyle=g;x.fillRect(cx-tw*.4,lv,tw*.8,t1-lv);x.fillStyle='rgba(255,240,200,.7)';x.fillRect(cx-tw*.4,lv,tw*.8,1.2);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(cx-tw*.25,t0+2,1.5,t1-t0-4);
   lamp(x,cx,h*.81,Math.max(2,w*.08),red&&blink,'rgb(255,60,40)')}}
 let last=0;
-if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const box=document.getElementById('gauges');if(!box||!box.offsetParent)return;const ts=performance.now();if(ts-last<30)return;last=ts;
- try{box.querySelectorAll('canvas').forEach((cv,i)=>draw(cv,DEF[i],ts))}catch(e){if(W.DBG)DBG.err='gauges: '+(e.message||e)}});
-if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('click',e=>{const c=e.target&&e.target.closest&&e.target.closest('#gauges canvas');if(!c)return;const d=DEF.find(q=>q.k===c.dataset.k);if(d&&d.tap){try{d.tap()}catch(_){}try{beep(300,.04,.05,'square')}catch(_){}}});
+if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const ts=performance.now();if(ts-last<30)return;last=ts;
+ try{document.querySelectorAll('.gauges canvas').forEach(cv=>{if(!cv.offsetParent)return;const d=DEF.find(q=>q.k===cv.dataset.k);if(d)draw(cv,d,ts)})}catch(e){if(W.DBG)DBG.err='gauges: '+(e.message||e)}});
+if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('click',e=>{const c=e.target&&e.target.closest&&e.target.closest('.gauges canvas');if(!c)return;const d=DEF.find(q=>q.k===c.dataset.k);if(d&&d.tap){try{d.tap()}catch(_){}try{beep(300,.04,.05,'square')}catch(_){}}});
 })(typeof window!=='undefined'?window:globalThis);
