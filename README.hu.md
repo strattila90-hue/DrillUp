@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.35
+- **Javítás:** a gép a főmenü alatt tovább haladt (és fogyasztott) – a játék újranyitása után magától akár több tíz métert is megtett. A főmenü megnyitásakor a gép most megáll.
+
 ## v5.34
 - **Megszűnt a háttér villogása:** az éjszakai csillagok nem ugrálnak függőleges mozgás közben, és a horizont sziluettjei (hegyek, ipar, erdő) nem rajzolódnak újra minden képkockán más magasságban.
 - **Élethű kőzetzúzás** (`js/grind.js`): sötét zúzott sáv a fúrófej kúpja mentén, apró, árnyalt forgács, amely a csúcstól oldalra, majd a fal mentén hátrafelé áramlik, az ép kőzetbe növő hajszálrepedések, leváló kőzetlapok, rétegszínű por.
