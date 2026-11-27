@@ -90,7 +90,7 @@ const RIG={PT,RIGS,GZ,MS,BITS,L,temp,zone,hotF,hist:[],ht:0,isOpen:false,ph:'idl
   if(RIG.ph==='trip'||RIG.mk>0)return;if(g.bw>=100)return RIG.msg('🪨 A fúrófej elkopott – emeld ki a szálat és cseréld (⏫).');
   if(g.d>=g.p.length*L-1e-6){if(g.auto){if(RIG.add())RIG.resume=1;return}return RIG.msg(g.p.length?'🔩 A szakasz kész – csavarj fel új csövet.':'🔩 Az első csövet kell felcsavarni a fúrófejjel.')}
   RIG.ph='drill';if(RIG.zAuto)RIG.zt=Math.max(RIG.zt,.001);RIG.beep(180,.1)},
- startTrip(){const g=RIG.st();if(!g.lv||RIG.ph==='trip'||RIG.mk>0||!g.p.length)return;const c=BITS[g.bt].c*g.lv;if(S.cash<c)return RIG.msg('Nincs elég pénz az új fúrófejre ('+nf(c,0)+' Ft).');RIG.ph='trip';RIG.rop=0;RIG.trip=0;RIG.tripD=g.d;RIG.msg('⏫ Kiemelés: '+nf(g.p.length,0)+' cső jön fel, majd új fúrófejjel vissza.')},
+ startTrip(){const g=RIG.st();if(!g.lv||RIG.ph==='trip'||RIG.mk>0||!g.p.length)return;const c=BITS[g.bt].c*g.lv;if(S.cash<c)return RIG.msg('Nincs elég pénz az új fúrófejre ('+nf(c,0)+' Ft).');S.cash-=c;RIG.tripBit=g.bt;RIG.tripCost=c;RIG.ph='trip';RIG.rop=0;RIG.trip=0;RIG.tripD=g.d;RIG.msg('⏫ Kiemelés: '+nf(g.p.length,0)+' cső jön fel, majd új fúrófejjel vissza.')},
  brk(i,why){const g=RIG.st(),n=g.p.length;i=cl(i,0,n-1);const fallen=n-i,at=Math.max(0,g.d-fallen*L),lostN=Math.max(1,Math.ceil(fallen*.4)),rec=fallen-lostN;
   // halászat: a leszakadt szál felső része kijön (a raktárba kerül), az alsó rész a talpon marad; fölötte oldalfúrás indul
   for(const k of g.p.slice(i,i+rec))g.inv[k]++;RIG.fall={y:Math.max(0,g.d-lostN*L),len:lostN*L,t:0,k:g.p[n-1]};g.p=g.p.slice(0,i);g.d=Math.max(0,g.d-lostN*L);g.lost+=lostN;g.fa*=.6;g.cu=0;g.bw=Math.min(g.bw,60);
@@ -101,7 +101,7 @@ const RIG={PT,RIGS,GZ,MS,BITS,L,temp,zone,hotF,hist:[],ht:0,isOpen:false,ph:'idl
   RIG.shake=Math.max(0,RIG.shake-dt*2);RIG.flash=Math.max(0,RIG.flash-dt*1.5);if(RIG.fall){RIG.fall.t+=dt;if(RIG.fall.t>3)RIG.fall=null}
   RIG.zt=cl(RIG.zt+((RIG.zAuto&&(RIG.ph==='drill'||RIG.mk>0)||RIG.zMan)?1:-1)*dt*.7,0,1);
   if(RIG.mk>0){RIG.mk-=dt;if(RIG.mk<=0){RIG.mk=0;if(RIG.resume){RIG.resume=0;RIG.ph='idle';RIG.toggle()}}return}
-  if(RIG.ph==='trip'){const sp=500;RIG.trip+=dt*sp/Math.max(1,RIG.tripD*2+40);if(RIG.trip>=1){RIG.trip=0;RIG.ph='idle';g.bw=0;g.fa*=.4;g.cu=0;const c=Math.min(S.cash,BITS[g.bt].c*g.lv);S.cash-=c;g.bi=g.bt;RIG.msg('🔁 Új fúrófej a talpon: '+BITS[g.bi].n+' (−'+nf(c,0)+' Ft). A csöveket átvizsgálták: a fáradás csökkent.');RIG.save()}return}
+  if(RIG.ph==='trip'){const sp=500;RIG.trip+=dt*sp/Math.max(1,RIG.tripD*2+40);if(RIG.trip>=1){RIG.trip=0;RIG.ph='idle';g.bw=0;g.fa*=.4;g.cu=0;const c=RIG.tripCost||0;g.bi=BITS[RIG.tripBit]?RIG.tripBit:g.bi;RIG.tripBit=null;RIG.tripCost=0;RIG.msg('🔁 Új fúrófej a talpon: '+BITS[g.bi].n+' (−'+nf(c,0)+' Ft). A csöveket átvizsgálták: a fáradás csökkent.');RIG.save()}return}
   if(RIG.ph!=='drill'){RIG.rop=0;g.cu=Math.max(0,g.cu-dt*.1);return}
   const R=RIG.rig(),Z=zone(g.d),T=temp(g.d),rpm=RIG.rpm(),need=RIG.need(),end=g.p.length*L;
   if(g.d>=end-1e-6){RIG.ph='idle';RIG.rop=0;const why=g.auto?RIG.canAdd():'';if(g.auto&&!why){RIG.add();RIG.resume=1}else RIG.msg(why?'🔩 '+why:'🔩 Szakasz kész ('+nf(g.d,0)+' m) – csavarj fel új csövet.');return}
@@ -163,7 +163,7 @@ function ensureUI(){if(ov)return true;if(typeof document==='undefined'||!documen
  document.body.appendChild(ov);cv=$('rgc');cx=cv.getContext('2d');
  ov.addEventListener('click',e=>{const t=e.target.closest?e.target.closest('button'):e.target;if(!t||!ov.contains(t))return;try{t.blur()}catch(_){}const g=RIG.st(),a=t.dataset&&t.dataset.a,id=t.id;
   if(id==='rgX')return RIG.close();if(id==='rgGo'){if(g.lv)RIG.toggle();else RIG.build()}else if(id==='rgAdd')RIG.add();else if(id==='rgTrip')RIG.startTrip();else if(id==='rgZm'){if(RIG.zt>.5||RIG.zMan){RIG.zMan=false;RIG.zAuto=0}else RIG.zMan=true}
-  else if(id==='rgUp'){if(!g.lv||confirm('Fejlesztés: '+RIGS[g.lv][0]+' – '+nf(RIGS[g.lv][7],0)+' Ft?'))RIG.build()}else if(id==='rgAuto'){g.auto=g.auto?0:1;RIG.save()}else if(id==='rgBit'){g.bt=g.bt==='t'?'d':'t';RIG.save()}else if(id==='rgZa'){RIG.zAuto=RIG.zAuto?0:1}
+  else if(id==='rgUp'){if(!g.lv||confirm('Fejlesztés: '+RIGS[g.lv][0]+' – '+nf(RIGS[g.lv][7],0)+' Ft?'))RIG.build()}else if(id==='rgAuto'){g.auto=g.auto?0:1;RIG.save()}else if(id==='rgBit'){if(RIG.ph!=='trip'){g.bt=g.bt==='t'?'d':'t';RIG.save()}}else if(id==='rgZa'){RIG.zAuto=RIG.zAuto?0:1}
   else if(a==='wob-')g.wob=cl(g.wob-1,2,30);else if(a==='wob+')g.wob=cl(g.wob+1,2,30);else if(a==='q-')g.q=cl(g.q-2,10,RIG.rig()[2]);else if(a==='q+')g.q=cl(g.q+2,10,RIG.rig()[2]);
   else if(a&&a[0]==='S')g.sel=a[1];else if(a&&a[0]==='B')RIG.buy(a[1],+a.slice(2));
   uiKey='';syncUI()});
@@ -264,7 +264,7 @@ function surface(x,ts,dt,w,TH,GY,HX,sm,td,g,R,n,drill){
 const PATS=[];
 function pat(i){if(PATS[i]!==undefined)return PATS[i];let P=null;try{const c=document.createElement('canvas');c.width=c.height=32;const q=c.getContext('2d');q.strokeStyle='rgba(0,0,0,.24)';q.fillStyle='rgba(0,0,0,.24)';q.lineWidth=1.2;q.beginPath();
  if(i===0)for(let k=0;k<4;k++){q.moveTo(2+(k%2)*14,4+k*8);q.lineTo(12+(k%2)*14,4+k*8)}
- else if(i===1){for(let k=0;k<6;k++){q.moveTo(0,0);q.arc((k*11)%30+1,(k*17)%30+1,1.4,0,7)}q.fill();q.fillStyle='rgba(255,226,120,.55)';q.fillRect(22,6,2,2);q.fillRect(8,24,2,2)}
+ else if(i===1){for(let k=0;k<6;k++){q.beginPath();q.arc((k*11)%30+1,(k*17)%30+1,1.4,0,7);q.fill()}q.beginPath();q.fillStyle='rgba(255,226,120,.55)';q.fillRect(22,6,2,2);q.fillRect(8,24,2,2)}
  else if(i===2)for(let k=0;k<4;k++){const a=4+(k%2)*16,b=6+k*7;q.moveTo(a,b);q.lineTo(a+3,b+4);q.lineTo(a+6,b)}
  else if(i===3){for(let k=0;k<5;k++){q.moveTo((k*13)%28+6,(k*9)%28+3);q.arc((k*13)%28+3,(k*9)%28+3,2.4,0,7)}}
  else if(i===4)for(let k=0;k<4;k++){const a=6+(k%2)*16,b=6+Math.floor(k/2)*16;q.moveTo(a-3,b);q.lineTo(a+3,b);q.moveTo(a,b-3);q.lineTo(a,b+3)}
@@ -311,9 +311,10 @@ function draw(ts,dt){const x=cx,w=CW,h=CH,g=RIG.st(),R=RIG.rig(),lv=g.lv,n=g.p.l
  const cyOv=(maxD+20)/2-10,cyCu=Math.max(18-6,g.d-8),cy=lerp(cyOv,cyCu,z);// képernyő közepe (m)
  const Yd=d=>BY+BH/2+(d-cy)*s,dTop=cy-BH/2/s,dBot=cy+BH/2/s;
  x.save();x.beginPath();x.rect(0,BY,w,BH);x.clip();
+ let PM=null;try{PM=new DOMMatrix([1,0,0,1,0,Yd(0)%32])}catch(e){}
  GZ.forEach((Z,zi)=>{if(Z[1]<dTop||Z[0]>dBot)return;const y0=Math.max(BY,Yd(Z[0])),y1=Math.min(h,Yd(Z[1]));x.fillStyle=Z[4];x.fillRect(0,y0,w,y1-y0);
   // kőzettípus-minta, a kőzettel együtt mozog
-  const P=pat(zi);if(P){try{P.setTransform&&P.setTransform(new DOMMatrix([1,0,0,1,0,Yd(0)%32]))}catch(e){}x.fillStyle=P;x.fillRect(0,y0,w,y1-y0)}
+  const P=pat(zi);if(P){if(PM&&P.setTransform)P.setTransform(PM);x.fillStyle=P;x.fillRect(0,y0,w,y1-y0)}
   x.fillStyle='rgba(0,0,0,.2)';x.fillRect(0,y0,w,Math.min(4,y1-y0))});
  x.fillStyle='rgba(10,6,20,.24)';x.fillRect(0,BY,w,BH);
  // forró mélység: a kőzet vörösen izzik (T > 110 °C)
