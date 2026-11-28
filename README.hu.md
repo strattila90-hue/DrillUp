@@ -65,6 +65,10 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.45
+- Csörlős felhúzás: a föld alatt a ▲ és a ⌂ (Felszín) gomb nem fordítja orral felfelé a gépet, és nem járatja végig vele a bejárt utat. Az indítóállás daruja leengedi a drótkötelet, a horog a farkánál fogja meg a gépet, és orral lefelé lógva felhúzza (a távolságtól függően 3–10 s, a bázis hajtja, így üres tankkal is működik); fent a daru vízszintesre forgatja és a platformra fekteti. A rakomány a gépen marad, az alagutak megmaradnak.
+- Nincs többé „felszíni” fúrás: 3 m-nél sekélyebben nem lehet oldalra fúrni (korábban a felszín alatt 2 m-rel megálló gép oldalra indulva úgy nézett ki, mintha a felszínen belemarna a talajba).
+
 ## v5.44
 - A kiereszkedett futómű a lejtőn is helyesen áll: a test a gép saját tengelye mentén (a lánctalpra merőlegesen) emelkedik, így a dombon a lábak merőlegesek maradnak, a lánctalp a test alatt és a talajon marad; a testhez kötött lámpák és effektek is követik a kiemelést.
 

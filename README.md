@@ -65,6 +65,10 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.45
+- Recovery winch: underground the ▲ and ⌂ (Surface) buttons no longer turn the machine nose-up or drive it back along the whole travelled route. The launch-pad crane lowers its steel cable, the hook grabs the machine by the tail and hauls it up hanging nose-down (3–10 s depending on distance, powered by the base, so it works even with an empty tank); at the top the crane swings it horizontal and lays it on the pad. Cargo stays aboard, tunnels remain.
+- No more "surface" drilling: sideways drilling is refused shallower than 3 m (previously a machine stopped 2 m under the surface looked like it was biting into the ground when driving sideways).
+
 ## v5.44
 - The lowered track unit now also sits correctly on slopes: the hull rises along the machine's own axis (perpendicular to the tracks), so on hills the legs stay square and the tracks stay under the body and on the ground; lights and effects attached to the hull follow the lift.
 
