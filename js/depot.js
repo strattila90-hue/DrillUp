@@ -207,10 +207,16 @@ if(W.on){
  on('world.back',V=>{const Ys=V.Ys;if(Ys<-60||Ys>V.h+80)return;const K=V.K,x=V.x,X=V.SX;
   const N=3+lv('v'),wl=3.4,home=30+(N+1)*wl,T=DEP.trainPhase(),pos=home+T.f*620;
   // sín
-  const a=Math.max(-20,X(10)),b=Math.min(V.w+20,X(700));if(b>a){x.fillStyle='#2b2b2e';x.fillRect(a,Ys-4,b-a,3);x.fillStyle='#5a4630';for(let m=Math.ceil((V.rx+(a-V.cx)/K)/1.6)*1.6;X(m)<b;m+=1.6)x.fillRect(X(m),Ys-5,4,6)}
+  // a sín és a vonat a terepen fut (a dombokon is), nem a lapos alapszinten
+  const H=W.HILL,gy=m=>Ys-(H?H.E(m)-H.e0:0)*K,ga=m=>H?Math.atan(H.g(m)):0;
+  const a=Math.max(-20,X(10)),b=Math.min(V.w+20,X(700));if(b>a){const m0=V.rx+(a-V.cx)/K,m1=V.rx+(b-V.cx)/K;x.strokeStyle='#2b2b2e';x.lineWidth=3;x.beginPath();for(let m=m0;;m+=1.6){const mm=Math.min(m,m1);const yy=gy(mm)-2.5;m===m0?x.moveTo(X(mm),yy):x.lineTo(X(mm),yy);if(mm>=m1)break}x.stroke();
+   x.fillStyle='#5a4630';for(let m=Math.ceil(m0/1.6)*1.6;X(m)<b;m+=1.6)x.fillRect(X(m),gy(m)-5,4,6)}
   // depó-épület
   const dx=X(22);if(dx>-200&&dx<V.w+60){x.fillStyle='#6b6f78';x.fillRect(dx,Ys-58,110,54);x.fillStyle='#4a4d54';x.beginPath();x.moveTo(dx-6,Ys-58);x.lineTo(dx+55,Ys-74);x.lineTo(dx+116,Ys-58);x.fill();x.fillStyle='#8a6a3a';const f=Math.min(1,DEP.stock()/val('s'));x.fillRect(dx+8,Ys-12-40*f,94,40*f+8)}
   // vonat
-  const px=X(pos);if(px>-wl*K*(N+3)&&px<V.w+40){for(let i=0;i<=N;i++){const lx=px-(1.3+i*(wl+.15))*K,ww=(i===0?1.3*wl:wl)*K;if(lx>V.w||lx+ww<0)continue;x.fillStyle=i===0?'#9a2b24':'#44484f';x.fillRect(lx,Ys-26,ww,18);if(i>0&&T.loaded){x.fillStyle='#8a6a3a';x.fillRect(lx+2,Ys-30,ww-4,5)}x.fillStyle='#16171a';x.fillRect(lx+4,Ys-8,7,7);x.fillRect(lx+ww-11,Ys-8,7,7)}x.fillStyle='#9a2b24';x.fillRect(px-1.3*wl*K,Ys-26,1.3*wl*K,18);x.fillStyle='#ffe9a0';x.fillRect(px-5,Ys-20,5,6)}});
+  const px=X(pos);if(px>-wl*K*(N+3)&&px<V.w+40){
+   const car=(m0,len,f)=>{const mc=m0+len/2,cxp=X(mc),cyp=gy(mc);if(cxp+len*K<-20||cxp-len*K>V.w+20)return;x.save();x.translate(cxp,cyp);x.rotate(-ga(mc));f(-len*K/2,len*K);x.restore()};
+   for(let i=1;i<=N;i++){car(pos-1.3*wl-.15-i*(wl+.15)+.15,wl,(l,ww)=>{x.fillStyle='#44484f';x.fillRect(l,-26,ww,18);if(T.loaded){x.fillStyle='#8a6a3a';x.fillRect(l+2,-30,ww-4,5)}x.fillStyle='#16171a';x.fillRect(l+4,-8,7,7);x.fillRect(l+ww-11,-8,7,7)})}
+   car(pos-1.3*wl,1.3*wl,(l,ww)=>{x.fillStyle='#9a2b24';x.fillRect(l,-26,ww,18);x.fillStyle='#16171a';x.fillRect(l+4,-8,7,7);x.fillRect(l+ww-11,-8,7,7);x.fillStyle='#ffe9a0';x.fillRect(l+ww-5,-20,5,6)})}});
 }
 })(typeof window!=='undefined'?window:globalThis);
