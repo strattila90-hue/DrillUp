@@ -25,7 +25,9 @@ const HILL={e0:0,rot:0,sl:0,
   const xa=wx-10.4*f,xb=wx-2.2*f,s0=Math.min(xa,xb),s1=Math.max(xa,xb),y0=HILL.E(s0),y1=HILL.E(s1),sl=(y1-y0)/(s1-s0);
   let lift=0;for(let k=1;k<8;k++){const xs=s0+(s1-s0)*k/8;lift=Math.max(lift,HILL.E(xs)-(y0+sl*(xs-s0)))}
   const target=on*(1-vert)*-Math.atan(sl);HILL.rot+=(target-HILL.rot)*Math.min(1,dt*9);
-  const dy=on*(1-vert)*-((y0+y1)/2+lift-HILL.e0);return{rot:HILL.rot,dy}},
+  // a talaj egyenetlensége (a burkolt bázistól ~40 m-re kezdődik): rögök, nyomvályúk – a gép a haladással együtt finoman bólint és ringatózik (a hely függvénye, állva nyugton van)
+  const bump=wx=>/* csak emel (rögön átbillen), soha nem süllyeszt a talajba */sm((Math.abs(wx)-40)/40)*(.04*(1+Math.sin(wx*1.1))+.02*(1+Math.sin(wx*2.9+1.3))),bm=on*(1-vert)*(bump(xa)+bump(xb))/2,bp=on*(1-vert)*(bump(xb)-bump(xa))/8.2;
+  const dy=on*(1-vert)*-((y0+y1)/2+lift-HILL.e0)-bm;return{rot:HILL.rot-Math.atan(bp),dy}},
  // haladás a lejtőn: sebesség- és fogyasztás-szorzó (a motor teljesítménye szerint)
  // lánctalp tapadása (μ): a meghajtás szintje szerint (nagyobb gép, szélesebb, mélyebb talpú lánctalp)
  mu(){let d=0;try{d=S.u.d|0}catch(e){}return Math.min(.95,.48+.06*d)},

@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.42
+- Surface travel really happens on the surface: on hills the depot railway and its train, the machine's shadow, the sediment under the topsoil and the underground darkness now all follow the terrain, so there is no longer a flat dark "tunnel" band and rail cutting through the hill at the old reference level. The ground also acts on the machine visibly: the tracks kick up dust and clods behind it (more when climbing or slipping), and it gently pitches and rocks over ruts and bumps as it drives (on top of the existing slope speed, fuel and traction effects).
+
 ## v5.41
 - When the machine stands unfolded on the surface away from the base, the camera slowly zooms in (×1.7) and frames the whole machine, so the engine lift, instrument mast and shield plates are easy to see on a phone. Tap the machine to zoom back out (it stays out until the machine moves again); it zooms out by itself when driving or drilling starts. No auto-zoom at the base, so the building buttons stay usable.
 
