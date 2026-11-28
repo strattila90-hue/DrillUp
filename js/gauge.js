@@ -18,7 +18,7 @@ const GG={
   for(let i=0;i<n;i++){const l=LY[i],yy=ly(i),hh=LAY.hs[i];x.fillStyle=l[4];x.globalAlpha=i===ps.i?1:.78;x.fillRect(bx,yy,bw,hh-1);if(i===ps.i){x.globalAlpha=.35;x.fillStyle='#fff';x.fillRect(bx,yy,bw,hh-1);x.globalAlpha=1;x.strokeStyle='#fff';x.lineWidth=1.2;x.strokeRect(bx+.5,yy+.5,bw-1,hh-2)}}
   x.globalAlpha=1;
   // a réteghatárok mélysége (a létra bal oldalán)
-  x.font='7px Georgia';x.textAlign='right';x.fillStyle='rgba(235,225,205,.7)';let lastY=-9;for(let i=0;i<TICK.length&&i<n-1;i++){const ty=ly(i+1)+2.5;if(ty-lastY<7.5)continue;lastY=ty;x.fillText(TICK[i],bx-2,ty)}
+  const GR=W.GRR&&W.GRR.r>bx-28&&W.GRR.l<bx?W.GRR:null;x.font='7px Georgia';x.textAlign='right';x.fillStyle='rgba(235,225,205,.7)';let lastY=-9;for(let i=0;i<TICK.length&&i<n-1;i++){const ty=ly(i+1)+2.5;if(ty-lastY<7.5)continue;if(GR&&ty>GR.t-3&&ty<GR.b+8)continue;lastY=ty;x.fillText(TICK[i],bx-2,ty)}
   x.fillText('0',bx-2,y0+7);x.fillText('6371 km',w-6,y1+11);
   // valós arányú csík: a teljes Föld, lineárisan – látszik, mennyire kevés a kéreg
   const rx=bx+bw+3,rw=4;x.fillStyle='rgba(255,255,255,.12)';x.fillRect(rx,y0,rw,H);for(const l of LY){x.fillStyle=l[4];x.fillRect(rx,y0+l[1]/R6*H,rw,Math.max(.6,(l[2]-l[1])/R6*H))}

@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.40
+- A mélységsáv réteghatár-feliratai (4 km, 20 km, 410 km …) nem íródnak a jobb oldali műszeroszlop alá – csak ott jelennek meg, ahol nem takarja őket műszer.
+
 ## v5.39
 - Elrendezés-finomítás: kis telefonon a jobb oldali műszeroszlop nem csúszik a kamera / panel / gőz gombok alá (a legalsó műszerek inkább elrejtőznek), a fúrófej közeli nézetének címét nem vágja le a bezáró gomb, és a mélyben túl erős munkalámpa-fény a gép körül visszafogottabb, így a test részletei látszanak.
 

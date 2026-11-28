@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.40
+- The depth ladder no longer prints its boundary labels (4 km, 20 km, 410 km …) underneath the right-hand gauge column – they only show where no gauge covers them.
+
 ## v5.39
 - Layout polish: on small phones the right-hand gauge column no longer slides under the camera / panel / steam buttons (the lowest gauges hide instead), the drill-bit close-up title is no longer cut by its close button, and the over-bright work-lamp glow around the machine at depth is toned down so the hull details stay visible.
 
