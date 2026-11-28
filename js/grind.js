@@ -23,10 +23,11 @@ function puff(col){let c=DUST.get(col);if(c)return c;if(typeof document==='undef
  const r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,`rgba(${col},.55)`);r.addColorStop(.5,`rgba(${col},.22)`);r.addColorStop(1,`rgba(${col},0)`);g.fillStyle=r;g.fillRect(0,0,64,64);if(DUST.size>16)DUST.clear();DUST.set(col,c);return c}
 const GRD={st:0,
  on(){return true},
- world(V){if(!V.dr||!V.lw||!(W.FACE&&FACE.active()))return;const x=V.x,K=V.K||10,T=(V.ts||0)/1e3,q=W.Gov?Gov.q:2;
-  const hard=FACE.hard(),heat=typeof HEAT!=='undefined'?cl(HEAT,0,1.3):0,rt=cl((typeof rate!=='undefined'?rate:8)/14,0,1),stall=typeof STALL!=='undefined'&&Date.now()-STALL<500;
-  const L=typeof layer==='function'?layer(S.depth):null,base=rgb(L?L[4]:'#8a7558');
-  const so=GRD.st||0,P=(a,b)=>V.lw(a+so,b),px=Math.max(.6,K/30);
+ // V.grd (opcionális, pl. a főmenü jelenete): {hard,heat,rt,col,so} – ekkor a játékállapottól függetlenül rajzol
+ world(V){const F=V.grd;if(!V.dr||!V.lw||!(F||(W.FACE&&FACE.active())))return;const x=V.x,K=V.K||10,T=(V.ts||0)/1e3,q=W.Gov?Gov.q:2;
+  const hard=F?F.hard:FACE.hard(),heat=F?F.heat:typeof HEAT!=='undefined'?cl(HEAT,0,1.3):0,rt=F?F.rt:cl((typeof rate!=='undefined'?rate:8)/14,0,1),stall=!F&&typeof STALL!=='undefined'&&Date.now()-STALL<500;
+  const L=F?null:typeof layer==='function'?layer(S.depth):null,base=rgb(F?F.col:L?L[4]:'#8a7558');
+  const so=F?(F.so||0):GRD.st||0,P=(a,b)=>V.lw(a+so,b),px=Math.max(.6,K/30);
   x.save();x.lineCap='round';x.lineJoin='round';
   // 1) zúzott sáv a kontúr előtt (sötét, szemcsés „kerf”)
   {x.beginPath();const n=24;for(let i=0;i<=n;i++){const s=-1+2*i/n,[a,b,nx,ny]=cont(s),bw=.38+.4*(1-Math.min(1,Math.abs(s)))*(1+.08*Math.sin(T*5+i)),p=P(a+nx*bw,b+ny*bw);i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])}

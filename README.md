@@ -65,6 +65,10 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.43
+- Main menu: the rock in front of the drill bit is now drawn by the same realistic grinding renderer as in the game (dark crushed kerf hugging the bit, hairline cracks growing into the rock, spalling flakes, cuttings flowing along the bit and back along the wall, dust, friction glow and sparks) instead of the old floating polygons and black blob.
+- On the surface the track unit lowers hydraulically: the hull rises 1.6 m above the tracks on three hydraulic cylinders with chrome rods, hoses (oil visibly flows while moving) and pivot joints, and retracts again when drilling starts. It sounds the part: valve hiss and a rising pump hum when extending, a falling hum when retracting, and a locking clank with a short hiss at the end.
+
 ## v5.42
 - Surface travel really happens on the surface: on hills the depot railway and its train, the machine's shadow, the sediment under the topsoil and the underground darkness now all follow the terrain, so there is no longer a flat dark "tunnel" band and rail cutting through the hill at the old reference level. The ground also acts on the machine visibly: the tracks kick up dust and clods behind it (more when climbing or slipping), and it gently pitches and rocks over ruts and bumps as it drives (on top of the existing slope speed, fuel and traction effects).
 

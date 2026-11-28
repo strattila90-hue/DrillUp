@@ -17,7 +17,28 @@ const TBM={u:1,cu:1,lt:0,
  // kinyitottság (0 = behúzva / fúrás, 1 = a felszínen minden kinyitva) – simítva
  upd(o){try{if(o.lw&&W.ZM){const a=o.lw(-6.8,0);ZM.mcx=a[0]}}catch(e){}const ts=o.ts||0,dt=TBM.lt?cl((ts-TBM.lt)/1000,0,.1):.016;TBM.lt=ts;
   let tg=1;try{if(o.menu)tg=0;else if((o.dep||0)>.5||S.mode==='drill'||(W.HYD&&HYD.on()))tg=0}catch(e){}
-  TBM.u+=(tg-TBM.u)*Math.min(1,dt*1.6);if(Math.abs(tg-TBM.u)<.002)TBM.u=tg;return TBM.u},
+  const u0=TBM.u;TBM.u+=(tg-TBM.u)*Math.min(1,dt*1.6);if(Math.abs(tg-TBM.u)<.002)TBM.u=tg;
+  if(o.main){const e=TBM.u*TBM.u*(3-2*TBM.u);TBM.L=e*TBM.LIFT;TBM.snd(tg,u0,TBM.u)}return TBM.u},
+ // a felszínen a futómű hidraulikusan kiereszkedik: a test ennyivel (m) emelkedik a lánctalp fölé
+ LIFT:1.6,L:0,tg0:-1,mv:0,
+ // hidraulika-hangok: indításkor szelepnyitás-sziszegés + szivattyú-búgás (kinyitáskor emelkedő, behúzáskor ereszkedő), a végén reteszelő csattanás
+ snd(tg,u0,u){try{const now=Date.now();if(TBM.tg0<0){TBM.tg0=tg;return}
+  if(tg!==TBM.tg0){TBM.tg0=tg;if(Math.abs(tg-u)>.05){TBM.mv=1;if(typeof hiss==='function')hiss(.45);if(W.MX&&MX.hum)MX.hum(tg?48:96,tg?104:46,1.8,.11,7);if(W.MX&&MX.tone)MX.tone('sine',tg?180:260,tg?260:150,.5,.05,900,.15)}}
+  else if(TBM.mv&&u===tg){TBM.mv=0;if(typeof clank==='function')clank(.5);if(typeof hiss==='function')setTimeout(()=>{try{hiss(.22)}catch(e){}},120)}}catch(e){}},
+ // a kiereszkedő futómű hidraulikus lábai (a test koordinátáiban; L = kiemelés m-ben)
+ legs(x,o,L){if(!(L>.01))return;const ts=o.ts||0;
+  for(const lx of[-9.7,-6.5,-3.3]){const top=1.62,bot=1.22+L,bl=Math.min(.7,(bot-top)*.5);
+   // csuklós felső tartó a hajótesten
+   x.fillStyle='#2a2d32';x.beginPath();if(x.roundRect)x.roundRect(lx-.34,top-.12,.68,.26,.06);else x.rect(lx-.34,top-.12,.68,.26);x.fill();
+   // henger (barrel) + krómozott dugattyúrúd
+   x.fillStyle=TBM.steel(x,top,top+bl);x.fillRect(lx-.26,top,.52,bl);x.fillStyle='rgba(0,0,0,.35)';x.fillRect(lx+.1,top,.16,bl);x.fillStyle='#f0b020';x.fillRect(lx-.26,top+bl*.35,.52,.06);
+   x.fillStyle='#3a3f46';x.fillRect(lx-.3,top+bl-.08,.6,.12);
+   const g=x.createLinearGradient(lx-.1,0,lx+.1,0);g.addColorStop(0,'#8e979f');g.addColorStop(.4,'#ffffff');g.addColorStop(1,'#6d757d');x.fillStyle=g;x.fillRect(lx-.12,top+bl,.24,Math.max(0,bot-top-bl));
+   // alsó csukló a lánctalp-kereten
+   x.fillStyle='#1e2024';x.beginPath();x.arc(lx,bot,.16,0,7);x.fill();x.fillStyle='#6a7079';x.beginPath();x.arc(lx,bot,.07,0,7);x.fill();
+   // nyomótömlő (a mozgás alatt áramló olaj)
+   x.strokeStyle='#141416';x.lineWidth=.07;x.beginPath();x.moveTo(lx+.22,top+.05);x.quadraticCurveTo(lx+.45,top+bl*.5,lx+.22,top+bl-.05);x.stroke();
+   if(TBM.mv){x.setLineDash([.08,.16]);x.lineDashOffset=-ts/160;x.strokeStyle='rgba(255,170,40,.75)';x.lineWidth=.035;x.stroke();x.setLineDash([])}}},
  steel(x,y0,y1){const g=x.createLinearGradient(0,y0,0,y1);g.addColorStop(0,'#eef2f5');g.addColorStop(.2,'#c3cbd2');g.addColorStop(.6,'#8e98a1');g.addColorStop(1,'#3a4148');return g},
  box(x,a,b,w,hh,f,lw){x.fillStyle=f;x.beginPath();if(x.roundRect)x.roundRect(a,b,w,hh,Math.min(.06,w/3,hh/3));else x.rect(a,b,w,hh);x.fill();x.strokeStyle=OL;x.lineWidth=lw||.045;x.stroke()},
  rod(x,a,b,c,d,w,col){x.strokeStyle=OL;x.lineWidth=w+.05;x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke();x.strokeStyle=col||'#e3e7eb';x.lineWidth=w;x.stroke()},
