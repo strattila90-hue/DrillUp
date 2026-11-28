@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.38
+- Villogás- és remegés-javítás, rögzített 60 fps-es képkocka-összehasonlítással mérve: a fúrófej közeli nézete nem stroboszkópol (a forgásszög összegződik, nem idő × ingadozó sebesség), a gép fúrás közbeni rezgése kisebb és lassabb (nincs 18–22 Hz-es élremegés), a fej melletti porfelhők nem ugrálnak, és a minőség-szabályozó ismételt visszaesés után egyre később lép vissza felfelé (kevesebb felbontásváltási villanás gyenge telefonon).
+
 ## v5.37
 - **Pajzsos (TBM) felépítés:** elöl a legnagyobb átmérőjű vágófej, mögötte a pajzs, a tolóhengerek és a fejnél kisebb hengeres hajótest. A tetőről lekerült a kazán, a tartály, a daru és a kémény, így a gép belefér a saját furatába. A hajótestben van a kabin, a motortér, a támasztótalpak és a törmelékszállító csiga, amely a farok garatából üríti ki a kőzetet; a lánctalp a föld alatt behúzódik.
 - **A felszínen minden kinyílik:** a motortér ajtói felnyílnak, a motor ollós emelőn kiemelkedik és „lélegzik”, kitolódik a műszerárboc (forgó radar, élő műszer, szélmérő, jelzőfény), a pajzslemezek felemelkednek, alattuk forog a hajtómű.
