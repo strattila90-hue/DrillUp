@@ -65,6 +65,10 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.43
+- Főmenü: a fúrófej előtti kőzetet ugyanaz az élethű kőzetbontó rajz adja, mint a játékban (a fejre simuló sötét zúzott sáv, a kőzetbe növő hajszálrepedések, leváló kőzetlapok, a fej mentén és a fal mentén hátrafelé áramló forgács, por, súrlódási izzás és szikra) a régi lebegő sokszögek és fekete folt helyett.
+- A felszínen a futómű hidraulikusan kiereszkedik: a test 1,6 m-rel a lánctalp fölé emelkedik három hidraulikus munkahengeren (krómozott dugattyúrúd, tömlők – mozgás közben láthatóan áramlik az olaj –, csuklók), fúrás indulásakor pedig visszahúzódik. Hanggal is: kinyitáskor szelep-sziszegés és emelkedő szivattyú-búgás, behúzáskor ereszkedő búgás, a végén reteszelő csattanás és rövid sziszegés.
+
 ## v5.42
 - A felszíni haladás tényleg a felszínen történik: a dombokon a raktár-vasút és a vonata, a gép árnyéka, a talaj alatti üledék és a föld alatti sötétedés is a terepet követi, így nem fut többé vízszintes, sötét „alagút”-sáv és sín a dombon át a régi viszonyítási szinten. A talaj láthatóan hat a gépre: a lánctalp port és rögöket ver fel mögötte (emelkedőn és csúszáskor többet), és haladás közben a nyomvályúkon, rögökön finoman bólint és ringatózik (a meglévő lejtő-sebesség, fogyasztás és tapadás hatások mellett).
 
