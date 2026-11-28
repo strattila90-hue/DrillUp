@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.44
+- The lowered track unit now also sits correctly on slopes: the hull rises along the machine's own axis (perpendicular to the tracks), so on hills the legs stay square and the tracks stay under the body and on the ground; lights and effects attached to the hull follow the lift.
+
 ## v5.43
 - Main menu: the rock in front of the drill bit is now drawn by the same realistic grinding renderer as in the game (dark crushed kerf hugging the bit, hairline cracks growing into the rock, spalling flakes, cuttings flowing along the bit and back along the wall, dust, friction glow and sparks) instead of the old floating polygons and black blob.
 - On the surface the track unit lowers hydraulically: the hull rises 1.6 m above the tracks on three hydraulic cylinders with chrome rods, hoses (oil visibly flows while moving) and pivot joints, and retracts again when drilling starts. It sounds the part: valve hiss and a rising pump hum when extending, a falling hum when retracting, and a locking clank with a short hiss at the end.

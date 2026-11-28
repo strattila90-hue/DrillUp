@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.44
+- A kiereszkedett futómű a lejtőn is helyesen áll: a test a gép saját tengelye mentén (a lánctalpra merőlegesen) emelkedik, így a dombon a lábak merőlegesek maradnak, a lánctalp a test alatt és a talajon marad; a testhez kötött lámpák és effektek is követik a kiemelést.
+
 ## v5.43
 - Főmenü: a fúrófej előtti kőzetet ugyanaz az élethű kőzetbontó rajz adja, mint a játékban (a fejre simuló sötét zúzott sáv, a kőzetbe növő hajszálrepedések, leváló kőzetlapok, a fej mentén és a fal mentén hátrafelé áramló forgács, por, súrlódási izzás és szikra) a régi lebegő sokszögek és fekete folt helyett.
 - A felszínen a futómű hidraulikusan kiereszkedik: a test 1,6 m-rel a lánctalp fölé emelkedik három hidraulikus munkahengeren (krómozott dugattyúrúd, tömlők – mozgás közben láthatóan áramlik az olaj –, csuklók), fúrás indulásakor pedig visszahúzódik. Hanggal is: kinyitáskor szelep-sziszegés és emelkedő szivattyú-búgás, behúzáskor ereszkedő búgás, a végén reteszelő csattanás és rövid sziszegés.
