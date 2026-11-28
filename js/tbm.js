@@ -15,7 +15,7 @@ const OL='#1a1712',cl=(v,a,b)=>v<a?a:v>b?b:v,h=n=>{const s=Math.sin(n*127.1+311.
 const TBM={u:1,cu:1,lt:0,
  on(){try{return S.set.tbm!==0&&!!(W.VART&&VART.ok3())}catch(e){return false}},
  // kinyitottság (0 = behúzva / fúrás, 1 = a felszínen minden kinyitva) – simítva
- upd(o){const ts=o.ts||0,dt=TBM.lt?cl((ts-TBM.lt)/1000,0,.1):.016;TBM.lt=ts;
+ upd(o){try{if(o.lw&&W.ZM){const a=o.lw(-6.8,0);ZM.mcx=a[0]}}catch(e){}const ts=o.ts||0,dt=TBM.lt?cl((ts-TBM.lt)/1000,0,.1):.016;TBM.lt=ts;
   let tg=1;try{if(o.menu)tg=0;else if((o.dep||0)>.5||S.mode==='drill'||(W.HYD&&HYD.on()))tg=0}catch(e){}
   TBM.u+=(tg-TBM.u)*Math.min(1,dt*1.6);if(Math.abs(tg-TBM.u)<.002)TBM.u=tg;return TBM.u},
  steel(x,y0,y1){const g=x.createLinearGradient(0,y0,0,y1);g.addColorStop(0,'#eef2f5');g.addColorStop(.2,'#c3cbd2');g.addColorStop(.6,'#8e98a1');g.addColorStop(1,'#3a4148');return g},
