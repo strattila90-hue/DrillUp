@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.38
+- Flicker and jitter sweep, measured frame by frame at a fixed 60 fps: the drill-bit close-up no longer strobes (the spin angle is accumulated instead of time × a fluctuating speed), the machine's vibration while drilling is smaller and slower (no 18–22 Hz edge shimmer), the dust puffs beside the head no longer jump, and the quality governor waits progressively longer before stepping back up after repeated drops (fewer resolution pops on slow phones).
+
 ## v5.37
 - **Shield (TBM) layout:** the cutterhead is now the widest part, followed by the shield, thrust rams and a cylindrical hull narrower than the head. Boiler, tank, crane and stack are gone from the roof, so the machine fits its own bore. The hull holds the cabin, engine bay, grippers and a screw conveyor that dumps cuttings from the tail chute; tracks retract underground.
 - **On the surface everything unfolds:** engine-bay doors open, the engine rises on a scissor lift and “breathes”, an instrument mast extends (rotating radar, live gauge, anemometer, beacon), shield plates lift to show the spinning drive gears.

@@ -50,7 +50,8 @@ const GRD={st:0,
    else{x.beginPath();x.arc(p[0],p[1],r,0,6.283);x.fill();x.fillStyle='rgba(255,245,225,.3)';x.beginPath();x.arc(p[0]-r*.35,p[1]-r*.35,r*.45,0,6.283);x.fill();x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.arc(p[0]+r*.3,p[1]+r*.35,r*.5,0,6.283);x.fill()}}
   x.globalAlpha=1;
   // 5) por a fej két oldalán (előre renderelt, rétegszínű folt)
-  if(q>0){const pc=puff(`${Math.min(255,base[0]+40)},${Math.min(255,base[1]+34)},${Math.min(255,base[2]+28)}`);if(pc){for(let i=0;i<6;i++){const ph=(T*(.35+rt*.3)+i/6)%1,sg=i%2?1:-1,[a,b,nx,ny]=cont(sg*(.7+ph*1.3)),d=.3+ph*.9,p=P(a+nx*d,b+ny*d),r=(.6+ph*1.6)*K;x.globalAlpha=(.55*(1-ph)*(.4+rt*.6));x.drawImage(pc,p[0]-r,p[1]-r,r*2,r*2)}x.globalAlpha=1}}
+  {const lt=GRD.lt||0;GRD.lt=V.ts;GRD.ph=((GRD.ph||0)+(lt?cl((V.ts-lt)/1e3,0,.1):0)*(.35+rt*.3))%1}const GPH=GRD.ph;
+  if(q>0){const pc=puff(`${Math.min(255,base[0]+40)},${Math.min(255,base[1]+34)},${Math.min(255,base[2]+28)}`);if(pc){for(let i=0;i<6;i++){const ph=(GPH+i/6)%1,sg=i%2?1:-1,[a,b,nx,ny]=cont(sg*(.7+ph*1.3)),d=.3+ph*.9,p=P(a+nx*d,b+ny*d),r=(.6+ph*1.6)*K;x.globalAlpha=(.55*(1-ph)*(.4+rt*.6));x.drawImage(pc,p[0]-r,p[1]-r,r*2,r*2)}x.globalAlpha=1}}
   // 6) súrlódási izzás a vágóéleken + szikrák (additív)
   const glow=cl((heat-.3)/.8,0,1),spk=cl(Math.max(hard*1.4-.2,glow*1.2,stall?1:0),0,1)*(.4+rt*.6);
   x.globalCompositeOperation='lighter';

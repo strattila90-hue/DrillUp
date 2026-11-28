@@ -44,8 +44,8 @@ const Gov={mode:'a',q:2,ema:16.7,lowT:0,highT:0,cool:0,
  guess(){const n=W.navigator||{};return ((n.deviceMemory||4)<=2||(n.hardwareConcurrency||4)<=4)?1:2},
  frame(ms){if(Gov.mode!=='a')return;Gov.ema+=(ms-Gov.ema)*.05;if(Gov.cool>0)Gov.cool-=ms;
   if(Gov.ema>26){Gov.lowT+=ms;Gov.highT=0}else if(Gov.ema<19){Gov.highT+=ms;Gov.lowT=0}else{Gov.lowT=Gov.highT=0}
-  if(Gov.lowT>2500&&Gov.q>0){Gov.q--;Gov.lowT=0;Gov.ema=16.7;Gov.cool=6e4}
-  else if(Gov.highT>12000&&Gov.q<2&&Gov.cool<=0){Gov.q++;Gov.highT=0}},
+  if(Gov.lowT>2500&&Gov.q>0){Gov.q--;Gov.lowT=0;Gov.ema=16.7;if(Gov.up){Gov.dn=Math.min(3,(Gov.dn||0)+1);Gov.up=0}Gov.cool=6e4*(1<<(Gov.dn||0))}
+  else if(Gov.highT>12000&&Gov.q<2&&Gov.cool<=0){Gov.q++;Gov.highT=0;Gov.up=1}},
  parts(){return [90,160,260][Gov.q]},rate(){return [.4,.7,1][Gov.q]},dust(){return Gov.q>0},
  dpr(d){return Math.min(d,[1,1.4,2][Gov.q])}};
 W.Gov=Gov;

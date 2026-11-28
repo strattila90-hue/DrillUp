@@ -21,7 +21,7 @@ function draw(x,C,p,tr,w,hi){ // fénycsík (a repedés pereme) + sötét mélys
  if(hi){x.strokeStyle=hi;line(x,C,p,(a,b)=>{const q=tr(a,b);return[q[0]+.9,q[1]+.9]},Math.max(.6,w*.55))}
  x.strokeStyle='rgba(8,5,3,.92)';line(x,C,p,tr,w);
  for(const k of C.kids){const q=clamp((p-k.at)/(1.02-k.at),0,1);if(q<=0)continue;draw(x,k.c,q,(a,b)=>tr(k.ox+a,k.oy+b),w*.62,hi)}}
-const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173,n=Math.floor(u);return{p:u-n,n,seed:i*37.7+n*11.3}},
+const FACE={ang:0,lt:0,cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173,n=Math.floor(u);return{p:u-n,n,seed:i*37.7+n*11.3}},
  active(){return S.mode==='drill'&&S.st!=='idle'&&!(W.NET&&NET.falling)},
  hard(){const i=LY.indexOf(layer(S.depth));return clamp((HR[i]||1)/1200,0,1)},
  // a világban: a fúrófej előtti kőzet – a fej felületéről induló repedések, szilánkok, por, zúzott szemcsék, szikra (a gép előtt, a törmelék-réteg fölött)
@@ -47,7 +47,8 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
   x.save();x.translate(px,py);x.beginPath();if(x.roundRect)x.roundRect(0,0,sz,sz,12);else x.rect(0,0,sz,sz);x.clip();
   const bg=x.createLinearGradient(0,0,0,sz);bg.addColorStop(0,mix(L[4],'#000000',.25));bg.addColorStop(1,mix(L[4],'#000000',.55));x.fillStyle=bg;x.fillRect(0,0,sz,sz);
   // kőzet-szemcsék és rétegcsíkok csúsznak a fej mellett
-  const sc=T*sz*(.18+.5*rt),ns=[14,30,46][q]||30;for(let i=0;i<ns;i++){const x0=((hash(i)*sz-sc)%sz+sz)%sz,y0=hash(i+50)*sz,r=.8+hash(i+90)*2.6;x.fillStyle=i%3?'rgba(255,255,255,.07)':'rgba(0,0,0,.22)';x.beginPath();x.ellipse(x0,y0,r*1.6,r,hash(i)*3,0,7);x.fill()}
+  const dtt=FACE.lt?clamp((V.ts-FACE.lt)/1e3,0,.1):0;FACE.lt=V.ts;FACE.ang=(FACE.ang+dtt*(1.5+9*rt))%62.83;FACE.scr=((FACE.scr||0)+dtt*(.18+.5*rt))%1e4;
+  const sc=FACE.scr*sz,ns=[14,30,46][q]||30;for(let i=0;i<ns;i++){const x0=((hash(i)*sz-sc)%sz+sz)%sz,y0=hash(i+50)*sz,r=.8+hash(i+90)*2.6;x.fillStyle=i%3?'rgba(255,255,255,.07)':'rgba(0,0,0,.22)';x.beginPath();x.ellipse(x0,y0,r*1.6,r,hash(i)*3,0,7);x.fill()}
   if(q>0){x.strokeStyle='rgba(0,0,0,.18)';x.lineWidth=1;for(let i=0;i<4;i++){const y0=sz*(.15+i*.22);x.beginPath();for(let k=0;k<=8;k++){const xx=sz*k/8,yy=y0+Math.sin(k*1.3+i*2)*4;k?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke()}}
   const tx=sz*.72,ty=sz*.5;
   // zúzott zóna a fej előtt
@@ -60,7 +61,7 @@ const FACE={cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=T/cy+i*.173
   x.globalAlpha=1;
   // a fúrófej: UGYANAZ a rajz, mint a játékbeli gépen (BG.head + pajzs), nagyítva
   const wear=clamp((S.hw||0)/100,0,1),scl=sz*.19;x.save();x.translate(tx-.5*scl,ty);x.scale(scl,scl);
-  if(W.BG){BG.shield(x,S.u.h);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);BG.head(x,{sp:T*(1.5+9*rt),heat,ht:tier,ts:V.ts})}
+  if(W.BG){BG.shield(x,S.u.h);x.fillStyle='rgba(0,0,0,.22)';x.fillRect(-4.7,-1.65,3.1,3.3);BG.head(x,{sp:FACE.ang,heat,ht:tier,ts:V.ts})}
   x.restore();
   if(heat>.4){const hg=x.createRadialGradient(tx,ty,0,tx,ty,sz*.3);hg.addColorStop(0,`rgba(255,${160-heat*50|0},50,${.55*Math.min(1,heat)})`);hg.addColorStop(1,'rgba(255,100,20,0)');x.fillStyle=hg;x.fillRect(tx-sz*.3,ty-sz*.3,sz*.6,sz*.6)}
   // szikrák és por
