@@ -94,6 +94,7 @@ function fitR(){const g=document.querySelector('.gauges.hudR');if(!g)return;cons
  let lim=Math.min(pw.bottom,W.innerHeight||1e9);const dk=document.querySelector('.dock');if(dk){const r=dk.getBoundingClientRect();if(r.height>0&&r.top>pw.top+40)lim=Math.min(lim,r.top)}
  try{const cv=document.getElementById('cv');if(cv&&dk&&getComputedStyle(dk).position==='absolute'){const a=cv.getBoundingClientRect(),r=dk.getBoundingClientRect();W.HUDB=Math.max(0,Math.round(a.bottom-r.top))}else W.HUDB=0}catch(e){}
  try{const st=document.getElementById('stage');if(st&&st._hb!==W.HUDB){st._hb=W.HUDB;st.style.setProperty('--hb',(W.HUDB||0)+'px')}}catch(e){}
+ try{const gr=g.getBoundingClientRect();document.querySelectorAll('.stmb,#cinBtn,#pnBtn').forEach(e=>{const r=e.getBoundingClientRect();if(r.width>0&&r.height>0&&r.right>gr.left+2&&r.left<gr.right-2&&r.top>pw.top+40)lim=Math.min(lim,r.top)})}catch(e){}
  const cs=[...g.children];cs.forEach(c=>{if(c.style.display)c.style.display=''});for(const c of cs){if(c.getBoundingClientRect().bottom>lim-4)c.style.display='none'}}
 if(W.on)on('frame',()=>{if(typeof document==='undefined'||!document.getElementById)return;const ts=performance.now();if(ts-last<30)return;last=ts;if(ts-lastFit>500){lastFit=ts;try{fitR()}catch(e){}}
  try{document.querySelectorAll('.gauges canvas').forEach(cv=>{if(!cv.offsetParent)return;const d=DEF.find(q=>q.k===cv.dataset.k);if(d)draw(cv,d,ts)})}catch(e){if(W.DBG)DBG.err='gauges: '+(e.message||e)}});

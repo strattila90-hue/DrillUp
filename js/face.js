@@ -69,7 +69,7 @@ const FACE={ang:0,lt:0,cyc(i,T,hard){const cy=(.8+hash(i*5.3)*.7)*(1+hard*.8),u=
   x.restore();
   // keret és feliratok
   x.save();x.translate(px,py);x.strokeStyle=heat>.85?'#ff5a3c':'rgba(240,160,48,.8)';x.lineWidth=1.5;x.beginPath();if(x.roundRect)x.roundRect(0,0,sz,sz,12);else x.rect(0,0,sz,sz);x.stroke();
-  x.font='bold 8.5px Georgia';x.fillStyle='rgba(10,8,6,.7)';x.fillRect(0,0,sz,13);x.fillStyle='#f0c070';x.textAlign='left';x.fillText('FÚRÓFEJ · KÖZELI NÉZET',5,9.5);
+  x.font='bold 8.5px Georgia';x.fillStyle='rgba(10,8,6,.7)';x.fillRect(0,0,sz,13);x.fillStyle='#f0c070';x.textAlign='left';x.fillText('FÚRÓFEJ · KÖZELI NÉZET',5,9.5,sz-26);
   x.fillStyle='rgba(10,8,6,.7)';x.fillRect(0,sz-24,sz,24);x.fillStyle='#fff';x.font='9px Georgia';x.fillText(L[0].split(' (')[0]+' · '+HR[LY.indexOf(L)]+' MPa',5,sz-14);x.fillStyle=wear>.75?'#ff6a4a':'#bfb09a';x.fillText('kopás '+Math.round(S.hw||0)+'%  ·  '+(typeof HD!=='undefined'?HD[tier][0].replace(' fúrófej',''):''),5,sz-4);x.restore()}};
 W.FACE=FACE;
 if(W.on){on('world.front',V=>FACE.world(V));on('hud',V=>FACE.inset(V))}
