@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.41
+- When the machine stands unfolded on the surface away from the base, the camera slowly zooms in (×1.7) and frames the whole machine, so the engine lift, instrument mast and shield plates are easy to see on a phone. Tap the machine to zoom back out (it stays out until the machine moves again); it zooms out by itself when driving or drilling starts. No auto-zoom at the base, so the building buttons stay usable.
+
 ## v5.40
 - The depth ladder no longer prints its boundary labels (4 km, 20 km, 410 km …) underneath the right-hand gauge column – they only show where no gauge covers them.
 

@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.41
+- Ha a gép a bázison kívül, kinyitva áll a felszínen, a kamera lassan ránagyít (×1,7) és a teljes gépet keretezi, így telefonon is jól látszik a motoremelő, a műszerárboc és a pajzslemezek mozgása. A gépre koppintva visszaáll (és a gép elindulásáig nem nagyít újra); haladás vagy fúrás indulásakor magától kinagyít. A bázison nincs automatikus nagyítás, így az épületgombok használhatók maradnak.
+
 ## v5.40
 - A mélységsáv réteghatár-feliratai (4 km, 20 km, 410 km …) nem íródnak a jobb oldali műszeroszlop alá – csak ott jelennek meg, ahol nem takarja őket műszer.
 
