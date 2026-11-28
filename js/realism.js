@@ -60,8 +60,9 @@ RZ.post=function(V){
  const gold=day>0&&(hr<8||hr>17)?cl(1-Math.abs(((hr<8?hr:hr-12)-6.5))/2.2,0,1)*.5:0;
  if(gold>.01){x.save();x.globalCompositeOperation='soft-light';x.fillStyle=`rgba(255,140,50,${(.32*gold).toFixed(3)})`;x.fillRect(0,0,w,h);x.restore()}
  if(q>=2&&typeof document!=='undefined'&&document.createElement&&x.canvas){const c=x.canvas,tw=Math.max(8,c.width>>3),th=Math.max(8,c.height>>3);
-  if(!RZ.tmp)RZ.tmp=document.createElement('canvas');const t=RZ.tmp;if(t.width!==tw||t.height!==th){t.width=tw;t.height=th}
-  const g=t.getContext('2d');g.imageSmoothingEnabled=true;g.clearRect(0,0,tw,th);g.drawImage(c,0,0,c.width,c.height,0,0,tw,th);
+  if(!RZ.tmp)RZ.tmp=document.createElement('canvas');const t=RZ.tmp;if(t.width!==tw||t.height!==th){t.width=tw;t.height=th;t._fresh=0}
+  // a teljes kép visszaolvasása drága: a lekicsinyített fény-réteg csak minden 3. képkockán frissül (a ragyogás lassan változik)
+  RZ.bn=((RZ.bn||0)+1)%3;if(RZ.bn===0||t._fresh!==1){t._fresh=1;const g=t.getContext('2d');g.imageSmoothingEnabled=true;g.clearRect(0,0,tw,th);g.drawImage(c,0,0,c.width,c.height,0,0,tw,th)}
   x.save();x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='screen';x.globalAlpha=.16+(day<.4?.06:0);x.imageSmoothingEnabled=true;x.drawImage(t,0,0,tw,th,0,0,c.width,c.height);x.restore()}
 };
 // ---- a gép: mozgó fényes visszaverődés a hengeres hátsó testen
