@@ -85,8 +85,8 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script><script src="js/complex.js"></script><script src="js/complex2.js"></script><script src="js/vart.js"></script><script src="js/grind.js"></script><script src="js/tbm.js"></script><script src="js/statgen.js"></script><script src="js/winch.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.45';
-const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.46';
+const NFC={},nf=(n,d=0)=>{const l=(typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',k=l+d;let f=NFC[k];if(!f){try{f=NFC[k]=new Intl.NumberFormat(l,{maximumFractionDigits:d})}catch(e){return n.toLocaleString(l,{maximumFractionDigits:d})}}return f.format(n)};/* gyorsítótárazott formázó: a toLocaleString minden hívásnál új formázót épít (képkockánként sokszor) */
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
 const ft=x=>(W_en()?'$'+nf(x,0):nf(x,0)+' Ft');const W_en=()=>{try{return I18N.lang==='en'}catch(e){return false}};
