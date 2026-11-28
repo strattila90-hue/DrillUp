@@ -65,6 +65,9 @@ Released under the [MIT License](LICENSE). All game content and the film relics 
 ---
 ⭐ If you like it, please give it a star — it really helps!
 
+## v5.39
+- Layout polish: on small phones the right-hand gauge column no longer slides under the camera / panel / steam buttons (the lowest gauges hide instead), the drill-bit close-up title is no longer cut by its close button, and the over-bright work-lamp glow around the machine at depth is toned down so the hull details stay visible.
+
 ## v5.38
 - Flicker and jitter sweep, measured frame by frame at a fixed 60 fps: the drill-bit close-up no longer strobes (the spin angle is accumulated instead of time × a fluctuating speed), the machine's vibration while drilling is smaller and slower (no 18–22 Hz edge shimmer), the dust puffs beside the head no longer jump, and the quality governor waits progressively longer before stepping back up after repeated drops (fewer resolution pops on slow phones).
 

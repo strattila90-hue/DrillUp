@@ -65,6 +65,9 @@ Hibajelentést, ötletet és pull requestet szívesen fogadunk – lásd [CONTRI
 ## Licenc / közreműködők
 [MIT licenc](LICENSE) alatt. A játék minden tartalma és a filmes relikviák eredetiek, kitaláltak. Fejlesztő: strattila90.
 
+## v5.39
+- Elrendezés-finomítás: kis telefonon a jobb oldali műszeroszlop nem csúszik a kamera / panel / gőz gombok alá (a legalsó műszerek inkább elrejtőznek), a fúrófej közeli nézetének címét nem vágja le a bezáró gomb, és a mélyben túl erős munkalámpa-fény a gép körül visszafogottabb, így a test részletei látszanak.
+
 ## v5.38
 - Villogás- és remegés-javítás, rögzített 60 fps-es képkocka-összehasonlítással mérve: a fúrófej közeli nézete nem stroboszkópol (a forgásszög összegződik, nem idő × ingadozó sebesség), a gép fúrás közbeni rezgése kisebb és lassabb (nincs 18–22 Hz-es élremegés), a fej melletti porfelhők nem ugrálnak, és a minőség-szabályozó ismételt visszaesés után egyre később lép vissza felfelé (kevesebb felbontásváltási villanás gyenge telefonon).
 

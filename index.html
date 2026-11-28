@@ -85,7 +85,7 @@ h3{margin:14px 0 4px}select,input[type=range]{width:100%;font:inherit;padding:6p
 <script src="js/tunnels.js"></script>
 <script src="js/lamps.js"></script><script src="js/rig.js"></script><script src="js/pad.js"></script><script src="js/joy.js"></script><script src="js/complex.js"></script><script src="js/complex2.js"></script><script src="js/vart.js"></script><script src="js/grind.js"></script><script src="js/tbm.js"></script><script src="js/statgen.js"></script>
 <script>
-const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.38';
+const $=s=>document.querySelector(s),G=9.81,A=Math.PI*.36,R=6371e3,VER='5.39';
 const nf=(n,d=0)=>n.toLocaleString((typeof I18N!=='undefined'&&I18N.lang==='en')?'en-US':'hu-HU',{maximumFractionDigits:d});
 const fd=n=>nf(n,n<100?2:1)+' m'+(n>=1000?` (${nf(n/1000,3)} km)`:'');
 const fk=k=>k<1?nf(k*1000,1)+' g':k>=1e4?nf(k/1000,2)+' t':nf(k,1)+' kg';
@@ -577,7 +577,7 @@ if(ry<1&&dir!='D'){angT=0;faceT=hf}const _ah=window.ARC?ARC.hd():null;if(_ah){an
  const blob=(c,l,a,col)=>{const s=RSPR(col);c.globalAlpha=Math.min(1,a);c.drawImage(s,l.x-l.r,l.y-l.r,l.r*2,l.r*2);c.globalAlpha=1};LT.forEach(l=>blob(d2,l,l.i,'0,0,0'));
  const cone=(c,ctx,fill)=>{const e1=[c.dx*Math.cos(c.s)-c.dy*Math.sin(c.s),c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],e2=[c.dx*Math.cos(c.s)+c.dy*Math.sin(c.s),-c.dx*Math.sin(c.s)+c.dy*Math.cos(c.s)],q=ctx.createLinearGradient(c.x,c.y,c.x+c.dx*c.len,c.y+c.dy*c.len);q.addColorStop(0,fill);q.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=q;ctx.beginPath();ctx.moveTo(c.x,c.y);ctx.lineTo(c.x+e1[0]*c.len,c.y+e1[1]*c.len);ctx.lineTo(c.x+e2[0]*c.len,c.y+e2[1]*c.len);ctx.fill()};
  CN.forEach(c=>cone(c,d2,'rgba(0,0,0,.95)'));x.drawImage(dk,0,0,w,h);
- x.globalCompositeOperation='lighter';LT.forEach(l=>blob(x,l,l.i*.2,'255,190,100'));
+ x.globalCompositeOperation='lighter';LT.forEach(l=>blob(x,l,l.i*.11,'255,190,100'));
  GL.forEach(l=>blob(x,l,l.i,l.c));CN.forEach(c=>cone(c,x,'rgba(255,230,160,.22)'));x.globalCompositeOperation='source-over';
  const T=window.VOL?VOL.tm(S.x,ry,lerp(TT,ry)):lerp(TT,ry);if(ry>0){x.fillStyle=`rgba(255,70,0,${Math.min(.35,T/6000*.45)})`;x.fillRect(0,0,w,h)}
  if(turbo){const dd2=DV[dir]||[0,0];x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1.5;for(let i=0;i<30;i++){const q=(ts*(.9+i%5*.15)/400+i*.37)%1,px=dd2[0]?(dd2[0]>0?1-q:q)*(w+80)-40:(i*83.7)%w,py=dd2[1]?(dd2[1]>0?1-q:q)*(h+80)-40:(i*47.3)%h;x.beginPath();x.moveTo(px,py);x.lineTo(px+(dd2[0]?40:0),py+(dd2[1]?40:0));x.stroke()}}
